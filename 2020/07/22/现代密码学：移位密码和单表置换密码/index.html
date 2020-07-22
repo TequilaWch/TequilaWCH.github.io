@@ -165,7 +165,7 @@
 </tr>
 </tbody></table>
 <p>例如 明文 <strong>WCH IS HANDSOME</strong> 就会被加密为 <strong>ZFK LV KDQGVRPH</strong></p>
-<p>如果把A-Z用0-25编码，明文M = m<sub>0</sub>m<sub>1</sub>……m<sub>n</sub>,  密文C = c<sub>0</sub>c<sub>1</sub>……c<sub>n</sub>,偏移量(密钥)key = +3 ，则上述加密可以表示为<br>$$<br>c_{i} \equiv m_{i} + key \ \ \ \ mod(26)<br>$$</p>
+<p>如果把A-Z用0-25编码，明文M = m<sub>0</sub>m<sub>1</sub>……m<sub>n</sub>,  密文C = c<sub>0</sub>c<sub>1</sub>……c<sub>n</sub>,偏移量(密钥)key = +3 ，则上述加密可以表示为 c<sub>i</sub> ≡ m<sub>i</sub>+key mod(26)</p>
 <p>在算力尚不发达的古代，这种密码具有很高的安全性，然而在现在一个小孩子依靠电脑也可以轻而易举的破解这种密码，根本原因在于其有效密钥空间太小（仅为25），一台计算机轻轻松松的就可以将其计算出来。有兴趣的读者可以尝试破解以下密文来证明我所言不虚2333</p>
 <blockquote>
 <p>WKDQNV IRU UHDGLQJ PB EORJ, L GR UHDOOB KRSH BRX KDYH D QLFH GDB! ORYH BRX PB GHDU IULHQG.</p>
@@ -418,16 +418,6 @@
   </div>
 
    
-  <nav class="article-nav">
-    
-    
-      <a href="/2020/07/21/hello-world/" class="article-nav-link">
-        <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Hello World</div>
-      </a>
-    
-  </nav>
-
    
 <!-- valine评论 -->
 <div id="vcomments-box">
