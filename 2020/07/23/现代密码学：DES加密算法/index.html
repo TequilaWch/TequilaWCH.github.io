@@ -98,7 +98,7 @@
 <p>在分组密码的发展历史中，出现了许多种优秀的算法，包括IDEA，AES，Safer＋＋和本文的主角<strong>DES</strong>算法。他们都拥有一个共同的特点：在其明文加密和密文解密的过程中，信息按照固定长度分组进行处理。以<strong>DES算法</strong>为例，<strong>DES算法</strong>将明文分成64位大小的众多数据块，即分组长度为64位。同时用56位密钥对64位明文信息加密，最终形成64位的密文。如果明文长度不足64位，即将其用补零的方式扩展为64位。</p>
 <p><strong>DES算法</strong>的具体加密过程为：首先将输入的数据进行初始置换（IP），即将明文M中数据的排列顺序按一定的规则重新排列，生成新的数据序列，以打乱原来的次序。然后将变换后的数据平分成左右两部分，将左边记为L<sub>0</sub>,右边记为R<SUB>0</SUB>。之后对R<SUB>0</SUB>和子密钥K<SUB>1</SUB>输入变换函数f进行一次变换，将得到的结果f(R<SUB>0</SUB>,K<SUB>1</SUB>)与L<sub>0</sub>按位进行异或运算，将结果记为R<sub>1</sub>,把R<sub>0</sub>作为L<sub>1</sub>进行下一轮操作，共进行16轮运算以得到L<sub>16</sub>和R<sub>16</sub>，最后将L<sub>16</sub>和R<sub>16</sub>进行逆初始置换IP<sup>-1</sup>就得到了加密数据。需要注意的是每一轮中的子密钥K<SUB>n</SUB>都是由56位密钥K生成的子密钥。</p>
 <p><strong>DES算法</strong>的解密过程与加密过程类似，只不过是子密钥的使用顺序与加密时刚好相反，其加密过程的流程图如下所示：</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES1.jpg" alt="流程图"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES1.jpg" alt="流程图"></p>
 <h2 id="Part-2：基本函数介绍"><a href="#Part-2：基本函数介绍" class="headerlink" title="Part 2：基本函数介绍"></a>Part 2：基本函数介绍</h2><p>上一部分中，我们可以得到这样三个关键函数<strong>初始置换IP</strong>，<strong>变换f</strong> 和<strong>逆初始置换IP<sup>－1</sup></strong>。在这一部分，我将对这三个基本函数进行详细介绍。看在我如此辛苦的进行介绍的份上，真的不来<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>点一个<strong>star</strong>么？</p>
 <h3 id="初始置换IP"><a href="#初始置换IP" class="headerlink" title="初始置换IP"></a>初始置换IP</h3><p>它的作用是把输入的64位数据块的排列顺序打乱，每位数据按照下面的置换规则重新排列，即将第58位换到第一位，第50位换打第2位，…，依次类推。置换后的64位输出分为L0 、R0（左、右）两部分，每部分分别为32位。以下是置换表：</p>
 <table>
@@ -178,7 +178,7 @@
 </tr>
 </tbody></table>
 <h3 id="变换函数f"><a href="#变换函数f" class="headerlink" title="变换函数f"></a>变换函数f</h3><p>在讲变换函数f之前，我们要先讲讲子密钥K<SUB>n</SUB>的生成,他的生成过程如下流程图所示。这里的PC-1为选择置换，可以去掉奇偶校验位。PC-2也是选择置换，它是用于从C<sub>i</sub>和D<sub>i</sub>中选取48位作为密钥K<sub>i</sub>。C<sub>0</sub>和D<sub>0</sub>是把密钥中实际的56位分成左右28位，LS<sub>i</sub>是表示对C<sub>i-1</sub>和D<sub>i-1</sub>进行循环左移变换，其中LS<sub>1</sub>,LS<sub>2</sub>,LS<sub>9</sub>,LS<sub>16</sub>是循环左移1位，其余为2位。</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES2.png" alt="子密钥生成"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES2.png" alt="子密钥生成"></p>
 <p>有没有发现一个问题，我们得到的每个子密钥都是48比特，然而我们输入的R<sub>i</sub>仅仅只有32位,因此我们还需要一个扩展过程将R<sub>i</sub>扩展为48为，这个扩展的基本思想是重复使用其中的16位，具体扩展置换表如下(<em>斜体</em>为重复部分)：</p>
 <table>
 <thead>
@@ -249,11 +249,11 @@
 </tr>
 </tbody></table>
 <p>这样，我们就有了一个48位的子密钥和一个扩展后的输入（不妨叫做x），我们把这个x和子密钥进行按位异或，得到一个总的48位结果（就叫y吧），但是我们需要一个32位的输出，直接输出y显然不可行，我们需要将其6位一组分成8组，输入8个s盒之中，每个s盒的输出是4位，这样就得到了32位的输出。具体流程图如下：</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES3.png" alt="变换函数f"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES3.png" alt="变换函数f"></p>
 <p>你的下一句话是：这个s盒是什么东西呢？我们用S<sub>1</sub>来举例，相信你一下就懂了。比如前6位是110101，把他输入S<sub>1</sub>后，取出他的第一位和最后一位(先前的重复位)构成行(这里是11即3)，剩下四位构成列(1010即10)，对照S<sub>1</sub>，我们的结果就是3，也就是0011。</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES5.png" alt="S盒1，2"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES5.png" alt="S盒1，2"></p>
 <p>全部s盒的定义我们也放在下面(虽然不是很清楚)</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES4.png" alt="S盒"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES4.png" alt="S盒"></p>
 <h3 id="逆初始置换IP－1"><a href="#逆初始置换IP－1" class="headerlink" title="逆初始置换IP－1"></a><strong>逆初始置换IP<sup>－1</sup></strong></h3><p>逆初始置换其实就是初始置换的逆，话不多说，直接上表。</p>
 <table>
 <thead>
@@ -333,9 +333,9 @@
 </tbody></table>
 <h2 id="Part-3：DES的一些其他用法"><a href="#Part-3：DES的一些其他用法" class="headerlink" title="Part 3：DES的一些其他用法"></a>Part 3：DES的一些其他用法</h2><p>自DES算法问世以来，就一直是一种重要的加密方式，为了防止一重DES加密被破解，又衍生出了许多种DES算法的特殊用法，在这里简要提一些。</p>
 <h3 id="双重DES"><a href="#双重DES" class="headerlink" title="双重DES"></a>双重DES</h3><p>顾名思义，两个密钥，两次DES，流程图如下</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES6.png" alt="双重DES"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES6.png" alt="双重DES"></p>
 <h3 id="双密钥三重DES"><a href="#双密钥三重DES" class="headerlink" title="双密钥三重DES"></a>双密钥三重DES</h3><p>因为DES的加密算法和解密算法其实过程相同，某些时候也可以把解密算法当作加密算法使用，双密钥三重DES应运而生</p>
-<p><img src="/.com//%C2%96%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES7.png" alt="双密钥三重DES"></p>
+<p><img src="/.com//%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%5CDES7.png" alt="双密钥三重DES"></p>
  
       <!-- reward -->
       
