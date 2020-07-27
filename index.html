@@ -122,7 +122,8 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="现代密码学：AES加密算法"><a href="#现代密码学：AES加密算法" class="headerlink" title="现代密码学：AES加密算法"></a>现代密码学：AES加密算法</h1><h2 id="Part-1：Rijndael"><a href="#Part-1：Rijndael" class="headerlink" title="Part 1：Rijndael"></a>Part 1：Rijndael</h2><p><strong>AES加密算法</strong>本质上是一种对称分组密码体制，他的基础是一种迭代分组密码算法<strong>Rijndael加密算法</strong>，因此为了介绍AES加密算法，我们应该先讲讲Rijndael加密算法的数学基础和设计思想。Rijndael加密算法建立在一种特殊的数学结构上–有限域GF(2<sup>8</sup>)。在多项式表示中，GF(2<sup>8</sup>)上两个元素的和仍然是一个次数不超过7的多项式，其系数等于两个元素对应系数的模2加(比特异或)。</p>
+  <h1 id="现代密码学：AES加密算法"><a href="#现代密码学：AES加密算法" class="headerlink" title="现代密码学：AES加密算法"></a>现代密码学：AES加密算法</h1><h2 id="Part-1：Rijndael和他的数学基础"><a href="#Part-1：Rijndael和他的数学基础" class="headerlink" title="Part 1：Rijndael和他的数学基础"></a>Part 1：Rijndael和他的数学基础</h2><p><strong>AES</strong>本质上是一种加密标准，我们常说的AES加密其实是<strong>Rijndael加密算法</strong>。对于AES的加密标准不过多赘述，我们详细讲讲Rijndael算法。</p>
+<p>Rijndael加密算法建立在一种特殊的数学结构上–有限域GF(2<sup>8</sup>)。在多项式表示中，GF(2<sup>8</sup>)上两个元素的和仍然是一个次数不超过7的多项式，其系数等于两个元素对应系数的模2加(比特异或)。</p>
 <p>而如果要计算GF(2<sup>8</sup>)上的乘法，必须先确定一个GF(2)上的8次不可约多项式；GF(2<sup>8</sup>)上两个元素的乘积就是这两个多项式的模乘(以这个8次不可约多项式为模)。而在Rijndael密码中，这个8次不可约多项式确定为m(x) = x<sup>8</sup>+x<sup>4</sup>+x<sup>3</sup>+x+1，十六进制表示为“11B”</p>
 <p>具体的数学知识在这里我们不涉及，接下来讲讲怎样在GF(2<sup>8</sup>)上建立我们的Rijndael加密算法。在GF(2<sup>8</sup>)上我们需要做模乘运算和模加运算。多项式的加法就是对应系数相加；换句话说，多项式的加法就是4字节向量的逐比特异或，这个很简单，应该都明白。多项式的乘法必须要取模n(x) = x<sup>4</sup>+1,这样使得次数小于4的多项式的乘积仍然是一个次数小于4的多项式。用下面这个例子来说明</p>
 <p>设a(x) = a<sub>3</sub>x<sup>3</sup>+a<sub>2</sub>x<sup>2</sup>+a<sub>1</sub>x<sup>1</sup>+a<sub>0</sub>,b(x) = b<sub>3</sub>x<sup>3</sup>+b<sub>2</sub>x<sup>2</sup>+b<sub>1</sub>x<sup>1</sup>+b<sub>0</sub>, 则a(x) * b(x) = c(x) = c<sub>3</sub>x<sup>3</sup>+c<sub>2</sub>x<sup>2</sup>+c<sub>1</sub>x<sup>1</sup>+c<sub>0</sub></p>
@@ -130,6 +131,70 @@
 <p><img src="https://i.loli.net/2020/07/27/p6x8kdAVf9TbjnK.png" alt="AES1.png"></p>
 <p>上面的式子还可以用矩阵表示为</p>
 <p><img src="https://i.loli.net/2020/07/27/h7HQ3ncYNCltF59.png" alt="AES2.png"></p>
+<h2 id="Rijndael的设计思想"><a href="#Rijndael的设计思想" class="headerlink" title="Rijndael的设计思想"></a>Rijndael的设计思想</h2><p>以上就是Rijndael加密算法的数学基础，现在我们来看看他的设计思想，作为一个密码算法，Rijndael的设计力求满足以下三条标准</p>
+<ul>
+<li>抵抗所有已知的攻击</li>
+<li>多平台兼容且快速，编码紧凑</li>
+<li>设计简单</li>
+</ul>
+<p>当前的大多数分组密码，其轮函数是Feistel结构，即将中间状态的部分比特不加改变地简单放置到其它位置。Rijndael没有这种结构，其轮函数是由三个不同的可逆均匀变换组成的，称它们为三个“层”。所谓“均匀变换”是指状态的每个比特都是用类似的方法进行处理的。不同层的特定选择大部分是建立在“宽轨迹策略”的应用基础上的；简单地说，“宽轨迹策略”就是提供抗线性密码分析和差分密码分析能力的一种设计。为实现宽轨迹策略，轮函数三个层中的每一层都有它自己的功能：</p>
+<ul>
+<li><strong>线性混合</strong>层：确保多轮之上的高度扩散</li>
+<li><strong>非线性</strong>层：将具有最优的“最坏情况非线性特性”的S盒并行使用</li>
+<li><strong>密钥加</strong>层：单轮子密钥简单地异或到中间状态上，实现一次性掩盖</li>
+</ul>
+<p>在第一轮之前，用了一个初始密钥加层，其目的是在不知道密钥的情况下，对最后一个密钥加层以后的任一层（或者是当进行已知明文攻击时，对第一个密钥加层以前的任一层）可简单地剥去，因此初始密钥加层对密码的安全性无任何意义。许多密码的设计中都在轮变换之前和之后用了密钥加层，如IDEA、SAFER和Blowfish。</p>
+<p>同时，为了使加密算法和解密算法在结构上更加接近，最后一轮的线性混合层与前面各轮的线性混合层不同，这类似于DES的最后一轮不做左右交换一样。可以证明这种设计不以任何方式提高或降低该密码的安全性。</p>
+<p>类似于明文分组和密文分组，算法的中间结果也须分组，称算法中间结果的分组为状态，所有的操作都在状态上进行。状态可以用以字节为元素的矩阵阵列表示，该阵列有4行，列数记为N<sub>b</sub>，N<sub>b</sub>等于分组长度除以32。</p>
+<p>种子密钥类似地用一个以字节为元素的矩阵阵列表示，该阵列有4行，列数记为N<sub>k</sub>，N<sub>k</sub>等于分组长度除以32。下表是N<sub>b</sub>=6的状态和N<sub>k</sub>=4的种子密钥的矩阵阵列表示。</p>
+<p><img src="https://i.loli.net/2020/07/27/TlifR3OpdkFutEG.png" alt="AES3.png"></p>
+<p>算法的输入和输出被看成是由8比特字节构成的一维数组，其元素下标的范围是0<del>（4N<sub>b</sub> -1），因此输入和输出以字节为单位的分组长度分别是16、24和32，其元素下标的范围分别是0</del>15、0<del>23和0</del>31。输入的种子密钥也看成是由8比特字节构成的一维数组，其元素下标的范围是0<del>（4N<sub>k</sub> -1），因此种子密钥以字节为单位的分组长度也分别是16、24和32，其元素下标的范围分别是0</del>15、0<del>23和0</del>31</p>
+<p>Rijndael的轮函数以下的四个不同的计算部件组成：<strong>字节代换</strong>（ByteSub），<strong>行移位</strong>（ShiftRow），<strong>列混淆（MixColumn）和</strong>密钥加**（AddRoundKey）。接下来我们将对其进行分别介绍。</p>
+<h3 id="字节代换ByteSub"><a href="#字节代换ByteSub" class="headerlink" title="字节代换ByteSub"></a>字节代换ByteSub</h3><p>字节代换是非线形变换，独立地对状态的每个字节进行。代换表（即S-盒）是可逆的，由以下两个变换的合成得到：</p>
+<ol>
+<li>将字节看作<em>GF</em>(2<sup>8</sup>)上的元素，映射到自己的乘法逆元，把<strong>00</strong>映射到自己。</li>
+<li>对字节做如下的（GF(2)上的，可逆的）仿射变换：</li>
+</ol>
+<p><img src="https://i.loli.net/2020/07/27/fvAh8QdHXZe4r5m.png" alt="AES4.png"></p>
+<p>这个变换过程难以理解的话可以看如下的示意图</p>
+<p><img src="https://i.loli.net/2020/07/27/buQdWsyFtamH4M5.png" alt="AES5.png"></p>
+<p>ByteSub的逆变换由代换表的逆表做字节代换，可通过如下两步实现，首先进行仿射变换的逆变换，再求每一字节在<em>GF</em>(2<sup>8</sup>)上逆元。</p>
+<h3 id="行移位ShiftRow"><a href="#行移位ShiftRow" class="headerlink" title="行移位ShiftRow"></a>行移位ShiftRow</h3><p>行移位是将状态阵列的各行进行循环移位，不同状态行的位移量不同。第0行不移动，第一行循环左移C<sub>1</sub>个字节，第二行循环左移C<sub>2</sub>个字节，第三行循环左移C<sub>3</sub>个字节。位移量C<sub>1</sub>、C<sub>2</sub>、C<sub>3</sub>的取值与N<sub>b</sub>有关，由下表给出。</p>
+<p><img src="https://i.loli.net/2020/07/27/TM2kslfnK4owyPI.png" alt="AES6.png"></p>
+<p>同样的，我也极其贴心的准备了相应的示意图</p>
+<p><img src="https://i.loli.net/2020/07/27/6uCTEdWHNGheZ5V.png" alt="AES7.png"></p>
+<p>这个的逆运算不用讲了把，再左移N<sub>b</sub>-偏移量位就ok了</p>
+<h3 id="列混淆MixColumn"><a href="#列混淆MixColumn" class="headerlink" title="列混淆MixColumn"></a>列混淆MixColumn</h3><p>在列混合变换中，将状态阵列的每个列视为GF(2<sup>8</sup>)上的多项式，再与一个固定的多项式c(x)进行模<em>x</em><sup>4</sup>+1乘法。当然要求c(x)是模<em>x</em><sup>4</sup>+1可逆的多项式，否则列混合变换就是不可逆的，因而会使不同的输入分组对应的输出分组可能相同。设计者给出的从c(x)为 <strong>03x<sup>3</sup>+01x<sup>2</sup>+01x<sup>1</sup>+02</strong>(系数为16进制)。同样的，列混淆可以写为矩阵乘法如下：</p>
+<p><img src="https://i.loli.net/2020/07/27/EaJpm2sxPAOF1r3.png" alt="AES8.png"></p>
+<p>示意图如下</p>
+<p><img src="https://i.loli.net/2020/07/27/el9pbaNJjk3dimw.png" alt="AES9.png"></p>
+<p>这个逆运算是将每一列用一个特定的多项式d(x)来乘，d(x)同样已经给出：<strong>0Bx<sup>3</sup>+0Dx<sup>2</sup>+09x<sup>1</sup>+0E</strong></p>
+<h3 id="密钥加AddRoundKey"><a href="#密钥加AddRoundKey" class="headerlink" title="密钥加AddRoundKey"></a>密钥加AddRoundKey</h3><p>密钥加是将轮密钥简单地与状态进行逐比特异或。轮密钥由种子密钥通过密钥编排算法得到，轮密钥长度等于分组长度N<sub>b</sub></p>
+<p><img src="https://i.loli.net/2020/07/27/8wTnDvbSk1IAGMX.png" alt="AES10.png"></p>
+<p>这里我们注意到一个关键词：<strong>密钥编排</strong>，密钥编排是指从种子密钥得到轮密钥的过程，它由密钥扩展和轮密钥选取两部分组成。其基本原则如下：</p>
+<ul>
+<li>轮密钥的比特数等于分组长度乘以轮数加1</li>
+<li>种子密钥被扩展成为扩展密钥</li>
+<li>轮密钥从扩展密钥中取，其中第1轮轮密钥取扩展密钥的前N<sub>b</sub>个字，第2轮轮密钥取接下来N<sub>b</sub>个字，如此下去不断地取</li>
+</ul>
+<p>其中，扩展密钥是以4字节字为元素的一维阵列，表示为W[N<sub>b </sub>* (N<sub>r</sub>+1)],其中前N<sub>k</sub>个字取为种子密钥，以后每个字按递归方式定义。而其扩展算法在N<sub>k</sub>≤6和N<sub>k</sub>＞6是是不同的</p>
+<h4 id="Nk≤6-时的扩展算法"><a href="#Nk≤6-时的扩展算法" class="headerlink" title="Nk≤6 时的扩展算法"></a>N<sub>k</sub>≤6 时的扩展算法</h4><p>其代码如下</p>
+<p><img src="https://i.loli.net/2020/07/27/NUa8GVfdkYtEMsC.png" alt="AES11.png"></p>
+<p>其中</p>
+<p><img src="https://i.loli.net/2020/07/27/gc7bAJ3pGB1SOUu.png" alt="AES12.png"></p>
+<p>其流程图如下</p>
+<p><img src="https://i.loli.net/2020/07/27/6kujKd5QPTAVmXG.png" alt="AES13.png"></p>
+<h4 id="Nk＞6-时的扩展算法"><a href="#Nk＞6-时的扩展算法" class="headerlink" title="Nk＞6 时的扩展算法"></a>N<sub>k</sub>＞6 时的扩展算法</h4><p>其代码如下</p>
+<p><img src="https://i.loli.net/2020/07/27/SHpwartezZcNdXJ.png" alt="AES14.png"></p>
+<p>其中</p>
+<p><img src="https://i.loli.net/2020/07/27/TsFHGOZr7oqD3vV.png" alt="AES15.png"></p>
+<p>其流程图为</p>
+<p><img src="https://i.loli.net/2020/07/27/qkVHLSYnR52eQ6v.png" alt="AES16.png"></p>
+<p>N<sub>k</sub>＞6与N<sub>k</sub>≤6的密钥扩展算法的区别在于：当i为N<sub>k</sub>的4的倍数时，须先将前一个字W[i-1]经过ByteSub变换。</p>
+<p>以上两个算法中，Rcon[i/N<sub>k</sub>] 为轮常数，其值与N<sub>k</sub>无关，定义为（字节用16进制表示，同时理解为GF(2<sup>8</sup>)上的元素）： Rcon[i]=(RC[i], ‘00’, ‘00’, ‘00’)</p>
+<p>其中RC[<em>i</em>] 是GF(2<sup>8</sup>)中值为<em>x**i</em>-1的元素，因此RC[1] =1(即‘01’),  RC[i]= <em>x</em>(即‘02’),  RC[i-1]= x<sup>i-1</sup></p>
+<h4 id="轮密钥选取"><a href="#轮密钥选取" class="headerlink" title="轮密钥选取"></a>轮密钥选取</h4><p>轮密钥 i (即第 i 个轮密钥)由轮密钥缓冲字W[N<sub>b</sub>× i]到 W[N<sub>b</sub>× (i+1)-1]给出，如图所示</p>
+<p><img src="https://i.loli.net/2020/07/27/gyMouTONH5X7P2E.png" alt="AES17.png"></p>
  
       <!-- reward -->
       
