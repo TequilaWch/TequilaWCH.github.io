@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>现代密码学：移位密码和单表置换密码</title>
+    <url>/2020/07/22/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E7%A7%BB%E4%BD%8D%E5%AF%86%E7%A0%81%E5%92%8C%E5%8D%95%E8%A1%A8%E7%BD%AE%E6%8D%A2%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h1 id="现代密码学：移位密码和单表置换密码"><a href="#现代密码学：移位密码和单表置换密码" class="headerlink" title="现代密码学：移位密码和单表置换密码"></a>现代密码学：移位密码和单表置换密码</h1><h2 id="Part-1：移位密码（以凯撒密码为例）"><a href="#Part-1：移位密码（以凯撒密码为例）" class="headerlink" title="Part 1：移位密码（以凯撒密码为例）"></a>Part 1：移位密码（以凯撒密码为例）</h2><p>古时候，战事频繁，为了在军队之间传递军情而不被敌手破解，密码学应运而生。其中最著名的一种密码便是由尤利乌斯凯撒发明的<em>凯撒密码</em>。</p>
+<p>这种密码是一种<em>移位密码</em>，其基本思路就是将英文字母向前或向后移动一个固定位置，只有信息的接收方和发送方知道偏移量，从而起到加密的效果。我们例子中的凯撒密码就是一种偏移量为+3的移位密码（向后偏移三位），其字母对照表如下：</p>
+<table>
+<thead>
+<tr>
+<th>原信息</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+<th>L</th>
+<th>M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>密文</strong></td>
+<td><strong>D</strong></td>
+<td><strong>E</strong></td>
+<td><strong>F</strong></td>
+<td><strong>G</strong></td>
+<td><strong>H</strong></td>
+<td><strong>I</strong></td>
+<td><strong>J</strong></td>
+<td><strong>K</strong></td>
+<td><strong>L</strong></td>
+<td><strong>M</strong></td>
+<td><strong>N</strong></td>
+<td><strong>O</strong></td>
+<td><strong>P</strong></td>
+</tr>
+<tr>
+<td><strong>原信息</strong></td>
+<td><strong>N</strong></td>
+<td><strong>O</strong></td>
+<td><strong>P</strong></td>
+<td><strong>Q</strong></td>
+<td><strong>R</strong></td>
+<td><strong>S</strong></td>
+<td><strong>T</strong></td>
+<td><strong>U</strong></td>
+<td><strong>V</strong></td>
+<td><strong>W</strong></td>
+<td><strong>X</strong></td>
+<td><strong>Y</strong></td>
+<td><strong>Z</strong></td>
+</tr>
+<tr>
+<td><strong>密文</strong></td>
+<td><strong>Q</strong></td>
+<td><strong>R</strong></td>
+<td><strong>S</strong></td>
+<td><strong>T</strong></td>
+<td><strong>U</strong></td>
+<td><strong>V</strong></td>
+<td><strong>W</strong></td>
+<td><strong>X</strong></td>
+<td><strong>Y</strong></td>
+<td><strong>Z</strong></td>
+<td><strong>A</strong></td>
+<td><strong>B</strong></td>
+<td><strong>C</strong></td>
+</tr>
+</tbody></table>
+<p>例如 明文 <strong>WCH IS HANDSOME</strong> 就会被加密为 <strong>ZFK LV KDQGVRPH</strong></p>
+<p>如果把A-Z用0-25编码，明文M = m<sub>0</sub>m<sub>1</sub>……m<sub>n</sub>,  密文C = c<sub>0</sub>c<sub>1</sub>……c<sub>n</sub>,偏移量(密钥)key = +3 ，则上述加密可以表示为 c<sub>i</sub> ≡ m<sub>i</sub>+key mod(26)</p>
+<p>在算力尚不发达的古代，这种密码具有很高的安全性，然而在现在一个小孩子依靠电脑也可以轻而易举的破解这种密码，根本原因在于其有效密钥空间太小（仅为25），一台计算机轻轻松松的就可以将其计算出来。有兴趣的读者可以尝试破解以下密文来证明我所言不虚2333</p>
+<blockquote>
+<p>WKDQNV IRU UHDGLQJ PB EORJ, L GR UHDOOB KRSH BRX KDYH D QLFH GDB! ORYH BRX PB GHDU IULHQG.</p>
+<p>LI BRX KDYH EHHQ KHUH , BRX FDQ ILQG PB F SOXV SOXV FRGH DERXW FDHVDU FLSKHU DW WKH DGGUHVV EHORZ,SOHDVH JLYH PH D VWDU DQG IRUN:</p>
+<blockquote>
+<p>kwwsv://jlwkxe.frp/WhtxlodZfk/Flskhu</p>
+</blockquote>
+</blockquote>
+<h2 id="PART-2：单表置换密码"><a href="#PART-2：单表置换密码" class="headerlink" title="PART 2：单表置换密码"></a>PART 2：单表置换密码</h2><p>单表置换密码是移位密码的一个升级，顾名思义，他不再是简单的将字母前移或者后移，而是建立一些无规律的一一对应关系，例如如下置换：</p>
+<table>
+<thead>
+<tr>
+<th>原信息</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+<th>L</th>
+<th>M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>密文</strong></td>
+<td><strong>H</strong></td>
+<td><strong>K</strong></td>
+<td><strong>W</strong></td>
+<td><strong>T</strong></td>
+<td><strong>X</strong></td>
+<td><strong>Y</strong></td>
+<td><strong>S</strong></td>
+<td><strong>G</strong></td>
+<td><strong>B</strong></td>
+<td><strong>P</strong></td>
+<td><strong>Q</strong></td>
+<td><strong>E</strong></td>
+<td><strong>J</strong></td>
+</tr>
+<tr>
+<td><strong>原信息</strong></td>
+<td><strong>N</strong></td>
+<td><strong>O</strong></td>
+<td><strong>P</strong></td>
+<td><strong>Q</strong></td>
+<td><strong>R</strong></td>
+<td><strong>S</strong></td>
+<td><strong>T</strong></td>
+<td><strong>U</strong></td>
+<td><strong>V</strong></td>
+<td><strong>W</strong></td>
+<td><strong>X</strong></td>
+<td><strong>Y</strong></td>
+<td><strong>Z</strong></td>
+</tr>
+<tr>
+<td><strong>密文</strong></td>
+<td><strong>A</strong></td>
+<td><strong>Z</strong></td>
+<td><strong>M</strong></td>
+<td><strong>L</strong></td>
+<td><strong>N</strong></td>
+<td><strong>O</strong></td>
+<td><strong>F</strong></td>
+<td><strong>C</strong></td>
+<td><strong>I</strong></td>
+<td><strong>D</strong></td>
+<td><strong>V</strong></td>
+<td><strong>U</strong></td>
+<td><strong>R</strong></td>
+</tr>
+</tbody></table>
+<p>就会把明文<strong>WCH IS HANDSOME</strong> 加密为<strong>DWG BO GHATOZJX</strong>。单表置换密码实现的关键问题是置换表的构造，虽然有很多种途径可以实现，但是考虑到记忆和使用的方便，我们可以选择一个短语或者句子，删除掉其重复的字母，依次填入置换表前面的部分，再把没有用上的字母依次填入置换表的后面部分，还是用<strong>WCH IS HANDSOME</strong>来举例（别骂我<del>我本来就帅</del>）,去掉重复字母后，得到密钥<strong>WCHISANDOME</strong>,剩余的字母为<strong>BFGJKLPQRTUVXYZ</strong>，我们就可以把A-Z的字母依次替换为：</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><strong>WCHISANDOMEBFGJKLPQRTUVXYZ</strong></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>单表置换密码相比于移位密码，其强度体现在更大的有效密钥空间，其置换表的字母组合高达26！种，如果再采用穷举密钥的方式来破解实在憨憨，因此对于单表置换密码最有效的攻击方法是利用自然语言的使用频率和语义分析相结合的方法，仅以英文为例。英文具有以下显著特征：</p>
+<ol>
+<li><p><strong>短单词(small words)</strong>：在英文中只有很少几个非常短的单词。因此，如果在一个加密的文本中可以确定单词的范围，那么就能得出明显的结果。一个字母的单词只有a和I。如果不计单词的缩写，在从电子邮件中选取500k字节的样本中，只有两个字母的单词仅出现35次，而两个字母的所有组合为26×26＝676种。而且，还是在那个样本中，只有三个字母的单词出现196次，而三个字母的所有组合为26×26×26＝17576种。</p>
+</li>
+<li><p><strong>常用单词(common words)</strong>：再次分析500k字节的样本，总共有5000多个不同的单词出现。在这里，9个最常用的单词出现的总次数占总单词数的21％，20个最常用的单词出现的总次数占总单词数的30％，104个最常用的单词占50％，247个最常用的单词占60％。样本中最常用的9个单词占总词数的百分比为：</p>
+<table>
+<thead>
+<tr>
+<th>单词</th>
+<th>the</th>
+<th>to</th>
+<th>of</th>
+<th>I</th>
+<th>a</th>
+<th>and</th>
+<th>is</th>
+<th>that</th>
+<th>in</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>频率%</td>
+<td>4.65</td>
+<td>3.02</td>
+<td>2.61</td>
+<td>2.2</td>
+<td>1.95</td>
+<td>1.82</td>
+<td>1.68</td>
+<td>1.62</td>
+<td>1.57</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>字母频率(character frequency):</strong>在1M字节旧的电子文本中，对字母”A”到“Z”（忽略大小写）分别进行统计。发现近似频率从高往低排列（以百分比表示）:</p>
+<table>
+<thead>
+<tr>
+<th>字母</th>
+<th>e</th>
+<th>t</th>
+<th>o</th>
+<th>i</th>
+<th>a</th>
+<th>n</th>
+<th>s</th>
+<th>r</th>
+<th>h</th>
+<th>l</th>
+<th>d</th>
+<th>u</th>
+<th>c</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>频率</td>
+<td>11.67</td>
+<td>9.53</td>
+<td>8.22</td>
+<td>7.81</td>
+<td>7.73</td>
+<td>6.71</td>
+<td>6.55</td>
+<td>5.97</td>
+<td>4.52</td>
+<td>4.3</td>
+<td>3.24</td>
+<td>3.21</td>
+<td>3.06</td>
+</tr>
+<tr>
+<td><strong>字母</strong></td>
+<td><strong>m</strong></td>
+<td><strong>p</strong></td>
+<td><strong>y</strong></td>
+<td><strong>f</strong></td>
+<td><strong>g</strong></td>
+<td><strong>w</strong></td>
+<td><strong>b</strong></td>
+<td><strong>v</strong></td>
+<td><strong>k</strong></td>
+<td><strong>x</strong></td>
+<td><strong>j</strong></td>
+<td><strong>q</strong></td>
+<td><strong>z</strong></td>
+</tr>
+<tr>
+<td>频率</td>
+<td>2.8</td>
+<td>2.34</td>
+<td>2.22</td>
+<td>2.14</td>
+<td>2.00</td>
+<td>1.69</td>
+<td>1.58</td>
+<td>1.03</td>
+<td>0.79</td>
+<td>0.30</td>
+<td>0.23</td>
+<td>0.12</td>
+<td>0.09</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<p>从该表中可以看出，最常用的单字母英文是e和t，其他字母使用频率相对来说就小得多。这样，攻击一个单表置换密码，首先统计密文中最常出现的字母，并据此猜出两个最常用的字母，并根据英文统计的其他特征（如字母组合等）进行试译。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>现代密码学：DES加密算法</title>
+    <url>/2020/07/23/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="现代密码学：DES加密算法"><a href="#现代密码学：DES加密算法" class="headerlink" title="现代密码学：DES加密算法"></a>现代密码学：DES加密算法</h1><h2 id="Part-1：DES的基本概念"><a href="#Part-1：DES的基本概念" class="headerlink" title="Part 1：DES的基本概念"></a>Part 1：DES的基本概念</h2><p>随着时代的不断变化，之前所提到的凯撒密码和单表置换密码逐渐难以满足人们对于密文安全性的需求，于是一种新的密码体制应运而生——<em>对称密码体制</em> ，而我们本文中要介绍的<strong>DES加密算法</strong>是对称密码体制中，分组密码的一个子类。</p>
+<p>在分组密码的发展历史中，出现了许多种优秀的算法，包括IDEA，AES，Safer＋＋和本文的主角<strong>DES</strong>算法。他们都拥有一个共同的特点：在其明文加密和密文解密的过程中，信息按照固定长度分组进行处理。以<strong>DES算法</strong>为例，<strong>DES算法</strong>将明文分成64位大小的众多数据块，即分组长度为64位。同时用56位密钥对64位明文信息加密，最终形成64位的密文。如果明文长度不足64位，即将其用补零的方式扩展为64位。</p>
+<p><strong>DES算法</strong>的具体加密过程为：首先将输入的数据进行初始置换（IP），即将明文M中数据的排列顺序按一定的规则重新排列，生成新的数据序列，以打乱原来的次序。然后将变换后的数据平分成左右两部分，将左边记为L<sub>0</sub>,右边记为R<SUB>0</SUB>。之后对R<SUB>0</SUB>和子密钥K<SUB>1</SUB>输入变换函数f进行一次变换，将得到的结果f(R<SUB>0</SUB>,K<SUB>1</SUB>)与L<sub>0</sub>按位进行异或运算，将结果记为R<sub>1</sub>,把R<sub>0</sub>作为L<sub>1</sub>进行下一轮操作，共进行16轮运算以得到L<sub>16</sub>和R<sub>16</sub>，最后将L<sub>16</sub>和R<sub>16</sub>进行逆初始置换IP<sup>-1</sup>就得到了加密数据。需要注意的是每一轮中的子密钥K<SUB>n</SUB>都是由56位密钥K生成的子密钥。</p>
+<p><strong>DES算法</strong>的解密过程与加密过程类似，只不过是子密钥的使用顺序与加密时刚好相反，其加密过程的流程图如下所示：</p>
+<p><img src="/images/DES1.jpg" alt="流程图"></p>
+<h2 id="Part-2：基本函数介绍"><a href="#Part-2：基本函数介绍" class="headerlink" title="Part 2：基本函数介绍"></a>Part 2：基本函数介绍</h2><p>上一部分中，我们可以得到这样三个关键函数<strong>初始置换IP</strong>，<strong>变换f</strong> 和<strong>逆初始置换IP<sup>－1</sup></strong>。在这一部分，我将对这三个基本函数进行详细介绍。看在我如此辛苦的进行介绍的份上，真的不来<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>点一个<strong>star</strong>么？</p>
+<h3 id="初始置换IP"><a href="#初始置换IP" class="headerlink" title="初始置换IP"></a>初始置换IP</h3><p>它的作用是把输入的64位数据块的排列顺序打乱，每位数据按照下面的置换规则重新排列，即将第58位换到第一位，第50位换打第2位，…，依次类推。置换后的64位输出分为L0 、R0（左、右）两部分，每部分分别为32位。以下是置换表：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>58</strong></th>
+<th><strong>50</strong></th>
+<th><strong>42</strong></th>
+<th><strong>34</strong></th>
+<th><strong>26</strong></th>
+<th><strong>18</strong></th>
+<th><strong>10</strong></th>
+<th><strong>2</strong></th>
+<th><strong>60</strong></th>
+<th><strong>52</strong></th>
+<th><strong>44</strong></th>
+<th><strong>36</strong></th>
+<th><strong>28</strong></th>
+<th><strong>20</strong></th>
+<th><strong>12</strong></th>
+<th><strong>4</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>62</strong></td>
+<td><strong>54</strong></td>
+<td><strong>46</strong></td>
+<td><strong>38</strong></td>
+<td><strong>30</strong></td>
+<td><strong>22</strong></td>
+<td><strong>14</strong></td>
+<td><strong>6</strong></td>
+<td><strong>64</strong></td>
+<td><strong>56</strong></td>
+<td><strong>48</strong></td>
+<td><strong>40</strong></td>
+<td><strong>32</strong></td>
+<td><strong>24</strong></td>
+<td><strong>16</strong></td>
+<td><strong>8</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>57</strong></td>
+<td><strong>49</strong></td>
+<td><strong>41</strong></td>
+<td><strong>33</strong></td>
+<td><strong>25</strong></td>
+<td><strong>17</strong></td>
+<td><strong>9</strong></td>
+<td><strong>1</strong></td>
+<td><strong>59</strong></td>
+<td><strong>51</strong></td>
+<td><strong>43</strong></td>
+<td><strong>35</strong></td>
+<td><strong>27</strong></td>
+<td><strong>19</strong></td>
+<td><strong>11</strong></td>
+<td><strong>3</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>61</strong></td>
+<td><strong>53</strong></td>
+<td><strong>45</strong></td>
+<td><strong>37</strong></td>
+<td><strong>29</strong></td>
+<td><strong>21</strong></td>
+<td><strong>13</strong></td>
+<td><strong>5</strong></td>
+<td><strong>63</strong></td>
+<td><strong>55</strong></td>
+<td><strong>47</strong></td>
+<td><strong>39</strong></td>
+<td><strong>31</strong></td>
+<td><strong>23</strong></td>
+<td><strong>15</strong></td>
+<td><strong>7</strong></td>
+</tr>
+</tbody></table>
+<h3 id="变换函数f"><a href="#变换函数f" class="headerlink" title="变换函数f"></a>变换函数f</h3><p>在讲变换函数f之前，我们要先讲讲子密钥K<SUB>n</SUB>的生成,他的生成过程如下流程图所示。这里的PC-1为选择置换，可以去掉奇偶校验位。PC-2也是选择置换，它是用于从C<sub>i</sub>和D<sub>i</sub>中选取48位作为密钥K<sub>i</sub>。C<sub>0</sub>和D<sub>0</sub>是把密钥中实际的56位分成左右28位，LS<sub>i</sub>是表示对C<sub>i-1</sub>和D<sub>i-1</sub>进行循环左移变换，其中LS<sub>1</sub>,LS<sub>2</sub>,LS<sub>9</sub>,LS<sub>16</sub>是循环左移1位，其余为2位。</p>
+<p><img src="/images/DES2.png" alt="子密钥生成"></p>
+<p>有没有发现一个问题，我们得到的每个子密钥都是48比特，然而我们输入的R<sub>i</sub>仅仅只有32位,因此我们还需要一个扩展过程将R<sub>i</sub>扩展为48为，这个扩展的基本思想是重复使用其中的16位，具体扩展置换表如下(<em>斜体</em>为重复部分)：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong><em>32</em></strong></th>
+<th align="center"><strong>1</strong></th>
+<th align="center"><strong>2</strong></th>
+<th align="center"><strong>3</strong></th>
+<th align="center"><strong>4</strong></th>
+<th align="center"><strong><em>5</em></strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong><em>4</em></strong></td>
+<td align="center"><strong>5</strong></td>
+<td align="center"><strong>6</strong></td>
+<td align="center"><strong>7</strong></td>
+<td align="center"><strong>8</strong></td>
+<td align="center"><strong><em>9</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>8</em></strong></td>
+<td align="center"><strong>9</strong></td>
+<td align="center"><strong>10</strong></td>
+<td align="center"><strong>11</strong></td>
+<td align="center"><strong>12</strong></td>
+<td align="center"><strong><em>13</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>12</em></strong></td>
+<td align="center"><strong>13</strong></td>
+<td align="center"><strong>14</strong></td>
+<td align="center"><strong>15</strong></td>
+<td align="center"><strong>16</strong></td>
+<td align="center"><strong><em>17</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>16</em></strong></td>
+<td align="center"><strong>17</strong></td>
+<td align="center"><strong>18</strong></td>
+<td align="center"><strong>19</strong></td>
+<td align="center"><strong>20</strong></td>
+<td align="center"><strong><em>21</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>20</em></strong></td>
+<td align="center"><strong>21</strong></td>
+<td align="center"><strong>22</strong></td>
+<td align="center"><strong>23</strong></td>
+<td align="center"><strong>24</strong></td>
+<td align="center"><strong><em>25</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>24</em></strong></td>
+<td align="center"><strong>25</strong></td>
+<td align="center"><strong>26</strong></td>
+<td align="center"><strong>27</strong></td>
+<td align="center"><strong>28</strong></td>
+<td align="center"><strong><em>29</em></strong></td>
+</tr>
+<tr>
+<td align="center"><strong><em>28</em></strong></td>
+<td align="center"><strong>29</strong></td>
+<td align="center"><strong>30</strong></td>
+<td align="center"><strong>31</strong></td>
+<td align="center"><strong>32</strong></td>
+<td align="center"><strong><em>1</em></strong></td>
+</tr>
+</tbody></table>
+<p>这样，我们就有了一个48位的子密钥和一个扩展后的输入（不妨叫做x），我们把这个x和子密钥进行按位异或，得到一个总的48位结果（就叫y吧），但是我们需要一个32位的输出，直接输出y显然不可行，我们需要将其6位一组分成8组，输入8个s盒之中，每个s盒的输出是4位，这样就得到了32位的输出。具体流程图如下：</p>
+<p><img src="/images/DES3.png" alt="变换函数f"></p>
+<p>你的下一句话是：这个s盒是什么东西呢？我们用S<sub>1</sub>来举例，相信你一下就懂了。比如前6位是110101，把他输入S<sub>1</sub>后，取出他的第一位和最后一位(先前的重复位)构成行(这里是11即3)，剩下四位构成列(1010即10)，对照S<sub>1</sub>，我们的结果就是3，也就是0011。</p>
+<p><img src="/images/DES5.png" alt="S盒1，2"></p>
+<p>全部s盒的定义我们也放在下面(虽然不是很清楚)</p>
+<p><img src="/images/DES4.png" alt="S盒"></p>
+<h3 id="逆初始置换IP－1"><a href="#逆初始置换IP－1" class="headerlink" title="逆初始置换IP－1"></a><strong>逆初始置换IP<sup>－1</sup></strong></h3><p>逆初始置换其实就是初始置换的逆，话不多说，直接上表。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>40</strong></th>
+<th align="center"><strong>8</strong></th>
+<th align="center"><strong>48</strong></th>
+<th align="center"><strong>16</strong></th>
+<th align="center"><strong>56</strong></th>
+<th align="center"><strong>24</strong></th>
+<th align="center"><strong>64</strong></th>
+<th align="center"><strong>32</strong></th>
+<th align="center"><strong>39</strong></th>
+<th align="center"><strong>7</strong></th>
+<th align="center"><strong>47</strong></th>
+<th align="center"><strong>15</strong></th>
+<th align="center"><strong>55</strong></th>
+<th align="center"><strong>23</strong></th>
+<th align="center"><strong>63</strong></th>
+<th align="center"><strong>31</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>38</strong></td>
+<td align="center"><strong>6</strong></td>
+<td align="center"><strong>46</strong></td>
+<td align="center"><strong>14</strong></td>
+<td align="center"><strong>54</strong></td>
+<td align="center"><strong>22</strong></td>
+<td align="center"><strong>62</strong></td>
+<td align="center"><strong>30</strong></td>
+<td align="center"><strong>37</strong></td>
+<td align="center"><strong>5</strong></td>
+<td align="center"><strong>45</strong></td>
+<td align="center"><strong>13</strong></td>
+<td align="center"><strong>53</strong></td>
+<td align="center"><strong>21</strong></td>
+<td align="center"><strong>61</strong></td>
+<td align="center"><strong>29</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>36</strong></td>
+<td align="center"><strong>4</strong></td>
+<td align="center"><strong>44</strong></td>
+<td align="center"><strong>12</strong></td>
+<td align="center"><strong>52</strong></td>
+<td align="center"><strong>20</strong></td>
+<td align="center"><strong>60</strong></td>
+<td align="center"><strong>28</strong></td>
+<td align="center"><strong>35</strong></td>
+<td align="center"><strong>3</strong></td>
+<td align="center"><strong>43</strong></td>
+<td align="center"><strong>11</strong></td>
+<td align="center"><strong>51</strong></td>
+<td align="center"><strong>19</strong></td>
+<td align="center"><strong>59</strong></td>
+<td align="center"><strong>27</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>34</strong></td>
+<td align="center"><strong>2</strong></td>
+<td align="center"><strong>42</strong></td>
+<td align="center"><strong>10</strong></td>
+<td align="center"><strong>50</strong></td>
+<td align="center"><strong>18</strong></td>
+<td align="center"><strong>58</strong></td>
+<td align="center"><strong>26</strong></td>
+<td align="center"><strong>33</strong></td>
+<td align="center"><strong>1</strong></td>
+<td align="center"><strong>41</strong></td>
+<td align="center"><strong>9</strong></td>
+<td align="center"><strong>49</strong></td>
+<td align="center"><strong>17</strong></td>
+<td align="center"><strong>57</strong></td>
+<td align="center"><strong>25</strong></td>
+</tr>
+</tbody></table>
+<h2 id="Part-3：DES的一些其他用法"><a href="#Part-3：DES的一些其他用法" class="headerlink" title="Part 3：DES的一些其他用法"></a>Part 3：DES的一些其他用法</h2><p>自DES算法问世以来，就一直是一种重要的加密方式，为了防止一重DES加密被破解，又衍生出了许多种DES算法的特殊用法，在这里简要提一些。</p>
+<h3 id="双重DES"><a href="#双重DES" class="headerlink" title="双重DES"></a>双重DES</h3><p>顾名思义，两个密钥，两次DES，流程图如下</p>
+<p><img src="/images/DES6.png" alt="双重DES"></p>
+<h3 id="双密钥三重DES"><a href="#双密钥三重DES" class="headerlink" title="双密钥三重DES"></a>双密钥三重DES</h3><p>因为DES的加密算法和解密算法其实过程相同，某些时候也可以把解密算法当作加密算法使用，双密钥三重DES应运而生</p>
+<p><img src="/images/DES7.png" alt="双密钥三重DES"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>现代密码学：AES加密算法</title>
+    <url>/2020/07/23/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9AAES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="现代密码学：AES加密算法"><a href="#现代密码学：AES加密算法" class="headerlink" title="现代密码学：AES加密算法"></a>现代密码学：AES加密算法</h1><h2 id="Part-1：Rijndael和他的数学基础"><a href="#Part-1：Rijndael和他的数学基础" class="headerlink" title="Part 1：Rijndael和他的数学基础"></a>Part 1：Rijndael和他的数学基础</h2><p><strong>AES</strong>本质上是一种加密标准，我们常说的AES加密其实是<strong>Rijndael加密算法</strong>。对于AES的加密标准不过多赘述，我们详细讲讲Rijndael算法。</p>
+<p>Rijndael加密算法建立在一种特殊的数学结构上–有限域GF(2<sup>8</sup>)。在多项式表示中，GF(2<sup>8</sup>)上两个元素的和仍然是一个次数不超过7的多项式，其系数等于两个元素对应系数的模2加(比特异或)。</p>
+<p>而如果要计算GF(2<sup>8</sup>)上的乘法，必须先确定一个GF(2)上的8次不可约多项式；GF(2<sup>8</sup>)上两个元素的乘积就是这两个多项式的模乘(以这个8次不可约多项式为模)。而在Rijndael密码中，这个8次不可约多项式确定为m(x) = x<sup>8</sup>+x<sup>4</sup>+x<sup>3</sup>+x+1，十六进制表示为“11B”</p>
+<p>具体的数学知识在这里我们不涉及，接下来讲讲怎样在GF(2<sup>8</sup>)上建立我们的Rijndael加密算法。在GF(2<sup>8</sup>)上我们需要做模乘运算和模加运算。多项式的加法就是对应系数相加；换句话说，多项式的加法就是4字节向量的逐比特异或，这个很简单，应该都明白。多项式的乘法必须要取模n(x) = x<sup>4</sup>+1,这样使得次数小于4的多项式的乘积仍然是一个次数小于4的多项式。用下面这个例子来说明</p>
+<p>设a(x) = a<sub>3</sub>x<sup>3</sup>+a<sub>2</sub>x<sup>2</sup>+a<sub>1</sub>x<sup>1</sup>+a<sub>0</sub>,b(x) = b<sub>3</sub>x<sup>3</sup>+b<sub>2</sub>x<sup>2</sup>+b<sub>1</sub>x<sup>1</sup>+b<sub>0</sub>, 则a(x) * b(x) = c(x) = c<sub>3</sub>x<sup>3</sup>+c<sub>2</sub>x<sup>2</sup>+c<sub>1</sub>x<sup>1</sup>+c<sub>0</sub></p>
+<p>由于x<sup>j</sup> mod (x<sup>4</sup>+1) = x<sup>j mod4</sup>,所以我们可以通过这样的方式计算c(x)。</p>
+<p><img src="https://i.loli.net/2020/07/27/p6x8kdAVf9TbjnK.png" alt="AES1.png"></p>
+<p>上面的式子还可以用矩阵表示为</p>
+<p><img src="https://i.loli.net/2020/07/27/h7HQ3ncYNCltF59.png" alt="AES2.png"></p>
+<h2 id="Part-2：Rijndael的设计思想"><a href="#Part-2：Rijndael的设计思想" class="headerlink" title="Part 2：Rijndael的设计思想"></a>Part 2：Rijndael的设计思想</h2><p>以上就是Rijndael加密算法的数学基础，现在我们来看看他的设计思想，作为一个密码算法，Rijndael的设计力求满足以下三条标准</p>
+<ul>
+<li>抵抗所有已知的攻击</li>
+<li>多平台兼容且快速，编码紧凑</li>
+<li>设计简单</li>
+</ul>
+<p>当前的大多数分组密码，其轮函数是Feistel结构，即将中间状态的部分比特不加改变地简单放置到其它位置。Rijndael没有这种结构，其轮函数是由三个不同的可逆均匀变换组成的，称它们为三个“层”。所谓“均匀变换”是指状态的每个比特都是用类似的方法进行处理的。不同层的特定选择大部分是建立在“宽轨迹策略”的应用基础上的；简单地说，“宽轨迹策略”就是提供抗线性密码分析和差分密码分析能力的一种设计。为实现宽轨迹策略，轮函数三个层中的每一层都有它自己的功能：</p>
+<ul>
+<li><strong>线性混合</strong>层：确保多轮之上的高度扩散</li>
+<li><strong>非线性</strong>层：将具有最优的“最坏情况非线性特性”的S盒并行使用</li>
+<li><strong>密钥加</strong>层：单轮子密钥简单地异或到中间状态上，实现一次性掩盖</li>
+</ul>
+<p>在第一轮之前，用了一个初始密钥加层，其目的是在不知道密钥的情况下，对最后一个密钥加层以后的任一层（或者是当进行已知明文攻击时，对第一个密钥加层以前的任一层）可简单地剥去，因此初始密钥加层对密码的安全性无任何意义。许多密码的设计中都在轮变换之前和之后用了密钥加层，如IDEA、SAFER和Blowfish。</p>
+<p>同时，为了使加密算法和解密算法在结构上更加接近，最后一轮的线性混合层与前面各轮的线性混合层不同，这类似于DES的最后一轮不做左右交换一样。可以证明这种设计不以任何方式提高或降低该密码的安全性。</p>
+<p>类似于明文分组和密文分组，算法的中间结果也须分组，称算法中间结果的分组为状态，所有的操作都在状态上进行。状态可以用以字节为元素的矩阵阵列表示，该阵列有4行，列数记为N<sub>b</sub>，N<sub>b</sub>等于分组长度除以32。</p>
+<p>种子密钥类似地用一个以字节为元素的矩阵阵列表示，该阵列有4行，列数记为N<sub>k</sub>，N<sub>k</sub>等于分组长度除以32。下表是N<sub>b</sub>=6的状态和N<sub>k</sub>=4的种子密钥的矩阵阵列表示。</p>
+<p><img src="https://i.loli.net/2020/07/27/TlifR3OpdkFutEG.png" alt="AES3.png"></p>
+<p>算法的输入和输出被看成是由8比特字节构成的一维数组，其元素下标的范围是0到4N<sub>b</sub> -1，因此输入和输出以字节为单位的分组长度分别是16、24和32，其元素下标的范围分别是0到15，0到23和0到31。输入的种子密钥也看成是由8比特字节构成的一维数组，其元素下标的范围是0到4N<sub>k</sub> -1，因此种子密钥以字节为单位的分组长度也分别是16、24和32，其元素下标的范围分别是0到15，0到23和0到31。</p>
+<p>Rijndael的轮函数以下的四个不同的计算部件组成：<strong>字节代换</strong>（ByteSub），<strong>行移位</strong>（ShiftRow），<strong>列混淆（MixColumn）</strong>和<strong>密钥加</strong>（AddRoundKey）。接下来我们将对其进行分别介绍。</p>
+<h3 id="字节代换ByteSub"><a href="#字节代换ByteSub" class="headerlink" title="字节代换ByteSub"></a>字节代换ByteSub</h3><p>字节代换是非线形变换，独立地对状态的每个字节进行。代换表（即S-盒）是可逆的，由以下两个变换的合成得到：</p>
+<ol>
+<li>将字节看作<em>GF</em>(2<sup>8</sup>)上的元素，映射到自己的乘法逆元，把<strong>00</strong>映射到自己。</li>
+<li>对字节做如下的（GF(2)上的，可逆的）仿射变换：</li>
+</ol>
+<p><img src="https://i.loli.net/2020/07/27/fvAh8QdHXZe4r5m.png" alt="AES4.png"></p>
+<p>这个变换过程难以理解的话可以看如下的示意图</p>
+<p><img src="https://i.loli.net/2020/07/27/buQdWsyFtamH4M5.png" alt="AES5.png"></p>
+<p>ByteSub的逆变换由代换表的逆表做字节代换，可通过如下两步实现，首先进行仿射变换的逆变换，再求每一字节在<em>GF</em>(2<sup>8</sup>)上逆元。</p>
+<h3 id="行移位ShiftRow"><a href="#行移位ShiftRow" class="headerlink" title="行移位ShiftRow"></a>行移位ShiftRow</h3><p>行移位是将状态阵列的各行进行循环移位，不同状态行的位移量不同。第0行不移动，第一行循环左移C<sub>1</sub>个字节，第二行循环左移C<sub>2</sub>个字节，第三行循环左移C<sub>3</sub>个字节。位移量C<sub>1</sub>、C<sub>2</sub>、C<sub>3</sub>的取值与N<sub>b</sub>有关，由下表给出。</p>
+<p><img src="https://i.loli.net/2020/07/27/TM2kslfnK4owyPI.png" alt="AES6.png"></p>
+<p>同样的，我也极其贴心的准备了相应的示意图</p>
+<p><img src="https://i.loli.net/2020/07/27/6uCTEdWHNGheZ5V.png" alt="AES7.png"></p>
+<p>这个的逆运算不用讲了把，再左移N<sub>b</sub>-偏移量位就ok了</p>
+<h3 id="列混淆MixColumn"><a href="#列混淆MixColumn" class="headerlink" title="列混淆MixColumn"></a>列混淆MixColumn</h3><p>在列混合变换中，将状态阵列的每个列视为GF(2<sup>8</sup>)上的多项式，再与一个固定的多项式c(x)进行模<em>x</em><sup>4</sup>+1乘法。当然要求c(x)是模<em>x</em><sup>4</sup>+1可逆的多项式，否则列混合变换就是不可逆的，因而会使不同的输入分组对应的输出分组可能相同。设计者给出的从c(x)为 <strong>03x<sup>3</sup>+01x<sup>2</sup>+01x<sup>1</sup>+02</strong>(系数为16进制)。同样的，列混淆可以写为矩阵乘法如下：</p>
+<p><img src="https://i.loli.net/2020/07/27/EaJpm2sxPAOF1r3.png" alt="AES8.png"></p>
+<p>示意图如下</p>
+<p><img src="https://i.loli.net/2020/07/27/el9pbaNJjk3dimw.png" alt="AES9.png"></p>
+<p>这个逆运算是将每一列用一个特定的多项式d(x)来乘，d(x)同样已经给出：<strong>0Bx<sup>3</sup>+0Dx<sup>2</sup>+09x<sup>1</sup>+0E</strong></p>
+<h3 id="密钥加AddRoundKey"><a href="#密钥加AddRoundKey" class="headerlink" title="密钥加AddRoundKey"></a>密钥加AddRoundKey</h3><p>密钥加是将轮密钥简单地与状态进行逐比特异或。轮密钥由种子密钥通过密钥编排算法得到，轮密钥长度等于分组长度N<sub>b</sub></p>
+<p><img src="https://i.loli.net/2020/07/27/8wTnDvbSk1IAGMX.png" alt="AES10.png"></p>
+<p>这里我们注意到一个关键词：<strong>密钥编排</strong>，密钥编排是指从种子密钥得到轮密钥的过程，它由密钥扩展和轮密钥选取两部分组成。其基本原则如下：</p>
+<ul>
+<li>轮密钥的比特数等于分组长度乘以轮数加1</li>
+<li>种子密钥被扩展成为扩展密钥</li>
+<li>轮密钥从扩展密钥中取，其中第1轮轮密钥取扩展密钥的前N<sub>b</sub>个字，第2轮轮密钥取接下来N<sub>b</sub>个字，如此下去不断地取</li>
+</ul>
+<p>其中，扩展密钥是以4字节字为元素的一维阵列，表示为W[N<sub>b </sub>* (N<sub>r</sub>+1)],其中前N<sub>k</sub>个字取为种子密钥，以后每个字按递归方式定义。而其扩展算法在N<sub>k</sub>≤6和N<sub>k</sub>＞6是是不同的</p>
+<h4 id="Nk≤6-时的扩展算法"><a href="#Nk≤6-时的扩展算法" class="headerlink" title="Nk≤6 时的扩展算法"></a>N<sub>k</sub>≤6 时的扩展算法</h4><p>其代码如下</p>
+<p><img src="https://i.loli.net/2020/07/27/NUa8GVfdkYtEMsC.png" alt="AES11.png"></p>
+<p>其中</p>
+<p><img src="https://i.loli.net/2020/07/27/gc7bAJ3pGB1SOUu.png" alt="AES12.png"></p>
+<p>其流程图如下</p>
+<p><img src="https://i.loli.net/2020/07/27/6kujKd5QPTAVmXG.png" alt="AES13.png"></p>
+<h4 id="Nk＞6-时的扩展算法"><a href="#Nk＞6-时的扩展算法" class="headerlink" title="Nk＞6 时的扩展算法"></a>N<sub>k</sub>＞6 时的扩展算法</h4><p>其代码如下</p>
+<p><img src="https://i.loli.net/2020/07/27/SHpwartezZcNdXJ.png" alt="AES14.png"></p>
+<p>其中</p>
+<p><img src="https://i.loli.net/2020/07/27/TsFHGOZr7oqD3vV.png" alt="AES15.png"></p>
+<p>其流程图为</p>
+<p><img src="https://i.loli.net/2020/07/27/qkVHLSYnR52eQ6v.png" alt="AES16.png"></p>
+<p>N<sub>k</sub>＞6与N<sub>k</sub>≤6的密钥扩展算法的区别在于：当i为N<sub>k</sub>的4的倍数时，须先将前一个字W[i-1]经过ByteSub变换。</p>
+<p>以上两个算法中，Rcon[i/N<sub>k</sub>] 为轮常数，其值与N<sub>k</sub>无关，定义为（字节用16进制表示，同时理解为GF(2<sup>8</sup>)上的元素）： Rcon[i]=(RC[i], ‘00’, ‘00’, ‘00’)</p>
+<p>其中RC[<em>i</em>] 是GF(2<sup>8</sup>)中值为<em>x**i</em>-1的元素，因此RC[1] =1(即‘01’),  RC[i]= <em>x</em>(即‘02’),  RC[i-1]= x<sup>i-1</sup></p>
+<h4 id="轮密钥选取"><a href="#轮密钥选取" class="headerlink" title="轮密钥选取"></a>轮密钥选取</h4><p>轮密钥 i (即第 i 个轮密钥)由轮密钥缓冲字W[N<sub>b</sub>× i]到 W[N<sub>b</sub>× (i+1)-1]给出，如图所示</p>
+<p><img src="https://i.loli.net/2020/07/27/gyMouTONH5X7P2E.png" alt="AES17.png"></p>
+<h2 id="Part-3：加解密算法"><a href="#Part-3：加解密算法" class="headerlink" title="Part 3：加解密算法"></a>Part 3：加解密算法</h2><h3 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h3><p>加密算法为顺序完成以下操作：初始的密钥加，N<sub>r</sub> -1轮迭代，一个结尾轮，即</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RijndaelEncode(State,ExpandedKey)</span><br><span class="line">&#123;</span><br><span class="line">	AddRoundKey(State,ExpandedKey);&#x2F;&#x2F;初始密钥加</span><br><span class="line">	For(i&#x3D;1;i&lt;N;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Round(State,ExpandedKey+Nb*i);&#x2F;&#x2F;迭代</span><br><span class="line">	&#125;</span><br><span class="line">	FinalRound(State,ExpandedKey+Nb*Nr);&#x2F;&#x2F;结尾轮</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中Round函数和FinalRound函数的定义如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Round(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	ByteSub(State);					&#x2F;&#x2F;字节代换</span><br><span class="line">	ShiftRow(State);				&#x2F;&#x2F;行移位</span><br><span class="line">	MixColumn(State);				&#x2F;&#x2F;列混淆</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br><span class="line">FinalRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	ByteSub(State);					&#x2F;&#x2F;字节代换</span><br><span class="line">	ShiftRow(State);				&#x2F;&#x2F;行移位</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解密算法"><a href="#解密算法" class="headerlink" title="解密算法"></a>解密算法</h3><p>在上面对ByteSub，ShiftRow和MixColumn的介绍中我们也提及了这三个部分的逆过程。不妨称之为InvBS，InvSR，InvMC。和DES算法相同，Rijndael的解密过程和加密过程也极其相似，同样包括初始的密钥加，N<sub>r</sub> -1轮迭代和一个结尾轮，有所区别的只有两个轮函数不同，总解密过程和轮函数的定义如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RijndaelDecode(State,ExpandedKey)</span><br><span class="line">&#123;</span><br><span class="line">	AddRoundKey(State,ExpandedKey);&#x2F;&#x2F;初始密钥加</span><br><span class="line">	For(i&#x3D;1;i&lt;N;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		InvRound(State,ExpandedKey+Nb*i);&#x2F;&#x2F;迭代</span><br><span class="line">	&#125;</span><br><span class="line">	InvFinalRound(State,ExpandedKey+Nb*Nr);&#x2F;&#x2F;结尾轮</span><br><span class="line">&#125;</span><br><span class="line">InvRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	InvBS(State);					&#x2F;&#x2F;逆字节代换</span><br><span class="line">	InvSR(State);					&#x2F;&#x2F;逆行移位</span><br><span class="line">	InvMC(State);					&#x2F;&#x2F;逆列混淆</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br><span class="line">InvFinalRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	InvBS(State);					&#x2F;&#x2F;逆字节代换</span><br><span class="line">	InvSR(State);					&#x2F;&#x2F;逆行移位</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;逆密钥加</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这就是AES算法我们要介绍的所有内容了，老样子，你可以<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>找到相关的Cpp代码，喜欢的话点个Star吧(卑微)。</p>
+]]></content>
+  </entry>
+</search>
