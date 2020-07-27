@@ -131,7 +131,7 @@
 <p><img src="https://i.loli.net/2020/07/27/p6x8kdAVf9TbjnK.png" alt="AES1.png"></p>
 <p>上面的式子还可以用矩阵表示为</p>
 <p><img src="https://i.loli.net/2020/07/27/h7HQ3ncYNCltF59.png" alt="AES2.png"></p>
-<h2 id="Rijndael的设计思想"><a href="#Rijndael的设计思想" class="headerlink" title="Rijndael的设计思想"></a>Rijndael的设计思想</h2><p>以上就是Rijndael加密算法的数学基础，现在我们来看看他的设计思想，作为一个密码算法，Rijndael的设计力求满足以下三条标准</p>
+<h2 id="Part-2：Rijndael的设计思想"><a href="#Part-2：Rijndael的设计思想" class="headerlink" title="Part 2：Rijndael的设计思想"></a>Part 2：Rijndael的设计思想</h2><p>以上就是Rijndael加密算法的数学基础，现在我们来看看他的设计思想，作为一个密码算法，Rijndael的设计力求满足以下三条标准</p>
 <ul>
 <li>抵抗所有已知的攻击</li>
 <li>多平台兼容且快速，编码紧凑</li>
@@ -149,7 +149,7 @@
 <p>种子密钥类似地用一个以字节为元素的矩阵阵列表示，该阵列有4行，列数记为N<sub>k</sub>，N<sub>k</sub>等于分组长度除以32。下表是N<sub>b</sub>=6的状态和N<sub>k</sub>=4的种子密钥的矩阵阵列表示。</p>
 <p><img src="https://i.loli.net/2020/07/27/TlifR3OpdkFutEG.png" alt="AES3.png"></p>
 <p>算法的输入和输出被看成是由8比特字节构成的一维数组，其元素下标的范围是0到4N<sub>b</sub> -1，因此输入和输出以字节为单位的分组长度分别是16、24和32，其元素下标的范围分别是0到15，0到23和0到31。输入的种子密钥也看成是由8比特字节构成的一维数组，其元素下标的范围是0到4N<sub>k</sub> -1，因此种子密钥以字节为单位的分组长度也分别是16、24和32，其元素下标的范围分别是0到15，0到23和0到31。</p>
-<p>Rijndael的轮函数以下的四个不同的计算部件组成：<strong>字节代换</strong>（ByteSub），<strong>行移位</strong>（ShiftRow），<strong>列混淆（MixColumn）</strong>和密钥加**（AddRoundKey）。接下来我们将对其进行分别介绍。</p>
+<p>Rijndael的轮函数以下的四个不同的计算部件组成：<strong>字节代换</strong>（ByteSub），<strong>行移位</strong>（ShiftRow），<strong>列混淆（MixColumn）</strong>和<strong>密钥加</strong>（AddRoundKey）。接下来我们将对其进行分别介绍。</p>
 <h3 id="字节代换ByteSub"><a href="#字节代换ByteSub" class="headerlink" title="字节代换ByteSub"></a>字节代换ByteSub</h3><p>字节代换是非线形变换，独立地对状态的每个字节进行。代换表（即S-盒）是可逆的，由以下两个变换的合成得到：</p>
 <ol>
 <li>将字节看作<em>GF</em>(2<sup>8</sup>)上的元素，映射到自己的乘法逆元，把<strong>00</strong>映射到自己。</li>
@@ -195,7 +195,18 @@
 <p>其中RC[<em>i</em>] 是GF(2<sup>8</sup>)中值为<em>x**i</em>-1的元素，因此RC[1] =1(即‘01’),  RC[i]= <em>x</em>(即‘02’),  RC[i-1]= x<sup>i-1</sup></p>
 <h4 id="轮密钥选取"><a href="#轮密钥选取" class="headerlink" title="轮密钥选取"></a>轮密钥选取</h4><p>轮密钥 i (即第 i 个轮密钥)由轮密钥缓冲字W[N<sub>b</sub>× i]到 W[N<sub>b</sub>× (i+1)-1]给出，如图所示</p>
 <p><img src="https://i.loli.net/2020/07/27/gyMouTONH5X7P2E.png" alt="AES17.png"></p>
-<p>##Part 3</p>
+<h2 id="Part-3：加解密算法"><a href="#Part-3：加解密算法" class="headerlink" title="Part 3：加解密算法"></a>Part 3：加解密算法</h2><h3 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h3><p>加密算法为顺序完成以下操作：初始的密钥加，N<sub>r</sub> -1轮迭代，一个结尾轮，即</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">RijndaelEncode(State,ExpandedKey)</span><br><span class="line">&#123;</span><br><span class="line">	AddRoundKey(State,ExpandedKey);&#x2F;&#x2F;初始密钥加</span><br><span class="line">	For(i&#x3D;1;i&lt;N;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Round(State,ExpandedKey+Nb*i);&#x2F;&#x2F;迭代</span><br><span class="line">	&#125;</span><br><span class="line">	FinalRound(State,ExpandedKey+Nb*Nr);&#x2F;&#x2F;结尾轮</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中Round函数和FinalRound函数的定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Round(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	ByteSub(State);					&#x2F;&#x2F;字节代换</span><br><span class="line">	ShiftRow(State);				&#x2F;&#x2F;行移位</span><br><span class="line">	MixColumn(State);				&#x2F;&#x2F;列混淆</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br><span class="line">FinalRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	ByteSub(State);					&#x2F;&#x2F;字节代换</span><br><span class="line">	ShiftRow(State);				&#x2F;&#x2F;行移位</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解密算法"><a href="#解密算法" class="headerlink" title="解密算法"></a>解密算法</h3><p>在上面对ByteSub，ShiftRow和MixColumn的介绍中我们也提及了这三个部分的逆过程。不妨称之为InvBS，InvSR，InvMC。和DES算法相同，Rijndael的解密过程和加密过程也极其相似，同样包括初始的密钥加，N<sub>r</sub> -1轮迭代和一个结尾轮，有所区别的只有两个轮函数不同，总解密过程和轮函数的定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">RijndaelDecode(State,ExpandedKey)</span><br><span class="line">&#123;</span><br><span class="line">	AddRoundKey(State,ExpandedKey);&#x2F;&#x2F;初始密钥加</span><br><span class="line">	For(i&#x3D;1;i&lt;N;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		InvRound(State,ExpandedKey+Nb*i);&#x2F;&#x2F;迭代</span><br><span class="line">	&#125;</span><br><span class="line">	InvFinalRound(State,ExpandedKey+Nb*Nr);&#x2F;&#x2F;结尾轮</span><br><span class="line">&#125;</span><br><span class="line">InvRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	InvBS(State);					&#x2F;&#x2F;逆字节代换</span><br><span class="line">	InvSR(State);					&#x2F;&#x2F;逆行移位</span><br><span class="line">	InvMC(State);					&#x2F;&#x2F;逆列混淆</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;密钥加</span><br><span class="line">&#125;</span><br><span class="line">InvFinalRound(State,RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">	InvBS(State);					&#x2F;&#x2F;逆字节代换</span><br><span class="line">	InvSR(State);					&#x2F;&#x2F;逆行移位</span><br><span class="line">	AddRoundKey(State,RoundKey);	&#x2F;&#x2F;逆密钥加</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这就是AES算法我们要介绍的所有内容了，老样子，你可以<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>找到相关的Cpp代码，喜欢的话点个Star吧(卑微)。</p>
  
       <!-- reward -->
       
