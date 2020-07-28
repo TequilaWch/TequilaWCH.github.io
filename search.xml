@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>现代密码学：DES加密算法</title>
-    <url>/2020/07/23/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
+    <url>/2020/07/28/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9ADES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="现代密码学：DES加密算法"><a href="#现代密码学：DES加密算法" class="headerlink" title="现代密码学：DES加密算法"></a>现代密码学：DES加密算法</h1><h2 id="Part-1：DES的基本概念"><a href="#Part-1：DES的基本概念" class="headerlink" title="Part 1：DES的基本概念"></a>Part 1：DES的基本概念</h2><p>随着时代的不断变化，之前所提到的凯撒密码和单表置换密码逐渐难以满足人们对于密文安全性的需求，于是一种新的密码体制应运而生——<em>对称密码体制</em> ，而我们本文中要介绍的<strong>DES加密算法</strong>是对称密码体制中，分组密码的一个子类。</p>
 <p>在分组密码的发展历史中，出现了许多种优秀的算法，包括IDEA，AES，Safer＋＋和本文的主角<strong>DES</strong>算法。他们都拥有一个共同的特点：在其明文加密和密文解密的过程中，信息按照固定长度分组进行处理。以<strong>DES算法</strong>为例，<strong>DES算法</strong>将明文分成64位大小的众多数据块，即分组长度为64位。同时用56位密钥对64位明文信息加密，最终形成64位的密文。如果明文长度不足64位，即将其用补零的方式扩展为64位。</p>
 <p><strong>DES算法</strong>的具体加密过程为：首先将输入的数据进行初始置换（IP），即将明文M中数据的排列顺序按一定的规则重新排列，生成新的数据序列，以打乱原来的次序。然后将变换后的数据平分成左右两部分，将左边记为L<sub>0</sub>,右边记为R<SUB>0</SUB>。之后对R<SUB>0</SUB>和子密钥K<SUB>1</SUB>输入变换函数f进行一次变换，将得到的结果f(R<SUB>0</SUB>,K<SUB>1</SUB>)与L<sub>0</sub>按位进行异或运算，将结果记为R<sub>1</sub>,把R<sub>0</sub>作为L<sub>1</sub>进行下一轮操作，共进行16轮运算以得到L<sub>16</sub>和R<sub>16</sub>，最后将L<sub>16</sub>和R<sub>16</sub>进行逆初始置换IP<sup>-1</sup>就得到了加密数据。需要注意的是每一轮中的子密钥K<SUB>n</SUB>都是由56位密钥K生成的子密钥。</p>
@@ -246,10 +246,13 @@
 <h3 id="双密钥三重DES"><a href="#双密钥三重DES" class="headerlink" title="双密钥三重DES"></a>双密钥三重DES</h3><p>因为DES的加密算法和解密算法其实过程相同，某些时候也可以把解密算法当作加密算法使用，双密钥三重DES应运而生</p>
 <p><img src="/images/DES7.png" alt="双密钥三重DES"></p>
 ]]></content>
+      <tags>
+        <tag>密码学</tag>
+      </tags>
   </entry>
   <entry>
     <title>现代密码学：移位密码和单表置换密码</title>
-    <url>/2020/07/22/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E7%A7%BB%E4%BD%8D%E5%AF%86%E7%A0%81%E5%92%8C%E5%8D%95%E8%A1%A8%E7%BD%AE%E6%8D%A2%E5%AF%86%E7%A0%81/</url>
+    <url>/2020/07/28/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E7%A7%BB%E4%BD%8D%E5%AF%86%E7%A0%81%E5%92%8C%E5%8D%95%E8%A1%A8%E7%BD%AE%E6%8D%A2%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="现代密码学：移位密码和单表置换密码"><a href="#现代密码学：移位密码和单表置换密码" class="headerlink" title="现代密码学：移位密码和单表置换密码"></a>现代密码学：移位密码和单表置换密码</h1><h2 id="Part-1：移位密码（以凯撒密码为例）"><a href="#Part-1：移位密码（以凯撒密码为例）" class="headerlink" title="Part 1：移位密码（以凯撒密码为例）"></a>Part 1：移位密码（以凯撒密码为例）</h2><p>古时候，战事频繁，为了在军队之间传递军情而不被敌手破解，密码学应运而生。其中最著名的一种密码便是由尤利乌斯凯撒发明的<em>凯撒密码</em>。</p>
 <p>这种密码是一种<em>移位密码</em>，其基本思路就是将英文字母向前或向后移动一个固定位置，只有信息的接收方和发送方知道偏移量，从而起到加密的效果。我们例子中的凯撒密码就是一种偏移量为+3的移位密码（向后偏移三位），其字母对照表如下：</p>
 <table>
@@ -514,10 +517,13 @@
 </ol>
 <p>从该表中可以看出，最常用的单字母英文是e和t，其他字母使用频率相对来说就小得多。这样，攻击一个单表置换密码，首先统计密文中最常出现的字母，并据此猜出两个最常用的字母，并根据英文统计的其他特征（如字母组合等）进行试译。</p>
 ]]></content>
+      <tags>
+        <tag>密码学</tag>
+      </tags>
   </entry>
   <entry>
     <title>现代密码学：AES加密算法</title>
-    <url>/2020/07/23/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9AAES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
+    <url>/2020/07/28/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9AAES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="现代密码学：AES加密算法"><a href="#现代密码学：AES加密算法" class="headerlink" title="现代密码学：AES加密算法"></a>现代密码学：AES加密算法</h1><h2 id="Part-1：Rijndael和他的数学基础"><a href="#Part-1：Rijndael和他的数学基础" class="headerlink" title="Part 1：Rijndael和他的数学基础"></a>Part 1：Rijndael和他的数学基础</h2><p><strong>AES</strong>本质上是一种加密标准，我们常说的AES加密其实是<strong>Rijndael加密算法</strong>。对于AES的加密标准不过多赘述，我们详细讲讲Rijndael算法。</p>
 <p>Rijndael加密算法建立在一种特殊的数学结构上–有限域GF(2<sup>8</sup>)。在多项式表示中，GF(2<sup>8</sup>)上两个元素的和仍然是一个次数不超过7的多项式，其系数等于两个元素对应系数的模2加(比特异或)。</p>
 <p>而如果要计算GF(2<sup>8</sup>)上的乘法，必须先确定一个GF(2)上的8次不可约多项式；GF(2<sup>8</sup>)上两个元素的乘积就是这两个多项式的模乘(以这个8次不可约多项式为模)。而在Rijndael密码中，这个8次不可约多项式确定为m(x) = x<sup>8</sup>+x<sup>4</sup>+x<sup>3</sup>+x+1，十六进制表示为“11B”</p>
@@ -604,5 +610,8 @@
 
 <p>这就是AES算法我们要介绍的所有内容了，老样子，你可以<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>找到相关的Cpp代码，喜欢的话点个Star吧(卑微)。</p>
 ]]></content>
+      <tags>
+        <tag>密码学</tag>
+      </tags>
   </entry>
 </search>
