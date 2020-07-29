@@ -757,4 +757,31 @@
         <tag>法师or律师？</tag>
       </tags>
   </entry>
+  <entry>
+    <title>现代密码学：公钥密码RSA</title>
+    <url>/2020/07/29/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81RSA/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script>
+    <div id="aplayer-wswtUkNq" class="aplayer aplayer-tag-marker meting-tag-marker"
+         data-id="1369601580" data-server="netease" data-type="song" data-mode="circulation" data-autoplay="true" data-mutex="false" data-listmaxheight="360px" data-preload="none" data-theme="#228B22"
+    ></div>
+
+<h1 id="现代密码学：公钥密码RSA"><a href="#现代密码学：公钥密码RSA" class="headerlink" title="现代密码学：公钥密码RSA"></a>现代密码学：公钥密码RSA</h1><h2 id="Part-1：何为公钥密码"><a href="#Part-1：何为公钥密码" class="headerlink" title="Part 1：何为公钥密码"></a>Part 1：何为公钥密码</h2><p>在之前我们学习过的序列密码和分组密码算法都要求通信双方通过交换密钥实现使用同一个密钥，这在密钥的管理、发布和安全性方面存在很多问题，而公钥密码算法解决了这个问题。</p>
+<p>公钥密码算法是指一个加密系统的加密密钥和解密密钥是不同的，或者说不能用其中一个推导出另一个。在公钥密码算法的两个密钥中，一个是用于加密的密钥，它是可以公开的，称为公钥；另一个是用于解密的密钥，是保密的，称为私钥。公钥密码算法解决了对称密码体制中密钥管理的难题，并提供了对信息发送人的身份进行验证的手段，是现代密码学最重要的发明。</p>
+<p>RSA密码体制是目前为止最成功的公钥密码算法，它是在1977年由Rivest、Shamir和Adleman提出的第一个比较完善的公钥密码算法。它的安全性是建立在“大数分解和素性检测”这个数论难题的基础上，即将两个大素数相乘在计算上容易实现，而将该乘积分解为两个大素数因子的计算量相当大。虽然它的安全性还未能得到理论证明，但经过20多年的密码分析和攻击，迄今仍然被实践证明是安全的。</p>
+<a id="more"></a>
+
+<p>虽然看着很厉害，但其实RSA算法很简单，在下面一个Part我将为你详细介绍他的具体算法，相信你看完之后和我会有同样的感受</p>
+<h2 id="Part-2：RSA算法描述"><a href="#Part-2：RSA算法描述" class="headerlink" title="Part 2：RSA算法描述"></a>Part 2：RSA算法描述</h2><h3 id="一：公钥与私钥"><a href="#一：公钥与私钥" class="headerlink" title="一：公钥与私钥"></a>一：公钥与私钥</h3><p>既然是公钥密码，那么肯定是得有<strong>公钥</strong>的(<del>废话</del>)，在RSA算法中，我们首先选着俩<strong>大素数</strong>p和q，计算n = pq，φ(n)是n的欧拉函数，因为n是两个素数p和q的乘积，所以φ(n)可以表示为(p-1)(q-1)。再随机选取一个正整数e，这个正整数的唯一要求就是与φ(n)<strong>互素</strong>(当然，越大越安全)。得到这个e之后，就可以把(e,n)作为公钥来使用。</p>
+<p>既然有公钥，那么在使用时肯定会有对应的<strong>私钥</strong>，RSA算法中的私钥规定为(d,n)。其中d需要满足条件e*d ≡ 1 mod φ(n)。将公钥发布用于发方的加密，私钥保留用于收方的解密</p>
+<h3 id="二：加密和解密"><a href="#二：加密和解密" class="headerlink" title="二：加密和解密"></a>二：加密和解密</h3><p>说实话，这玩意儿的加密和解密比求公钥私钥还简单，就俩同余运算。过程如下</p>
+<blockquote>
+<p>加密过程：对于明文m，通过 c ≡ m<sup>e</sup> mod n 可以求得密文c</p>
+<p>解密过程：对于密文c，通过 m ≡ c<sup>d</sup> mod n 可以求得明文m</p>
+</blockquote>
+<h3 id="三：安全性依赖"><a href="#三：安全性依赖" class="headerlink" title="三：安全性依赖"></a>三：安全性依赖</h3><p> 为什么说这个东西安全，因为对于不怀好意的攻击者，他能获得的有效信息只有<strong>n</strong>,<strong>e</strong>和<strong>c</strong>,想要破解出明文m必须要计算出私钥<strong>d</strong>。这意味着他需要分解n。然而在目前使用的长度为1024比特及以上的n的RSA算法中，这是计算上不可能的。虽然因式分解的技术在不断的发展，但是目前在商业应用中使用1024比特的足以满足，而在更高级的场合要求使用2048长度n，在平时的普通使用中，512比特也绰绰有余。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+      </tags>
+  </entry>
 </search>
