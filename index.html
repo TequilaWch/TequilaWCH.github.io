@@ -111,6 +111,85 @@
     
     
     <article
+  id="post-现代密码学：哈希算法MD5"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/07/31/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95MD5/"
+    >现代密码学：哈希算法MD5</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/07/31/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6%EF%BC%9A%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95MD5/" class="article-date">
+  <time datetime="2020-07-31T03:55:29.000Z" itemprop="datePublished">2020-07-31</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="现代密码学：哈希算法MD5"><a href="#现代密码学：哈希算法MD5" class="headerlink" title="现代密码学：哈希算法MD5"></a>现代密码学：哈希算法MD5</h1><h2 id="Part-1：什么是Hash"><a href="#Part-1：什么是Hash" class="headerlink" title="Part 1：什么是Hash"></a>Part 1：什么是Hash</h2><p>如果和搞信息安全的人聊算法，最容易听见的一个词就是<strong>Hash</strong>，那么<strong>Hash</strong>到底是什么呢？实际上<strong>Hash函数</strong>是对一类函数的总称，这一类函数可以将输入的任意长度的数字串转化为一个较短的定长数字串输出，这个输出值被称为<strong>Hash值</strong>。</p>
+<p>既然Hash在信息安全中是一个很常见的词，很容易就会想到Hash函数一定具备一些安全性的要求和特点。Hash的特点如下：</p>
+<ul>
+<li><strong>快速性</strong>：对于一个输入值X，Hash函数可以容易地计算Hash值Y   //可以快速计算</li>
+<li><strong>单向性</strong>：对于一个输出值Y，反向推出输入值X是计算上不可能的  //只能从X到Y</li>
+<li><strong>无碰撞性</strong>：无碰撞性有强弱两种，一个好的Hash函数需要满足强无碰撞性。强无碰撞性是指：找到两个任意的不同的数字串x<sub>1</sub>和x<sub>2</sub>使对s应的Hash值y<sub>1</sub>和y<sub>2</sub>满足y<sub>1</sub> = y<sub>2</sub>是不可能的。顺带一提，弱无碰撞性是指对于给定的属于A的x<sub>1</sub>找属于B的x<sub>2</sub>使对s应的Hash值y<sub>1</sub>和y<sub>2</sub>满足y<sub>1</sub> = y<sub>2</sub>是不可能的</li>
+</ul>
+<p>满足以上三个特性的Hash函数被称为<strong>安全保密的Hash函数</strong>,也是我们推荐去使用的Hash函数。这种Hash函数除了枚举破解以外不可能其他的破解方法。</p>
+<p>Hash函数是一种很泛用的工具，可用于数字签名、消息的完整性检验。消息的来源认证检测等，现在常用的Hash算法有<strong>MD5</strong>、<strong>SHA－1</strong>等。下面从MD5入手来介绍Hash算法的实现机制</p>
+<h2 id="Part-2：MD和MD5"><a href="#Part-2：MD和MD5" class="headerlink" title="Part 2：MD和MD5"></a>Part 2：MD和MD5</h2><p>MD系列单向Hash函数是由Ron Rivest设计的，MD5算法对任意长度的输入值处理后产生128位的Hash值。MD5算法的实现步骤如下：</p>
+<p><img src="https://i.loli.net/2020/08/01/6zxUKLcBDW8Nwif.png" alt="MD1.png"></p>
+<p><img src="https://i.loli.net/2020/08/01/pbgCXNrVaKLMklz.png" alt="MD1.1.png"></p>
+<p>在MD5算法中，首先需要对信息进行填充，使其字节长度与448模512同余，<strong>需要注意的是这一步是<em>必须的</em>，即便长度刚好是448，也要加上512比特</strong>，即信息的字节长度扩展至488+512n，n为一个正整数。填充的方法如下：在信息的后面填充第一位为1，其余各位均为0，直到满足上面的条件时才停止用0对信息的填充。然后，再在这个结果后面附加一个以64位二进制表示的填充前信息长度。经过这两步的处理，现在的信息字节长度为，即长度恰好是512的整数倍，这样做的目的是为了满足后面处理中对信息长度的要求。</p>
+<p>同时，MD5中有A、B、C、D，4个32位被称为链接变量的整数参数，它们的初始值分别为：</p>
+<blockquote>
+<p> A<sub>0</sub>＝0x01234567，B<sub>0</sub>＝0x89abcdef,    C<sub>0</sub>=0xfedcba98,    D<sub>0</sub>=0x76543210</p>
+</blockquote>
+<p>当设置好这4个链接变量之后，就可以进入算法的4轮循环。循环的次数是信息中的512位信息分组数目。接下来的算法里面，首先把四个初始值复制到A,B,C,D当中，以备后面进行处理。</p>
+<p>之后进入真正的循环(主循环)，主循环共4轮，并且具有相似的结构。第一轮进行16次操作，每次操作对A,B,C,D中的三个进行一次非线性函数运算，并将所得结果加上第四个变量，文本的一个子分组(32位)和一个常数。之后再将所得结果向左循环移动S位，并加上A,B,C,D其中之一，最后用该结果取代A,B,C,D其中之一。四个轮函数如下：</p>
+<blockquote>
+<p><img src="https://i.loli.net/2020/08/01/dPNwpHQtAieWEBy.png" alt="MD2.png"></p>
+<p><img src="https://i.loli.net/2020/08/01/vH6lixVduDYoWCq.png" alt="MD3.png"></p>
+<p><img src="https://i.loli.net/2020/08/01/pqX65AfcNntQDOh.png" alt="MD4.png"></p>
+<p><img src="https://i.loli.net/2020/08/01/miRfPl4JdSYpUk1.png" alt="MD5.png"></p>
+</blockquote>
+<p>每轮处理过程还需加上常数表T中四分之的个元素，分别为T[1..16], T[17..32], T[33..48], T[49..64]。常数表T共64个元素，下面是常数表的具体内容</p>
+<p><img src="https://i.loli.net/2020/08/01/HykgPMCYa98rJdn.png" alt="MD6.png"></p>
+<p>所有这些操作完成之后，将A，B，C，D分别加上 A<sub>0</sub>，B<sub>0</sub>,    C<sub>0</sub>,    D<sub>0</sub>。然后用下一分组数据继续进行运算，最后得到一组A，B，C，D。把这组数据级联起来，即得到128比特的Hash结果。</p>
+<h2 id="Part-3：MD5的破解"><a href="#Part-3：MD5的破解" class="headerlink" title="Part 3：MD5的破解"></a>Part 3：MD5的破解</h2><p>虽然MD5是一个很常用的Hash函数，但是我国山东大学的王小云教授在Crypto2004国际密码学大会上发现了一种找到MD5散列函数碰撞的方法，这一发现意味着采用MD5算法的数字签名、完整性检验等信息安全应用系统将不在安全了，这就促使信息安全系统的设计者尽快去寻找和探索新的Hash算法。</p>
+<p>好了，以上就是本次我们要讲的内容了。</p>
+<p>老规矩，想要我的代码吗？去Star吧！我把它放在<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>了</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/" rel="tag">密码学</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-刀马WCH的一方净土"
   class="article article-type-post"
   itemscope
