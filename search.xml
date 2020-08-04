@@ -20,10 +20,17 @@
       </tags>
   </entry>
   <entry>
+    <title>飙马野郎，末代侠客--Arthur·Morgan</title>
+    <url>/2020/08/04/%E9%A3%99%E9%A9%AC%E9%87%8E%E9%83%8E%EF%BC%8C%E6%9C%AB%E4%BB%A3%E4%BE%A0%E5%AE%A2-Arthur%C2%B7Morgan/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script>]]></content>
+  </entry>
+  <entry>
     <title>Android：概述与工具</title>
     <url>/2020/08/03/Android%EF%BC%9A%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="Android：概述与工具"><a href="#Android：概述与工具" class="headerlink" title="Android：概述与工具"></a>Android：概述与工具</h1><h2 id="Part-1：没想好叫啥反正就是说些前言"><a href="#Part-1：没想好叫啥反正就是说些前言" class="headerlink" title="Part 1：没想好叫啥反正就是说些前言"></a>Part 1：没想好叫啥反正就是说些前言</h2><p>从今天开始，我所参与的创新项目就要正式开工了。我们打算开发一个Android程序，但是组里没有一个人有过开发经验，就很烦。因此开始一个新的系列–Android开发，用这一系列的blog记录我的开发过程和学习过程。话不多说，进入下一P。</p>
-<h2 id="Part-2：Android工具准备"><a href="#Part-2：Android工具准备" class="headerlink" title="Part 2：Android工具准备"></a>Part 2：Android工具准备</h2><p>Android是由Google开发的一种基于Linux系统的操作系统，是一种开发移动应用的表现形式。目前最常用的开发工具是 <strong>Android Studio</strong>。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="Android：概述与工具"><a href="#Android：概述与工具" class="headerlink" title="Android：概述与工具"></a>Android：概述与工具</h1><h2 id="Part-1：Android工具准备"><a href="#Part-1：Android工具准备" class="headerlink" title="Part 1：Android工具准备"></a>Part 1：Android工具准备</h2><p>从今天开始，我所参与的创新项目就要正式开工了。我们打算开发一个Android程序，但是组里没有一个人有过开发经验，就很烦。因此开始一个新的系列–Android开发，用这一系列的blog记录我的开发过程和学习过程。话不多说，进入下一P。</p>
+<p>Android是由Google开发的一种基于Linux系统的操作系统，是一种开发移动应用的表现形式。目前最常用的开发工具是 <strong>Android Studio</strong>。</p>
+<a id="more"></a>
+
 <p>为了进行Android的开发，我们首先要安装一个JDK，因为Android开发的语言是Java语言，可以参考<a href="https://blog.csdn.net/pu329289309/article/details/104883458/" target="_blank" rel="noopener">这个网址</a>进行JDK的安装，这里不作为重点介绍。</p>
 <p>另外一个工具就是我们所说的Android Studio，可以在<a href="http://www.android-studio.org/" target="_blank" rel="noopener">AS中文社区</a>中找到其安装包并进行下载，下载好了之后就可以进行安装了，安装过程中没有什么好说的，一路next就可以轻松搞定。</p>
 <p><strong>But</strong>，事情并没有这么简单，安装了之后我们还要对其进行配置，话不多说，先Start Android Studio，然后点击Finish完成安装。</p>
@@ -35,7 +42,7 @@
 <p><img src="https://i.loli.net/2020/08/03/HR59fEFYho6jdZe.png" alt="A3.png"></p>
 <p>注意到这下面会给你列出来许多你需要使用的SDK，点击Finish开始下载，等待下载完毕后，就可以进入到这样一个欢迎界面了，这代表着我们的AS安装圆满完成了(撒花)</p>
 <p>说来惭愧，我还没学过Java(<del>Python是世界上最好的语言</del>)，先写个简单的程序了解一下基本的语法</p>
-<h2 id="Part-3：Android应用初体验"><a href="#Part-3：Android应用初体验" class="headerlink" title="Part 3：Android应用初体验"></a>Part 3：Android应用初体验</h2><blockquote>
+<h2 id="Part-2：Android应用初体验"><a href="#Part-2：Android应用初体验" class="headerlink" title="Part 2：Android应用初体验"></a>Part 2：Android应用初体验</h2><blockquote>
 <p>编程界认为刚接触一门新语言时，如果首先用它来偏写一个在屏幕上显示hello world的程序，将给你带来好运。</p>
 </blockquote>
 <p>那我们就编写一个Hello Android吧。新建一个Android项目，乱七八糟的设定全部先不管，直接新建一个空的项目。进去以后得到这样一个目录</p>
@@ -72,6 +79,8 @@
 </ul>
 <p>满足以上三个特性的Hash函数被称为<strong>安全保密的Hash函数</strong>,也是我们推荐去使用的Hash函数。这种Hash函数除了枚举破解以外不可能其他的破解方法。</p>
 <p>Hash函数是一种很泛用的工具，可用于数字签名、消息的完整性检验。消息的来源认证检测等，现在常用的Hash算法有<strong>MD5</strong>、<strong>SHA－1</strong>等。下面从MD5入手来介绍Hash算法的实现机制</p>
+<a id="more"></a>
+
 <h2 id="Part-2：MD和MD5"><a href="#Part-2：MD和MD5" class="headerlink" title="Part 2：MD和MD5"></a>Part 2：MD和MD5</h2><p>MD系列单向Hash函数是由Ron Rivest设计的，MD5算法对任意长度的输入值处理后产生128位的Hash值。MD5算法的实现步骤如下：</p>
 <p><img src="https://i.loli.net/2020/08/01/6zxUKLcBDW8Nwif.png" alt="MD1.png"></p>
 <p><img src="https://i.loli.net/2020/08/01/pbgCXNrVaKLMklz.png" alt="MD1.1.png"></p>
