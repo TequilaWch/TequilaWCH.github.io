@@ -22,10 +22,7 @@
   <entry>
     <title>2020新生指南-转载自大胖嗷子</title>
     <url>/2020/08/17/2020%E6%96%B0%E7%94%9F%E6%8C%87%E5%8D%97-%E8%BD%AC%E8%BD%BD%E8%87%AA%E5%A4%A7%E8%83%96%E5%97%B7%E5%AD%90/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><hr>
-<p>title:2020新生指南-转载自大胖嗷子<br>date:2020-08-1722:03:15<br>tags:杂文</p>
-<hr>
-<h1 id="2020新生指南"><a href="#2020新生指南" class="headerlink" title="2020新生指南"></a>2020新生指南</h1><p>本文转载自我的好哥们大胖嗷子，我希望能提供更多样的平台让大家能看到。不止是2020年新生，也不止是南开大学的新生，相信大家都能从中了解到自己所想了解的一切。文末附带他的个人公众号嗷范特西Zone的二维码，希望大家多多关注。大学生活愉快！</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="2020新生指南"><a href="#2020新生指南" class="headerlink" title="2020新生指南"></a>2020新生指南</h1><p>本文转载自我的好哥们大胖嗷子，我希望能提供更多样的平台让大家能看到。不止是2020年新生，也不止是南开大学的新生，相信大家都能从中了解到自己所想了解的一切。文末附带他的个人公众号嗷范特西Zone的二维码，希望大家多多关注。大学生活愉快！</p>
 <blockquote>
 <p>​    首先，欢迎20级的学弟学妹来到南开大学学习和生活！</p>
 <p>​    2020新生指南在学长学姐编写的18、19新生攻略的基础上增添了一些细节，并依据政策和环境的变化进行了更新，作为2020年入学的学弟学妹们生活、学习等方面的一个参考。</p>
@@ -377,6 +374,9 @@
 
 <p><img src="https://i.loli.net/2020/08/17/IUwSDysWbfXTCZn.jpg" alt="嘻嘻嘻.jpg"></p>
 ]]></content>
+      <tags>
+        <tag>杂文</tag>
+      </tags>
   </entry>
   <entry>
     <title>Android：布局，TextView和Button</title>
