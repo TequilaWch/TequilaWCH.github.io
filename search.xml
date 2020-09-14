@@ -20,6 +20,63 @@
       </tags>
   </entry>
   <entry>
+    <title>Complier学习-0x00</title>
+    <url>/2020/09/14/Complier%E5%AD%A6%E4%B9%A0-0x00/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="Complier学习-0x00"><a href="#Complier学习-0x00" class="headerlink" title="Complier学习-0x00"></a>Complier学习-0x00</h1><h2 id="1：C语言编程和优化"><a href="#1：C语言编程和优化" class="headerlink" title="1：C语言编程和优化"></a>1：C语言编程和优化</h2><p>需要下面两个功能相同的代码谁的速度更快。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;* loop 1*&#x2F;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	a[i] &#x3D; a[i]*2000;</span><br><span class="line">	a[i] &#x3D; a[i]&#x2F;10000;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;* loop 2 *&#x2F;</span><br><span class="line">b &#x3D; a;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	*b &#x3D; *b*2000;</span><br><span class="line">	*b &#x3D; *b&#x2F;10000;</span><br><span class="line">	b++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初步判断，loop2要更快一点，因为直接对于指针进行操作，而不是loop1对偏移量操作，省略一次加法。 编写代码测试如下</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cout &lt;&lt; x+1 &lt;&lt; &quot;:&quot;&lt;&lt; &quot;it is No.1 test,our n &#x3D;1000&quot; &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F; 初始化</span><br><span class="line">int a[r1];</span><br><span class="line">for (int j &#x3D; 0; j &lt; r1; j++)</span><br><span class="line">&#123;</span><br><span class="line">	a[j] &#x3D; j;</span><br><span class="line">&#125;</span><br><span class="line">int *b &#x3D; a;</span><br><span class="line">CTimer timer;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; loop 1</span><br><span class="line">timer.time_in();</span><br><span class="line">for (int x &#x3D; 0; x &lt; r1; x++)&#x2F;&#x2F;为了保证数是一个int型，对示例进行了修改</span><br><span class="line">&#123;</span><br><span class="line">	a[x] &#x3D; a[x] * 10000;</span><br><span class="line">	a[x] &#x3D; a[x] &#x2F; 2000;</span><br><span class="line">&#125;</span><br><span class="line">lp11[x] &#x3D; timer.time_out() * 10000;</span><br><span class="line">cout &lt;&lt; &quot;time loop1 used:&quot; &lt;&lt; lp11[x] &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F; loop 2</span><br><span class="line">timer.time_in();</span><br><span class="line">for (int y &#x3D; 0; y &lt; r1; y++)&#x2F;&#x2F;为了保证数是一个int型，对示例进行了修改</span><br><span class="line">&#123;</span><br><span class="line">	*b &#x3D; *b * 10000;</span><br><span class="line">	*b &#x3D; *b &#x2F; 2000;</span><br><span class="line">b++;</span><br><span class="line">&#125;</span><br><span class="line">lp21[x] &#x3D; timer.time_out() * 10000;</span><br><span class="line">cout &lt;&lt; &quot;time loop2 used:&quot; &lt;&lt; lp21[x] &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<p>其中 CTimer 是为了满足计时要求，编写的一个计时器方法，实现代码如下。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class CTimer</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	CTimer(void);</span><br><span class="line">	~CTimer(void);</span><br><span class="line"></span><br><span class="line">	int time_in();</span><br><span class="line">	double time_out();</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">	LARGE_INTEGER litmp;</span><br><span class="line">	LONGLONG qt1, qt2;</span><br><span class="line">	double dft, dff, dfm;</span><br><span class="line">&#125;;</span><br><span class="line">CTimer::CTimer(void)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line">CTimer::~CTimer(void)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line">int CTimer::time_in()</span><br><span class="line">&#123;</span><br><span class="line">	QueryPerformanceFrequency(&amp;litmp);&#x2F;&#x2F;获得时钟频率</span><br><span class="line">	dff &#x3D; (double)litmp.QuadPart;</span><br><span class="line"></span><br><span class="line">	QueryPerformanceCounter(&amp;litmp);&#x2F;&#x2F;获得初始值</span><br><span class="line">	qt1 &#x3D; litmp.QuadPart;</span><br><span class="line"></span><br><span class="line">	return 1;</span><br><span class="line">&#125;</span><br><span class="line">double CTimer::time_out()</span><br><span class="line">&#123;</span><br><span class="line">	QueryPerformanceCounter(&amp;litmp);&#x2F;&#x2F;获得终止值</span><br><span class="line">	qt2 &#x3D; litmp.QuadPart;</span><br><span class="line"></span><br><span class="line">	dfm &#x3D; (double)(qt2 - qt1);</span><br><span class="line">	dft &#x3D; dfm &#x2F; dff;&#x2F;&#x2F;获得对应的时间值</span><br><span class="line"></span><br><span class="line">	return dft;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后设置两层循环。内层循环分别测试当r1 = 1000|10000|100000时的情况，外层循环进行十次，记录每次的时间的一万倍以便之后求平均数。运行结果如下</p>
+<p><img src="https://i.loli.net/2020/09/13/tnNvxR6Sf7eq2hi.png" alt="1.png"></p>
+<p>可以发现loop1在这三种水平下都比loop2快，而且多次运行可以发现每次的运行时间并不一致，结果也会有偏差。为了获得运行更快的目标程序，应该会选loop1的方式。</p>
+<p>如果需要一个更完整的测试方案，应该需要在不同的os，不同的版本，不同的编译器上测试，还要扩大测试范围（比如说1<del>100000000）且提高测试精度（比如1000</del>5000~10000）这样。</p>
+<h2 id="2：对数据库查询表达式进行分词"><a href="#2：对数据库查询表达式进行分词" class="headerlink" title="2：对数据库查询表达式进行分词"></a>2：对数据库查询表达式进行分词</h2><p>对下面的这个查询语句进行分词</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Model &#x3D; “Civic” AND Year &#x3D; “2001”</span><br></pre></td></tr></table></figure>
+
+<p>模仿PPT中的示例，分词如下</p>
+<p><img src="https://i.loli.net/2020/09/13/XHKkNmEnsJPDxdv.png" alt="2.png"></p>
+<h2 id="3：静态检查"><a href="#3：静态检查" class="headerlink" title="3：静态检查"></a>3：静态检查</h2><p>创建一个test.c文件，文件代码如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">char firstChar1(char *s)</span><br><span class="line">&#123;</span><br><span class="line">    return *s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int *glob;</span><br><span class="line"></span><br><span class="line">int *f(int **x)</span><br><span class="line">&#123;</span><br><span class="line">   int sa[2] &#x3D; &#123;0,1&#125;;</span><br><span class="line">   int loc &#x3D; 3;</span><br><span class="line">   glob &#x3D; loc;</span><br><span class="line">   *x &#x3D; &amp;sa[0];</span><br><span class="line">   return &amp;loc;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void h(void)</span><br><span class="line">&#123;</span><br><span class="line">   unsigned int i;</span><br><span class="line">   if(i&gt;&#x3D;0)</span><br><span class="line">   &#123;</span><br><span class="line">       printf(&quot;&gt;&#x3D;0\n&quot;);</span><br><span class="line">   &#125;</span><br><span class="line">   else</span><br><span class="line">   &#123;</span><br><span class="line">       printf(&quot;&lt;0&quot;);</span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下载并安装静态检测工具 splint，随后打开  splint console应用。输入以下指令</p>
+<blockquote>
+<p>splint  目标c文件路径</p>
+</blockquote>
+<p>就可以开始静态检测。第一次运行的时候由于此前没有使用过c语言相关的库，没有在环境变量中找到 <em>stdio.h</em> 这个文件。将 splint自带的<em>stdio.h*文件路径添加到系统的 *INCLUDE</em> 环境变量中就可以正常执行。再次运行得到如下结果</p>
+<p><img src="https://i.loli.net/2020/09/14/fJnc6TH9Mpb2ZIF.png" alt="3.png"></p>
+<p>可以看到检测出了8个存在的错误。具体错误如下：</p>
+<ol>
+<li>类型不兼容</li>
+<li>悬空引用</li>
+<li>立即地址传输不一致</li>
+<li>堆栈分配的存储位置*x可以由参数x访问</li>
+<li>无符号值与0比较</li>
+<li>变量i未定义</li>
+<li>使用未声明的标识符printf</li>
+<li>导出的变量未在外部使用。</li>
+</ol>
+<h2 id="4：递归定义"><a href="#4：递归定义" class="headerlink" title="4：递归定义"></a>4：递归定义</h2><p>在变量声明中，允许任意多个标识符形成的标识符列表，如下所示。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int a,b,……,x;</span><br></pre></td></tr></table></figure>
+
+<p>用自然语言描述标识符列表的递归定义如下：</p>
+<blockquote>
+<p>检查 variable_list 的第一个标识符及其后面的分隔符</p>
+<p>​        如果为 “,”，为此标识符分配空间并检查下一个标识符及其后面的分隔符</p>
+<p>​        如果为 “;”，为此标识符分配空间并结束本次循环</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>nku2019计算方法期末试题</title>
     <url>/2020/09/09/nku2019%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="nku2019计算方法期末试题"><a href="#nku2019计算方法期末试题" class="headerlink" title="nku2019计算方法期末试题"></a>nku2019计算方法期末试题</h1><blockquote>
@@ -612,7 +669,7 @@
 
 ]]></content>
       <tags>
-        <tag>Android开发</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -686,7 +743,7 @@
 <p><img src="https://i.loli.net/2020/08/04/BuEcxDT86oSX2Am.png" alt="AC3.png"></p>
 ]]></content>
       <tags>
-        <tag>Android开发</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -727,7 +784,7 @@
 <p>老规矩，想要我的代码吗？去Star吧！我把它放在<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>了</p>
 ]]></content>
       <tags>
-        <tag>密码学</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -749,7 +806,7 @@
 <h3 id="三：安全性依赖"><a href="#三：安全性依赖" class="headerlink" title="三：安全性依赖"></a>三：安全性依赖</h3><p> 为什么说这个东西安全，因为对于不怀好意的攻击者，他能获得的有效信息只有<strong>n</strong>,<strong>e</strong>和<strong>c</strong>,想要破解出明文m必须要计算出私钥<strong>d</strong>。这意味着他需要分解n。然而在目前使用的长度为1024比特及以上的n的RSA算法中，这是计算上不可能的。虽然因式分解的技术在不断的发展，但是目前在商业应用中使用1024比特的足以满足，而在更高级的场合要求使用2048长度n，在平时的普通使用中，512比特也绰绰有余。</p>
 ]]></content>
       <tags>
-        <tag>密码学</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -781,7 +838,7 @@
 <h2 id="四：结语"><a href="#四：结语" class="headerlink" title="四：结语"></a>四：结语</h2><p>​    人治不如法治，劣法不如良法。不论是对《法国民法典》的学习，还是对中国《民法典》的探讨，都是基于我们心中的一个最初始的梦想：建立一个更美好的中国。希望我们在学习的过程中，不忘初心，即使学海无涯，但只要方向对了，就一定能到岸。</p>
 ]]></content>
       <tags>
-        <tag>法师or律师？</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -847,7 +904,7 @@
 <p>​    虽然如今已然是一个全球化的时代，然而距离法律的全球化尚有很长的路要走，那是因为全球尚未形成一种统一的“一般精神”。为了应对和迎接即将到来的挑战和转型，我们应当学习孟德斯鸠的思想，并将其演化入中国环境中，成为新时期中国寻找中国法的“一般精神”的强力助手。尤其是在民族复兴的关键时期，寻找“一般精神”更具有无比重大的意义，因此我们在此时此地，在此种历史文化环境之中，依旧要沿着孟德斯鸠为我们找到的具有借鉴意义的道路前行，找寻适合我们复兴中的中华民族的“一般精神”。</p>
 ]]></content>
       <tags>
-        <tag>法师or律师？</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -981,7 +1038,7 @@
 <p>这就是AES算法我们要介绍的所有内容了，老样子，你可以<em><a href="https://github.com/TequilaWch/Cipher" target="_blank" rel="noopener">https://github.com/TequilaWch/Cipher</a></em>找到相关的Cpp代码，喜欢的话点个Star吧(卑微)。</p>
 ]]></content>
       <tags>
-        <tag>密码学</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -1233,7 +1290,7 @@
 <p><img src="/images/DES7.png" alt="双密钥三重DES"></p>
 ]]></content>
       <tags>
-        <tag>密码学</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
   <entry>
@@ -1506,7 +1563,7 @@
 <p>从该表中可以看出，最常用的单字母英文是e和t，其他字母使用频率相对来说就小得多。这样，攻击一个单表置换密码，首先统计密文中最常出现的字母，并据此猜出两个最常用的字母，并根据英文统计的其他特征（如字母组合等）进行试译。</p>
 ]]></content>
       <tags>
-        <tag>密码学</tag>
+        <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
 </search>
