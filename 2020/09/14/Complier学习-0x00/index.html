@@ -120,7 +120,7 @@
 <p>最后设置两层循环。内层循环分别测试当r1 = 1000|10000|100000时的情况，外层循环进行十次，记录每次的时间的一万倍以便之后求平均数。运行结果如下</p>
 <p><img src="https://i.loli.net/2020/09/13/tnNvxR6Sf7eq2hi.png" alt="1.png"></p>
 <p>可以发现loop1在这三种水平下都比loop2快，而且多次运行可以发现每次的运行时间并不一致，结果也会有偏差。为了获得运行更快的目标程序，应该会选loop1的方式。</p>
-<p>如果需要一个更完整的测试方案，应该需要在不同的os，不同的版本，不同的编译器上测试，还要扩大测试范围（比如说1<del>100000000）且提高测试精度（比如1000</del>5000~10000）这样。</p>
+<p>如果需要一个更完整的测试方案，应该需要在不同的os，不同的版本，不同的编译器上测试，还要扩大测试范围（比如说1 to 100000000）且提高测试精度（比如1000 to 5000 to 10000）这样。</p>
 <h2 id="2：对数据库查询表达式进行分词"><a href="#2：对数据库查询表达式进行分词" class="headerlink" title="2：对数据库查询表达式进行分词"></a>2：对数据库查询表达式进行分词</h2><p>对下面的这个查询语句进行分词</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model &#x3D; “Civic” AND Year &#x3D; “2001”</span><br></pre></td></tr></table></figure>
 
