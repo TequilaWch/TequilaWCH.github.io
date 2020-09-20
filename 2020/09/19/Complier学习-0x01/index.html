@@ -82,7 +82,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">438</span>
+            <span class="post-count">478</span>
         </span>
     </span>
 
@@ -121,10 +121,10 @@
 <a id="more"></a>
 
 <p>对于这个while语句，其定义如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; BNF定义</span><br><span class="line">WHILE_STATEMENT ::&#x3D; &quot;while&quot; &quot;(&quot; expression|value &quot;)&quot; statement</span><br><span class="line">&#x2F;&#x2F; 产生式</span><br><span class="line">stmt → while(expr)stmt</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; BNF定义</span><br><span class="line">WHILE_STATEMENT ::&#x3D; &quot;while&quot; &quot;(&quot; expression|value &quot;)&quot; statement</span><br><span class="line">&#x2F;&#x2F; 产生式</span><br><span class="line">stmt → while(expr)stmt</span><br><span class="line">expr → (expr boolop expr)|value</span><br></pre></td></tr></table></figure>
 
 <p>对于这个for语句，其定义如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; BNF定义</span><br><span class="line">FOR_STATEMENT ::&#x3D; </span><br><span class="line">&quot;for&quot; &quot;(&quot; (variable_declaration | (expression&quot;;&quot;)| &quot;;&quot;)[ expression ] &quot;;&quot;[ expression ]&quot;)&quot; statement</span><br><span class="line">&#x2F;&#x2F; 产生式</span><br><span class="line">stmt → for(expr;expr;expr)stmt</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; BNF定义</span><br><span class="line">FOR_STATEMENT ::&#x3D; </span><br><span class="line">&quot;for&quot; &quot;(&quot; (variable_declaration | (expression&quot;;&quot;)| &quot;;&quot;)[ expression ] &quot;;&quot;[ expression ]&quot;)&quot; statement</span><br><span class="line">&#x2F;&#x2F; 产生式</span><br><span class="line">stmt  	  → for(expr1;expr2;expr3)stmt</span><br><span class="line">expr1 	  → init | id | epsilon</span><br><span class="line">expr2 	  → condition | epsilon</span><br><span class="line">expr3 	  → increment | epsilon</span><br><span class="line">init  	  → int|float|double|char id &#x3D; value </span><br><span class="line">condition → (expr boolop expr)|value</span><br><span class="line">increment → id op value|id </span><br><span class="line">expr 	  → (expr op expr)|value</span><br></pre></td></tr></table></figure>
 
 <p>对于变量声明语句，其定义如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; BNF定义</span><br><span class="line">DEFINE_STATEMENT ::&#x3D; &quot;int&quot;|&quot;char&quot;|&quot;float&quot;|&quot;double&quot;  &lt;id&gt;[&quot;&#x3D;&quot;][value] &#123;&quot;,&quot;id[&quot;&#x3D;&quot;][value]&#125;&quot;;&quot;</span><br><span class="line">&#x2F;&#x2F; 产生式</span><br><span class="line">stmt → int|float|double|char ids</span><br><span class="line">ids  → (ids,id)|ids|id</span><br></pre></td></tr></table></figure>
@@ -140,10 +140,10 @@
 <p>7 - 3 * (4 + 6)</p>
 </blockquote>
 <p>其推导过程如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">expr → expr - term</span><br><span class="line">	 → expr - term * factor</span><br><span class="line">	 → expr - term * (expr)</span><br><span class="line">	 → expr - term * (expr + term)</span><br><span class="line">	 → digit - digit * (digit + digit)</span><br><span class="line">	 → 7 - 3 * (4 + 6)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">expr → expr - term</span><br><span class="line">	 → term - term * factor</span><br><span class="line">	 → factor - factor * (expr)</span><br><span class="line">	 → digit - digit * (expr + term)</span><br><span class="line">	 → 7 - 3 * (term + factor)</span><br><span class="line">	 → 7 - 3 * (factor + digit)</span><br><span class="line">	 → 7 - 3 * (digit + 6)</span><br><span class="line">	 → 7 - 3 * (4 + 6)</span><br></pre></td></tr></table></figure>
 
 <p>可以绘制其语法分析树如下</p>
-<p><img src="https://i.loli.net/2020/09/18/lw1Le6q2RGdsgD5.png" alt="2.png"></p>
+<p><img src="https://i.loli.net/2020/09/20/sDMdXgRFQZfuAS5.png" alt="未命名文件.png"></p>
 <h2 id="3：注释语法分析树"><a href="#3：注释语法分析树" class="headerlink" title="3：注释语法分析树"></a>3：注释语法分析树</h2><p>对句子 <strong>9-5+2</strong> 给出其注释语法分析树</p>
 <p>仿照样例过程，其语法规则如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">expr.t &#x3D; expr1.t||term.t||&quot;-&quot;</span><br><span class="line">expr.t &#x3D; expr1.t||term.t||&quot;+&quot;</span><br><span class="line">expr.t &#x3D; expr1.t||expr2.t||&quot;-&quot;</span><br><span class="line">expr.t &#x3D; expr1.t||expr2.t||&quot;+&quot;</span><br><span class="line">expr.t &#x3D; term.t</span><br><span class="line">term.t &#x3D; &quot;0&quot;|&quot;1&quot;|...|&quot;9&quot;</span><br></pre></td></tr></table></figure>
@@ -224,6 +224,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2020/09/19/%E4%B8%AD%E5%9B%BD%E5%95%86%E4%B8%9A%E5%AF%86%E7%A0%81-%E7%A5%96%E5%86%B2%E4%B9%8B%E5%AF%86%E7%A0%81ZUC/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            中国商业密码:祖冲之密码ZUC
+          
+        </div>
+      </a>
     
     
       <a href="/2020/09/14/Complier%E5%AD%A6%E4%B9%A0-0x00/" class="article-nav-link">
