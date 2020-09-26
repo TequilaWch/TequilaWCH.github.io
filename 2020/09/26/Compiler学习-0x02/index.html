@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta name="baidu-site-verification" content="R9wFeVUEye" />
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Compiler学习-0x02 |  净土
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/taiji.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Compiler学习-0x02"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Compiler学习-0x02
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/09/26/Compiler%E5%AD%A6%E4%B9%A0-0x02/" class="article-date">
+  <time datetime="2020-09-26T05:24:48.000Z" itemprop="datePublished">2020-09-26</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">4.3k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">17 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="What-happened？–从C-到机器语言"><a href="#What-happened？–从C-到机器语言" class="headerlink" title="What happened？–从C++到机器语言"></a>What happened？–从C++到机器语言</h1><blockquote>
+<p>我们都知道输入 <strong>cout &lt;&lt; “hello world” ;</strong> 可以让机器在屏幕上显示一串 <em>hello world</em>，但是你知道为什么输入这句指令就可以得到这个结果吗？或者说，你知道在整个编译过程中，<strong>预处理器</strong>，<strong>编译器</strong>，<strong>汇编器</strong>和<strong>链接器</strong>都做了什么吗？</p>
+</blockquote>
+<p>关键词：<strong>编译</strong>，<strong>汇编</strong>，<strong>预处理</strong>，<strong>编程语言</strong>，<strong>机器语言</strong>，<strong>G++</strong> ，<strong>C++</strong></p>
+<a id="more"></a>
+
+<h2 id="0x00-引言"><a href="#0x00-引言" class="headerlink" title="0x00 引言"></a>0x00 引言</h2><blockquote>
+<p> <em>你给我翻译翻译，什么叫做惊喜？    –张麻子《让子弹飞》</em>    </p>
+</blockquote>
+<p>​    这个世界上有许许多多的编程语言，经常听到的C/C++，Java，Python都是这个大家族的一份子。有的语言看起来不像人能看懂的东西，有的语言看起来好像和英语差不多，还有的语言甚至是文言文。但这些语言只要按照一定的语法规则写好，在我们配置好环境的计算机上都是可以运行的，这是为什么呢？</p>
+<p>​    排除法，首先不是机器为每种语言都装了一种处理他的硬件，因为如果是这样，我们的机器将无比庞大，而不是像现在这样一个书包就能背着走。其次不是计算机很聪明，什么文字他都看得懂。那么原因只剩下了一个–有东西把这些不同语言的程序翻译成了机器能懂得的指令–机器语言</p>
+<p>​    随着学习的深入，我们知道了编程语言，汇编语言和机器语言的区别，也知道了预处理器，编译器，汇编器和链接器在这个过程中的角色。在接下来的内容中，我们将在<strong>Ubuntu18.04</strong>系统中，使用<strong>G++</strong>编译器对一段简单的阶乘C++代码进行编译，探究在从编程到运行这个过程中，<em>预处理器<em>，</em>编译器<em>，</em>汇编器</em> 和 <em>链接器</em> 分别做了什么。</p>
+<p>阶乘程序的源代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="comment">/* factorial.cpp */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;       </span><br><span class="line">    <span class="keyword">int</span> i,n,f;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    i = <span class="number">2</span>;</span><br><span class="line">    f = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt;= n)</span><br><span class="line">    &#123;</span><br><span class="line">        f = f * i;</span><br><span class="line">        i = i + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; f &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在终端执行这样几条指令，可以得到不同处理阶段的文件，接下来的研究就从这些文件中入手</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 执行预处理，将得到的文件重定向到 factorial.u中</span><br><span class="line">$ g++ -E factorial.cpp &gt; factorial.u </span><br><span class="line">&#x2F;&#x2F; 执行预处理和编译，将得到的汇编代码存入factorial.s中</span><br><span class="line">$ g++ -S factorial.cpp </span><br><span class="line">&#x2F;&#x2F; 执行预处理，编译和汇编，将文件转换为obj形式存入factorial.o中</span><br><span class="line">$ g++ -c factorial.cpp</span><br><span class="line">&#x2F;&#x2F; 执行预处理，编译，汇编和链接，生成一个可以运行的factorial文件</span><br><span class="line">$ g++ factorial.cpp -o factorial</span><br></pre></td></tr></table></figure>
+
+<p>执行完这些指令之后，我们可以得到这样一些文件，我们的准备工作就已经完成了。</p>
+<p><img src="https://i.loli.net/2020/09/23/p7S3Nj6PMfCrcmt.png" alt="1.png"></p>
+<h2 id="0x01-What-did-Preprocessor-do"><a href="#0x01-What-did-Preprocessor-do" class="headerlink" title="0x01  What did Preprocessor do"></a>0x01  What did Preprocessor do</h2><p>既然要看<strong>预处理器(Preprocessor)</strong>在这个过程中做了什么，我们自然要从.cpp文件和.u文件入手来比较。.cpp文件的代码在上一个部分已经给出，下面贴出部分.u文件的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 代码最顶部</span><br><span class="line"># 1 &quot;&#x2F;usr&#x2F;include&#x2F;x86_64-linux-gnu&#x2F;c++&#x2F;7&#x2F;bits&#x2F;c++config.h&quot; 1 3</span><br><span class="line"># 229 &quot;&#x2F;usr&#x2F;include&#x2F;x86_64-linux-gnu&#x2F;c++&#x2F;7&#x2F;bits&#x2F;c++config.h&quot; 3</span><br><span class="line"></span><br><span class="line"># 229 &quot;&#x2F;usr&#x2F;include&#x2F;x86_64-linux-gnu&#x2F;c++&#x2F;7&#x2F;bits&#x2F;c++config.h&quot; 3</span><br><span class="line">namespace std</span><br><span class="line">&#123;</span><br><span class="line">  typedef long unsigned int size_t;</span><br><span class="line">  typedef long int ptrdiff_t;</span><br><span class="line"></span><br><span class="line">  typedef decltype(nullptr) nullptr_t;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"># 251 &quot;&#x2F;usr&#x2F;include&#x2F;x86_64-linux-gnu&#x2F;c++&#x2F;7&#x2F;bits&#x2F;c++config.h&quot; 3</span><br><span class="line">namespace std</span><br><span class="line">&#123;</span><br><span class="line">  inline namespace __cxx11 __attribute__((__abi_tag__ (&quot;cxx11&quot;))) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line">namespace __gnu_cxx</span><br><span class="line">&#123;</span><br><span class="line">  inline namespace __cxx11 __attribute__((__abi_tag__ (&quot;cxx11&quot;))) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;代码最底部</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line"> int i,n,f;</span><br><span class="line"> cin&gt;&gt;n;</span><br><span class="line"> i &#x3D; 2;</span><br><span class="line"> f &#x3D; 1;</span><br><span class="line"> while(i&lt;&#x3D;n)</span><br><span class="line"> &#123;</span><br><span class="line">  f &#x3D; f*i;</span><br><span class="line">  i &#x3D; i+1;</span><br><span class="line"> &#125;</span><br><span class="line"> cout&lt;&lt;f&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，原先写的C++代码除了这一句 <strong># include&lt;iostream&gt;</strong> 以外，全部放在了.u文件的末尾，那我们的  <strong># include&lt;iostream&gt;</strong>指令呢?</p>
+<p>我们可以查找一下 &lt;iostream&gt; 的具体内容，不难发现他的内容和.u文件中多出来的内容一样。实际上预处理阶段所做的事情就是处理所有的预处理器指令，这类指令的特征是由 <strong>#</strong> 这个符号开头。这些指令并不罕见，除了上面的例子以外，我们还经常会遇到这些，他们都是预处理器指令的一类。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">include</span><span class="meta-string">&lt;ctime&gt;  // 接入头文件</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> F (f*i)  <span class="comment">// 宏定义指令</span></span></span><br></pre></td></tr></table></figure>
+
+<p>不妨通过增加上面两个预处理指令到源代码中，将源代码中的 <strong>f = f * i;</strong> 语句替换成 <strong>f = F ;</strong>，再预处理生成一个新的.u文件，来比较其中的区别。我们可以发现在代码的前端没有变化，但底部变成了这样</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"># 1 &quot;&#x2F;usr&#x2F;include&#x2F;c++&#x2F;7&#x2F;ctime&quot; 1 3</span><br><span class="line"># 39 &quot;&#x2F;usr&#x2F;include&#x2F;c++&#x2F;7&#x2F;ctime&quot; 3</span><br><span class="line">       </span><br><span class="line"># 40 &quot;&#x2F;usr&#x2F;include&#x2F;c++&#x2F;7&#x2F;ctime&quot; 3</span><br><span class="line"># 58 &quot;&#x2F;usr&#x2F;include&#x2F;c++&#x2F;7&#x2F;ctime&quot; 3</span><br><span class="line">namespace std</span><br><span class="line">&#123;</span><br><span class="line">  using ::clock_t;</span><br><span class="line">  using ::time_t;</span><br><span class="line">  using ::tm;</span><br><span class="line"></span><br><span class="line">  using ::clock;</span><br><span class="line">  using ::difftime;</span><br><span class="line">  using ::mktime;</span><br><span class="line">  using ::time;</span><br><span class="line">  using ::asctime;</span><br><span class="line">  using ::ctime;</span><br><span class="line">  using ::gmtime;</span><br><span class="line">  using ::localtime;</span><br><span class="line">  using ::strftime;</span><br><span class="line">&#125;</span><br><span class="line"># 3 &quot;fac2.cpp&quot; 2</span><br><span class="line"></span><br><span class="line"># 5 &quot;fac2.cpp&quot;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    int i,n,f;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    i &#x3D; 2;</span><br><span class="line">    f &#x3D; 1;</span><br><span class="line">    while(i &lt;&#x3D; n)</span><br><span class="line">    &#123;</span><br><span class="line">        f &#x3D; (f*i);</span><br><span class="line">        i &#x3D; i + 1;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; f &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样预处理器所作的操作便已经很清楚了：<strong>预处理器将原先代码中的预处理器指令先进行处理，对源代码进行格式化的处理</strong></p>
+<p>其中的两种预处理器指令<strong>include</strong> 和 <strong>define</strong> 的功能也一目了然。其他的预处理指令也可以通过这种方式知道其用法，这里不深入探讨。</p>
+<blockquote>
+<p><strong>include</strong> 指令将引入的头文件完完全全地附加到源代码中的引入位置</p>
+<p><strong>define</strong> 指令将代码中所有定义的实体替换成被定义的代码，直到它对应的 <strong>undef</strong> 指令出现为止</p>
+</blockquote>
+<h2 id="0x02-What-did-Complier-do"><a href="#0x02-What-did-Complier-do" class="headerlink" title="0x02 What did Complier do"></a>0x02 What did Complier do</h2><p>上一部分里我们通过对比.cpp和.u文件知道了预处理器的功能，这一部分我们将对比.u文件和.s文件比较，从而理解编译器在做什么。</p>
+<p>下面是.s文件中的文本，可以看到我们的cpp程序此时已经变成了一个x86汇编语言程序(<del>越来越不像人话</del>)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">	.file	&quot;factorial.cpp&quot;</span><br><span class="line">	.text</span><br><span class="line">	.section	.rodata</span><br><span class="line">	.type	_ZStL19piecewise_construct, @object</span><br><span class="line">	.size	_ZStL19piecewise_construct, 1</span><br><span class="line">_ZStL19piecewise_construct:</span><br><span class="line">	.zero	1</span><br><span class="line">	.local	_ZStL8__ioinit</span><br><span class="line">	.comm	_ZStL8__ioinit,1,1</span><br><span class="line">	.text</span><br><span class="line">	.globl	main</span><br><span class="line">	.type	main, @function</span><br><span class="line">main:</span><br><span class="line">.LFB1493:</span><br><span class="line">	.cfi_startproc</span><br><span class="line">	pushq	%rbp</span><br><span class="line">	.cfi_def_cfa_offset 16</span><br><span class="line">	.cfi_offset 6, -16</span><br><span class="line">	movq	%rsp, %rbp</span><br><span class="line">	.cfi_def_cfa_register 6</span><br><span class="line">	subq	$32, %rsp</span><br><span class="line">	movq	%fs:40, %rax</span><br><span class="line">	movq	%rax, -8(%rbp)</span><br><span class="line">	xorl	%eax, %eax</span><br><span class="line">	leaq	-20(%rbp), %rax</span><br><span class="line">	movq	%rax, %rsi</span><br><span class="line">	leaq	_ZSt3cin(%rip), %rdi</span><br><span class="line">	call	_ZNSirsERi@PLT</span><br><span class="line">	movl	$2, -16(%rbp)</span><br><span class="line">	movl	$1, -12(%rbp)</span><br><span class="line">.L3:</span><br><span class="line">	movl	-20(%rbp), %eax</span><br><span class="line">	cmpl	%eax, -16(%rbp)</span><br><span class="line">	jg	.L2</span><br><span class="line">	movl	-12(%rbp), %eax</span><br><span class="line">	imull	-16(%rbp), %eax</span><br><span class="line">	movl	%eax, -12(%rbp)</span><br><span class="line">	addl	$1, -16(%rbp)</span><br><span class="line">	jmp	.L3</span><br><span class="line">.L2:</span><br><span class="line">	movl	-12(%rbp), %eax</span><br><span class="line">	movl	%eax, %esi</span><br><span class="line">	leaq	_ZSt4cout(%rip), %rdi</span><br><span class="line">	call	_ZNSolsEi@PLT</span><br><span class="line">	movq	%rax, %rdx</span><br><span class="line">	movq	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_@GOTPCREL(%rip), %rax</span><br><span class="line">	movq	%rax, %rsi</span><br><span class="line">	movq	%rdx, %rdi</span><br><span class="line">	call	_ZNSolsEPFRSoS_E@PLT</span><br><span class="line">	movl	$0, %eax</span><br><span class="line">	movq	-8(%rbp), %rcx</span><br><span class="line">	xorq	%fs:40, %rcx</span><br><span class="line">	je	.L5</span><br><span class="line">	call	__stack_chk_fail@PLT</span><br><span class="line">.L5:</span><br><span class="line">	leave</span><br><span class="line">	.cfi_def_cfa 7, 8</span><br><span class="line">	ret</span><br><span class="line">	.cfi_endproc</span><br><span class="line">.LFE1493:</span><br><span class="line">	.size	main, .-main</span><br><span class="line">	.type	_Z41__static_initialization_and_destruction_0ii, @function</span><br><span class="line">_Z41__static_initialization_and_destruction_0ii:</span><br><span class="line">.LFB1979:</span><br><span class="line">	.cfi_startproc</span><br><span class="line">	pushq	%rbp</span><br><span class="line">	.cfi_def_cfa_offset 16</span><br><span class="line">	.cfi_offset 6, -16</span><br><span class="line">	movq	%rsp, %rbp</span><br><span class="line">	.cfi_def_cfa_register 6</span><br><span class="line">	subq	$16, %rsp</span><br><span class="line">	movl	%edi, -4(%rbp)</span><br><span class="line">	movl	%esi, -8(%rbp)</span><br><span class="line">	cmpl	$1, -4(%rbp)</span><br><span class="line">	jne	.L8</span><br><span class="line">	cmpl	$65535, -8(%rbp)</span><br><span class="line">	jne	.L8</span><br><span class="line">	leaq	_ZStL8__ioinit(%rip), %rdi</span><br><span class="line">	call	_ZNSt8ios_base4InitC1Ev@PLT</span><br><span class="line">	leaq	__dso_handle(%rip), %rdx</span><br><span class="line">	leaq	_ZStL8__ioinit(%rip), %rsi</span><br><span class="line">	movq	_ZNSt8ios_base4InitD1Ev@GOTPCREL(%rip), %rax</span><br><span class="line">	movq	%rax, %rdi</span><br><span class="line">	call	__cxa_atexit@PLT</span><br><span class="line">.L8:</span><br><span class="line">	nop</span><br><span class="line">	leave</span><br><span class="line">	.cfi_def_cfa 7, 8</span><br><span class="line">	ret</span><br><span class="line">	.cfi_endproc</span><br><span class="line">.LFE1979:</span><br><span class="line">	.size	_Z41__static_initialization_and_destruction_0ii, .-_Z41__static_initialization_and_destruction_0ii</span><br><span class="line">	.type	_GLOBAL__sub_I_main, @function</span><br><span class="line">_GLOBAL__sub_I_main:</span><br><span class="line">.LFB1980:</span><br><span class="line">	.cfi_startproc</span><br><span class="line">	pushq	%rbp</span><br><span class="line">	.cfi_def_cfa_offset 16</span><br><span class="line">	.cfi_offset 6, -16</span><br><span class="line">	movq	%rsp, %rbp</span><br><span class="line">	.cfi_def_cfa_register 6</span><br><span class="line">	movl	$65535, %esi</span><br><span class="line">	movl	$1, %edi</span><br><span class="line">	call	_Z41__static_initialization_and_destruction_0ii</span><br><span class="line">	popq	%rbp</span><br><span class="line">	.cfi_def_cfa 7, 8</span><br><span class="line">	ret</span><br><span class="line">	.cfi_endproc</span><br><span class="line">.LFE1980:</span><br><span class="line">	.size	_GLOBAL__sub_I_main, .-_GLOBAL__sub_I_main</span><br><span class="line">	.section	.init_array,&quot;aw&quot;</span><br><span class="line">	.align 8</span><br><span class="line">	.quad	_GLOBAL__sub_I_main</span><br><span class="line">	.hidden	__dso_handle</span><br><span class="line">	.ident	&quot;GCC: (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0&quot;</span><br><span class="line">	.section	.note.GNU-stack,&quot;&quot;,@progbits</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在代码的最后一段，指明了编译器，系统版本等信息，而在代码的中间有大量的类似于 <em>_GLOBAL__sub_I_main</em> 的系统函数调用。这时的程序已经很接近机器可以理解的程序了。但是此时的.s文件仍然是一个能看的文本文档，还没有真正完成他的转换。</p>
+<h2 id="0x03-What-did-Assembler-do"><a href="#0x03-What-did-Assembler-do" class="headerlink" title="0x03 What did Assembler do"></a>0x03 What did Assembler do</h2><p>前面不管是.cpp还是.u还是.s文件，他们好歹是一个可以正常打开的文本文档。在经过了汇编器的处理之后，它就变成了一个学名叫做<strong>可重定位目标程序</strong>的二进制obj文件(后缀为.o)</p>
+<p>当我们想用一些常规的文本编辑器打开.o文件的时候，不出意外地失败了。因为这个文件已经不是常规的文本了，他是用二进制表示的，因此我们选择16进制文本编辑器<strong>winhex</strong>来打开这个文件，就得到了下面的这个截图。</p>
+<p><img src="https://i.loli.net/2020/09/24/IXx8EpgbmvQ93Ke.png" alt="3.png"></p>
+<p>虽然这个东西乍一看非常的离谱，全是数字和乱码，给人的第一反应就是这东西不是人看的。但其实仔细看可以发现整个窗口分为三个部分：最左边的是<strong>Offset偏移量</strong>，它说明了二进制代码的地址相对于开头的偏移量(单位：字节)；而中间的是<strong>每一段从0到15的16个字节的具体内容</strong>，上面的数字能确定这个十六进制数的地址，下面的十六进制数就是内容，比如被选中部分的第一个十六进制数47的位置就是00000313；而最右边的是<strong>ANSI ASCII</strong>，就是winhex很尽力的把中间的内容翻译成字符的结果，我们可以通过右边找到一些关键信息，比如说被选中的这一段 <strong>GCC: (Ubuntu 7.5.0-3ubuntu1~18.04)</strong>，我们可以发现他就是上一部分中.s文件里末尾的<strong>.ident</strong>，接着往下翻也能找到更多的和之前汇编代码相同的内容。因此我们很容易就能得到以下的结果：</p>
+<p>我们知道在一个汇编程序里，采用<a href="https://baike.baidu.com/item/助记符" target="_blank" rel="noopener">助记符</a>表达指令<a href="https://baike.baidu.com/item/操作码" target="_blank" rel="noopener">操作码</a>，采用<a href="https://baike.baidu.com/item/标识符/7105638" target="_blank" rel="noopener">标识符</a>表示指令<a href="https://baike.baidu.com/item/操作数/7658270" target="_blank" rel="noopener">操作数</a>，而汇编器所作的工作就是把助记符和标识符转换成机器可以理解的01指令，也就是机器语言。但是这步得到的机器语言依旧是没有办法运行的，它还不是一个合格的可执行文件–别忘了，里面还有大量的系统函数调用。</p>
+<h2 id="0x04-What-did-Linker-do"><a href="#0x04-What-did-Linker-do" class="headerlink" title="0x04 What did Linker do"></a>0x04 What did Linker do</h2><p>最后的最后，为了让这个.o能编程一个合格的可执行文件，我们还需要一个叫做链接器的大宝贝。链接器通过将不同的.o文件链接在一起，从而使每个.o文件中涉及到的外部函数调用都可以被正常执行，合并在一起后的就是我们的可执行文件了。</p>
+<p>在终端输入以下代码，就可以运行来看看了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ .&#x2F;factorial</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/09/23/nWkxFdaL9JME3ub.png" alt="3.png"></p>
+<h2 id="0x05-What-else？"><a href="#0x05-What-else？" class="headerlink" title="0x05 What else？"></a>0x05 What else？</h2><p>一个编译器的正常工作流程到这里已经是over了，如果时间倒推80年，我靠这篇文章得个奖不是问题，可惜推不得。现在的编译器除了执行这些基础的功能以外，还可以帮助我们的程序员对程序进行优化，调试，让程序自动并行化等。</p>
+<p>比如说对于G++的优化选项一共有-O/-O1,-O2,-O3,-O0,-Os等几个级别，我们可以通过以下的指令来查看不同等级的优化能开启什么样的功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ g++ -Q -O --help&#x3D;optimizers  &#x2F;&#x2F; -O意味着对应的优化等级</span><br></pre></td></tr></table></figure>
+
+<p>下面我们就用 <strong>-O1</strong> 和 <strong>-O2</strong> 来举例，观察其不同的差别。首先是节选的 -O1 启用的优化选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-faggressive-loop-optimizations 	[enabled]</span><br><span class="line">-falign-functions           		[disabled]</span><br><span class="line">-falign-jumps               		[disabled]</span><br><span class="line">-falign-labels              		[disabled]</span><br><span class="line">-falign-loops               		[disabled]</span><br><span class="line">-fassociative-math          		[disabled]</span><br><span class="line">-fasynchronous-unwind-tables 		[enabled]</span><br><span class="line">-fauto-inc-dec              		[enabled]</span><br><span class="line">-fbranch-count-reg          		[enabled]</span><br><span class="line">-fbranch-probabilities      		[disabled]</span><br><span class="line">-fbranch-target-load-optimize 	[disabled]</span><br><span class="line">-fbranch-target-load-optimize2 	[disabled]</span><br><span class="line">-fbtr-bb-exclusive          		[disabled]</span><br><span class="line">-fcaller-saves              		[disabled]</span><br><span class="line">-fcode-hoisting             		[disabled]</span><br><span class="line">-fcombine-stack-adjustments 		[enabled]</span><br><span class="line">-fcompare-elim              		[enabled]</span><br><span class="line">-fconserve-stack            		[disabled]</span><br><span class="line">-fcprop-registers           		[enabled]</span><br><span class="line">-fcrossjumping              		[disabled]</span><br><span class="line">-fcse-follow-jumps          		[disabled]</span><br><span class="line">-fcx-fortran-rules          		[disabled]</span><br><span class="line">-fcx-limited-range          		[disabled]</span><br><span class="line">-fdce                       		[enabled]</span><br></pre></td></tr></table></figure>
+
+<p>之后是 -O2启用的优化选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-faggressive-loop-optimizations 	[enabled]</span><br><span class="line">-falign-functions           		[disabled]</span><br><span class="line">-falign-jumps               		[disabled]</span><br><span class="line">-falign-labels              		[enabled]			&#x2F;&#x2F;new</span><br><span class="line">-falign-loops               		[disabled]</span><br><span class="line">-fassociative-math          		[disabled]</span><br><span class="line">-fasynchronous-unwind-tables 		[enabled]</span><br><span class="line">-fauto-inc-dec              		[enabled]</span><br><span class="line">-fbranch-count-reg          		[enabled]</span><br><span class="line">-fbranch-probabilities      		[disabled]</span><br><span class="line">-fbranch-target-load-optimize 	[disabled]</span><br><span class="line">-fbranch-target-load-optimize2 	[disabled]</span><br><span class="line">-fbtr-bb-exclusive          		[disabled]</span><br><span class="line">-fcaller-saves              		[enabled]			&#x2F;&#x2F;new</span><br><span class="line">-fcode-hoisting             		[enabled]			&#x2F;&#x2F;new</span><br><span class="line">-fcombine-stack-adjustments 		[enabled]</span><br><span class="line">-fcompare-elim              		[enabled]</span><br><span class="line">-fconserve-stack            		[disabled]</span><br><span class="line">-fcprop-registers           		[enabled]</span><br><span class="line">-fcrossjumping              		[enabled]			&#x2F;&#x2F;new</span><br><span class="line">-fcse-follow-jumps          		[enabled]			&#x2F;&#x2F;new</span><br><span class="line">-fcx-fortran-rules          		[disabled]</span><br><span class="line">-fcx-limited-range          		[disabled]</span><br><span class="line">-fdce                       		[enabled]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到-O2是在-O1的基础上开启了新的优化选项，实际上，更高级的优化等级都是在上一级之上增加新的选项。随着编译优化等级的不断提升，可执行程序的性能也不断提升，但是这种提升是以更多的编译时间作为代价的，这也很好理解，毕竟要是没有代价的话肯定顶配拉满。</p>
+<p>同时对于G++编译器而言，它在开启编译优化和没开启编译优化的工作目标也是不一样的。在<strong>没开启编译优化</strong>时，G++的目标是：<strong>减少编译时间并生成预期的结果</strong>，也就是在没有特殊要求的时候，尽快弄完，能使就好，不在乎程序质量优不优。而在开启了编译优化的时候，G++编译器的目的是：<strong>优化性能，减少大小</strong>，就像一个匠人，不光要做到能使，还要<strong>好使</strong>，还要<strong>精细</strong>，但是这就需要慢工出细活，会导致编译时间变长，同时也更难调试。</p>
+<p>此外，通过以下的指令还可以生成文本格式的AST输出和中间代码多阶段的输出。在需要靠这些文件分析的时候可以使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;得到文本格式的AST</span><br><span class="line">$ g++ -fdump-tree-original-raw .&#x2F;***.c </span><br><span class="line">&#x2F;&#x2F;得到中间代码生成的多阶段输出，可以用graphviz可视化</span><br><span class="line">$ g++ -fdump-tree-all-graph .&#x2F;***.c</span><br><span class="line">$ g++ -fdump-rtl-all-graph .&#x2F;***.c</span><br></pre></td></tr></table></figure>
+
+<p>至于其他的功能，比如并行化，调试等功能在此不进行介绍了(<del>篇幅实在长</del>)。最后再说说编译器的历史吧。</p>
+<p>最早的编译器是1950年代，由John Backus带领的小组进行对FORTRAN语言及其编译器的开发。当时的开发工作非常的困难，因为那时候还没有语法分析的技术。这个时候出现了一位天降猛男：<strong>Noam Chomsky</strong>。</p>
+<p>他对于自然语言结构的研究导致了根据语言文法的难易程度以及识别他们所需要的算法来对语言进行分类，其中包括了0,1,2,3四型文法，并且每一类型文法都是前者的一个特例。而<strong>2型文法</strong>(上下文无关文法)被证明是程序设计语言中最有用的，直到今天依旧代表程序设计语言结构的标准。</p>
+<p>同时，<strong>有限状态自动机</strong>(Finite Automaton)和<strong>正则表达式</strong>(Regular Expression)同上下文无关文法紧密相关，对应着上面提到的<strong>3型文法</strong>，对他们的研究和Chomsky的研究几乎是同时开始的，由此引发了表示程序设计语言的单词的符号方式。</p>
+<p>之后的人们又深化了生成有效目标代码的方法，这时便有了最初的编译器。不过虽然被称为<strong>优化技术</strong>(Optimization Technique)，但实际上从未真正的得到过被优化的目标代码，更合适的称呼应该是<strong>代码改进技术</strong>(Code Improvement Technique)。</p>
+<p>这个时候分析问题便不是一个难题了，人们开始投入很大的功夫来研究编译器的自动构造，这些程序被称为<strong>编译器的编译器</strong>(Compiler-compiler),其中最著名的是 <strong>Yacc</strong>，类似的，有限状态自动机的研究也发展出了一种被称为扫描程序生成器的工具，<strong>Lex</strong>。</p>
+<h2 id="0x06-结语"><a href="#0x06-结语" class="headerlink" title="0x06 结语"></a>0x06 结语</h2><p>编译器在编程中是一个非常关键的部分，如果没有编译器的存在，靠汇编指令和机器指令编写几个GB的程序无疑是让人痛苦的。计算机技术能发展到今天的模样，编译器的功劳是不可或缺的。</p>
+<p>在编译器的开发和设计过程中，前人的思想是值得我们去借鉴的。比如用语义分析的方式来化简问题，用抽象的方式来简化设计，用递归的方式来减少工作量，这些都非常值得我们去学习。</p>
+<p>站在巨人的肩膀上，我们能看的更远。但是不要只顾着看向远方，看看巨人们的思想同样能让我们受益匪浅。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/09/26/Compiler%E5%AD%A6%E4%B9%A0-0x02/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/09/19/%E4%B8%AD%E5%9B%BD%E5%95%86%E4%B8%9A%E5%AF%86%E7%A0%81-%E7%A5%96%E5%86%B2%E4%B9%8B%E5%AF%86%E7%A0%81ZUC/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">中国商业密码:祖冲之密码ZUC</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "Ma68dRjESk4fCGvCf2c2zUiC-gzGzoHsz",
+    app_key: "3VxRiJaLej2sxlEQW6BeLl4N",
+    path: window.location.pathname,
+    avatar: "robohash",
+    placeholder: "想夸就夸别憋着~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 刀马WCH
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="净土"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/music">音乐</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+    
+
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":150},"mobile":{"show":true},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
