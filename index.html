@@ -172,6 +172,64 @@
 
     
     <article
+  id="post-Compiler学习-0x03"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/09/29/Compiler%E5%AD%A6%E4%B9%A0-0x03/"
+    >Compiler学习-0x03</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/09/29/Compiler%E5%AD%A6%E4%B9%A0-0x03/" class="article-date">
+  <time datetime="2020-09-29T11:47:45.000Z" itemprop="datePublished">2020-09-29</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业03-1811437-吴昌昊"><a href="#编译系统原理预习作业03-1811437-吴昌昊" class="headerlink" title="编译系统原理预习作业03_1811437_吴昌昊"></a>编译系统原理预习作业03_1811437_吴昌昊</h1><h2 id="1：翻译模式设计"><a href="#1：翻译模式设计" class="headerlink" title="1：翻译模式设计"></a>1：翻译模式设计</h2><blockquote>
+<p>构造翻译模式，中缀→前缀，构造<strong>9-5*2</strong>的带语义动作的语法分析树。</p>
+</blockquote>
+<p>构造带语义动作的产生式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">expr → &#123;print(&#39;+&#39;)&#125; expr + term </span><br><span class="line">	 → &#123;print(&#39;-&#39;)&#125; expr - term</span><br><span class="line">	 → term</span><br><span class="line"></span><br><span class="line">term → &#123;print(&#39;*&#39;)&#125; term * fact</span><br><span class="line">	 → &#123;print(&#39;&#x2F;&#39;)&#125; term &#x2F; fact</span><br><span class="line">	 → fact</span><br><span class="line">	 </span><br><span class="line">fact → (expr)</span><br><span class="line">	 → &#123;print(&#39;0&#39;)&#125;	0	</span><br><span class="line">	 ......</span><br><span class="line">	 → &#123;print(&#39;9&#39;)&#125; 9</span><br></pre></td></tr></table></figure>
+
+<p>根据上面的产生式，可以制作带语义动作的语法分析树如下</p> 
+      <a class="article-more-link" href="/2020/09/29/Compiler%E5%AD%A6%E4%B9%A0-0x03/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-Compiler学习-0x02"
   class="article article-type-post"
   itemscope
@@ -636,70 +694,13 @@
 </article>
 
     
-    <article
-  id="post-飙马野郎，末代侠客-Arthur·Morgan"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/08/04/%E9%A3%99%E9%A9%AC%E9%87%8E%E9%83%8E%EF%BC%8C%E6%9C%AB%E4%BB%A3%E4%BE%A0%E5%AE%A2-Arthur%C2%B7Morgan/"
-    >飙马野郎，末代侠客--Arthur·Morgan</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/08/04/%E9%A3%99%E9%A9%AC%E9%87%8E%E9%83%8E%EF%BC%8C%E6%9C%AB%E4%BB%A3%E4%BE%A0%E5%AE%A2-Arthur%C2%B7Morgan/" class="article-date">
-  <time datetime="2020-08-04T02:58:03.000Z" itemprop="datePublished">2020-08-04</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="飙马野郎，末代侠客–Arthur·Morgan"><a href="#飙马野郎，末代侠客–Arthur·Morgan" class="headerlink" title="飙马野郎，末代侠客–Arthur·Morgan"></a>飙马野郎，末代侠客–Arthur·Morgan</h1><blockquote>
-<p>有个没有鼻子的人正在追你，不要睡得太沉，否则他就会追上你</p>
-</blockquote>
-<p>《荒野大镖客2：救赎》是R星在18年发布的一款关于美国西部拓荒时期的牛仔的游戏，剧情上是其在10年发布的《荒野大镖客》的前传，聚焦于主角亚瑟·摩根，讲述了他传奇而悲剧的一生。</p>
-<p>游戏的游戏性和画面无须我来赘述，随便去任何一个论坛都能看到如潮般的好评，独特的设定和细节，宏大的世界地图和丰富的游戏元素带给人的是无比真实的沉浸体验，也因此让玩家被剧情所吸引，因其喜而喜，因其悲而悲。</p>
-<p>我就是这么一个被他吸引的玩家，在我们的主角亚瑟·摩根迎来了他人生的结局之时，在为他感到悲痛和惋惜之余，我也想写一点东西，纪念这位西部的飙马野郎，这位复杂的善良黑帮，这位豁达的末代侠客，这位我游戏人生10余年以来印象最深的一位人物。</p> 
-      <a class="article-more-link" href="/2020/08/04/%E9%A3%99%E9%A9%AC%E9%87%8E%E9%83%8E%EF%BC%8C%E6%9C%AB%E4%BB%A3%E4%BE%A0%E5%AE%A2-Arthur%C2%B7Morgan/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%B1%E7%8E%A9%E6%B8%B8%E6%88%8F%E7%9A%84WCH%E7%9A%84%E5%AD%98%E6%A1%A3/" rel="tag">爱玩游戏的WCH的存档</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
   
 </section>
