@@ -198,7 +198,7 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="编译系统原理预习作业03-1811437-吴昌昊"><a href="#编译系统原理预习作业03-1811437-吴昌昊" class="headerlink" title="编译系统原理预习作业03_1811437_吴昌昊"></a>编译系统原理预习作业03_1811437_吴昌昊</h1><h2 id="1：翻译模式设计"><a href="#1：翻译模式设计" class="headerlink" title="1：翻译模式设计"></a>1：翻译模式设计</h2><blockquote>
+  <h1 id="编译系统原理预习作业03-刀马WCH"><a href="#编译系统原理预习作业03-刀马WCH" class="headerlink" title="编译系统原理预习作业03@刀马WCH"></a>编译系统原理预习作业03@刀马WCH</h1><h2 id="1：翻译模式设计"><a href="#1：翻译模式设计" class="headerlink" title="1：翻译模式设计"></a>1：翻译模式设计</h2><blockquote>
 <p>构造翻译模式，中缀→前缀，构造<strong>9-5*2</strong>的带语义动作的语法分析树。</p>
 </blockquote>
 <p>构造带语义动作的产生式如下：</p>
@@ -256,7 +256,7 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="What-happened？–从C-到机器语言"><a href="#What-happened？–从C-到机器语言" class="headerlink" title="What happened？–从C++到机器语言"></a>What happened？–从C++到机器语言</h1><blockquote>
+  <h1 id="What-happened？–从C-到机器语言-刀马WCH"><a href="#What-happened？–从C-到机器语言-刀马WCH" class="headerlink" title="What happened？–从C++到机器语言@刀马WCH"></a>What happened？–从C++到机器语言@刀马WCH</h1><blockquote>
 <p>我们都知道输入 <strong>cout &lt;&lt; “hello world” ;</strong> 可以让机器在屏幕上显示一串 <em>hello world</em>，但是你知道为什么输入这句指令就可以得到这个结果吗？或者说，你知道在整个编译过程中，<strong>预处理器</strong>，<strong>编译器</strong>，<strong>汇编器</strong>和<strong>链接器</strong>都做了什么吗？</p>
 </blockquote>
 <p>关键词：<strong>编译</strong>，<strong>汇编</strong>，<strong>预处理</strong>，<strong>编程语言</strong>，<strong>机器语言</strong>，<strong>G++</strong> ，<strong>C++</strong></p> 
@@ -311,7 +311,7 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="编译系统原理预习作业02-1811437-吴昌昊"><a href="#编译系统原理预习作业02-1811437-吴昌昊" class="headerlink" title="编译系统原理预习作业02_1811437_吴昌昊"></a>编译系统原理预习作业02_1811437_吴昌昊</h1><h2 id="1：CFG设计练习"><a href="#1：CFG设计练习" class="headerlink" title="1：CFG设计练习"></a>1：CFG设计练习</h2><p>设计产生式描述while语句</p>
+  <h1 id="编译系统原理预习作业02-刀马WCH"><a href="#编译系统原理预习作业02-刀马WCH" class="headerlink" title="编译系统原理预习作业02@刀马WCH"></a>编译系统原理预习作业02@刀马WCH</h1><h2 id="1：CFG设计练习"><a href="#1：CFG设计练习" class="headerlink" title="1：CFG设计练习"></a>1：CFG设计练习</h2><p>设计产生式描述while语句</p>
 <blockquote>
 <p>while(expression)  statement</p>
 </blockquote>
@@ -374,7 +374,7 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="Complier学习-0x00"><a href="#Complier学习-0x00" class="headerlink" title="Complier学习-0x00"></a>Complier学习-0x00</h1><h2 id="1：C语言编程和优化"><a href="#1：C语言编程和优化" class="headerlink" title="1：C语言编程和优化"></a>1：C语言编程和优化</h2><p>需要下面两个功能相同的代码谁的速度更快。</p>
+  <h1 id="编译系统原理预习作业01-刀马WCH"><a href="#编译系统原理预习作业01-刀马WCH" class="headerlink" title="编译系统原理预习作业01@刀马WCH"></a>编译系统原理预习作业01@刀马WCH</h1><h2 id="1：C语言编程和优化"><a href="#1：C语言编程和优化" class="headerlink" title="1：C语言编程和优化"></a>1：C语言编程和优化</h2><p>需要下面两个功能相同的代码谁的速度更快。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* loop 1*&#x2F;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	a[i] &#x3D; a[i]*2000;</span><br><span class="line">	a[i] &#x3D; a[i]&#x2F;10000;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;* loop 2 *&#x2F;</span><br><span class="line">b &#x3D; a;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	*b &#x3D; *b*2000;</span><br><span class="line">	*b &#x3D; *b&#x2F;10000;</span><br><span class="line">	b++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>初步判断，loop2要更快一点，因为直接对于指针进行操作，而不是loop1对偏移量操作，省略一次加法。 编写代码测试如下</p> 
