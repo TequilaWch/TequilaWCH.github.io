@@ -20,6 +20,73 @@
       </tags>
   </entry>
   <entry>
+    <title>Compiler学习-0x04</title>
+    <url>/2020/10/11/Compiler%E5%AD%A6%E4%B9%A0-0x04/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="lab2–自己做个编译器-刀马WCH"><a href="#lab2–自己做个编译器-刀马WCH" class="headerlink" title="lab2–自己做个编译器@刀马WCH"></a>lab2–自己做个编译器@刀马WCH</h1><blockquote>
+<p>基于上次实验的结果，我们知道了一个程序从c++到机器语言经过了怎样的过程。在这次的实验中我们要开始为自己的编译器做准备了。这次的工作比较简单，我们要做的是定义自己的C语言子集–利用上下文无关文法；以及对一个c程序编写一个等价的汇编程序实现相同的功能。</p>
+</blockquote>
+<p>关键词：上下文无关文法，汇编程序，c语言子集</p>
+<a id="more"></a>
+
+<h2 id="0x01-定义C语言子集"><a href="#0x01-定义C语言子集" class="headerlink" title="0x01: 定义C语言子集"></a>0x01: 定义C语言子集</h2><blockquote>
+<p>你所使用的编译器支持哪些主要的C(C++)语言特性？在此基础上定义你的编译器支持的C语言子集，并用C语言描述你的C语言子集</p>
+</blockquote>
+<p>不管是GCC还是Visual Studio，他们基本上支持所有的C语言特性，所以轮不到我们为他操心。先为自己的C语言子集做准备吧。从最基本的东西一点点往上加，才能做出最后的成品。</p>
+<ol>
+<li><p>要利用C语言实现运算，首先要有变量，先从整数类型int开始</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># vDec:变量声明语句; type:变量类型; idlist:变量名列表;</span><br><span class="line">vDec   → type idlist						</span><br><span class="line">type   → int</span><br><span class="line">idlist → id,idlist | id</span><br><span class="line"># VT&#x3D;&#123;int&#125;; VN&#x3D;&#123;vDec,type,idlist&#125;; S&#x3D;vDec</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>有了变量之后还要给变量赋值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># asExpr:赋值表达式; expr:普通表达式; unExpr:一元表达式; biExpr:二元表达式;</span><br><span class="line"># digit:数值; num:数字;</span><br><span class="line">asExpr → id &#x3D; expr</span><br><span class="line">expr   → asExpr | unExpr | biExpr</span><br><span class="line">unExpr → digit | id</span><br><span class="line">digit  → digit num</span><br><span class="line">num    → 0 | 1 | ... | 9</span><br><span class="line"># biExpr在下一个片段说</span><br><span class="line"># VT&#x3D;&#123;id,num&#125;; VN&#x3D;&#123;asExpr,expr.unExpr,digit,biExpr&#125;; S&#x3D;asExpr</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>biExpr中实现加减乘除模五个运算</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># biExpr:二元表达式; addExp:加减表达式; mulExp:乘除模表达式;</span><br><span class="line">biExpr → addExp </span><br><span class="line">addExp → addExp + mulEXP | addExp - mulExp | mulExp</span><br><span class="line">mulExp → mulExp * unExpr | mulExp &#x2F; unExpr | mulExp % unExpr | unExpr</span><br><span class="line">unExpr → digit | id</span><br><span class="line">digit  → digit num</span><br><span class="line">num    → 0 | 1 | ... | 9</span><br><span class="line"># VT&#x3D;&#123;id,num&#125;; VN&#x3D;&#123;biExpr,addExp,mulExp,unExpr,digit&#125;; S&#x3D;biExpr</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>还有一种比较特别的单拿出来，就是关系表达式relExp和相等表达式eqExpr，实现大于小于等于逻辑关系</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># relExp:关系表达式; eqExpr:相等表达式;</span><br><span class="line">relExp → relExp &gt;  addExp</span><br><span class="line">	   → relExp &lt;  addExp</span><br><span class="line">	   → relExp &gt;&#x3D; addExp</span><br><span class="line">	   → relExp &lt;&#x3D; addExp</span><br><span class="line">	   → addExp</span><br><span class="line">eqExpr → relExp | eqExpr !&#x3D; relExp | eqExpr &#x3D;&#x3D; relExp</span><br><span class="line"># VT&#x3D;&#123;id,num&#125;; VN&#x3D;&#123;eqExpr,relExp,addExp&#125;; S&#x3D;eqExpr</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>除了正常的执行顺序，还需要一些分支语 句和循环语句来满足使用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># stmt:语句</span><br><span class="line">stmt     → if(eqExpr) stmt else stmt</span><br><span class="line">stmt     → while(eqExpr) stmt</span><br><span class="line">stmt     → for(expr;eqExpr;expr) stmt</span><br><span class="line">stmt     → expr; [expr;]</span><br><span class="line"># VT&#x3D;&#123;if,while,for,else&#125;; VN&#x3D;&#123;stmt,eqExpr,expr&#125;; S&#x3D;stmt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后还要有函数定义，这个是编程的灵魂</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># fDef:函数定义语句; paralist:参数列表; pDec:参数定义; epsilon:空;</span><br><span class="line">fDef     → type fname (paralist) stmt</span><br><span class="line">paralist → paralist, pDec | pDec | epsilon</span><br><span class="line">pDec     → type id</span><br><span class="line"># VT&#x3D;&#123;id&#125;; VN&#x3D;&#123;fDef,paralist,pDec&#125;; S&#x3D;fDef</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>有了上面这些定义，应该就囊括了最基本的C语言特性了(希望如此)。初步的准备工作到此结束。</p>
+<h2 id="0x02-编写一个C程序的汇编程序"><a href="#0x02-编写一个C程序的汇编程序" class="headerlink" title="0x02: 编写一个C程序的汇编程序"></a>0x02: 编写一个C程序的汇编程序</h2><blockquote>
+<p>对某个C程序编写等价的汇编程序，用汇编器生成可执行程序，调试通过，能正常运行</p>
+</blockquote>
+<p>长期以来，编程界都认为刚接触一门新语言时，如果首先使用它来编写一个在屏幕上显示消息“Hello world!”的程序，将给你带来好运。所以我们就来写一个helloworld的x86汇编程序吧。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* helloworld.c */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello,World! \n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	hello();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为这个简单的c程序编写如下的x86汇编代码myhello.s</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rodata段 储存常量</span><br><span class="line">	.section .rodata</span><br><span class="line">STR0:</span><br><span class="line">	.string &quot;Hello,World! \n&quot;</span><br><span class="line"># hello</span><br><span class="line">	.text</span><br><span class="line">	.globl hello</span><br><span class="line">	.type  hello, @function</span><br><span class="line">hello:</span><br><span class="line">#printf()</span><br><span class="line">	pushl $STR0</span><br><span class="line">	call printf</span><br><span class="line">	addl $4,%esp</span><br><span class="line">	ret</span><br><span class="line"># main</span><br><span class="line">	.text</span><br><span class="line">	.globl main</span><br><span class="line">	.type main, @function</span><br><span class="line">main:</span><br><span class="line"># hello()</span><br><span class="line">	call hello</span><br><span class="line"># return 0</span><br><span class="line">	movl $0,%eax</span><br><span class="line">	ret</span><br><span class="line"># 听从建议保留</span><br><span class="line">	.section        .note.GNU-stack,&quot;&quot;,@progbits</span><br></pre></td></tr></table></figure>
+
+<p>通过以下命令生成一个myhello.out文件，在qemu-i386上运行，正常输出了一个helloworld，得行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ gcc myhello.s -m32 -o myhello.out</span><br><span class="line">$ qemu-i386 myhello.out</span><br></pre></td></tr></table></figure>
+
+<p>但是我们上面费老大劲写的这么多CFG，光写个helloworld显得我们做了很多无用功，我们编写一个包括了上面所有内容的程序torture.c。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* torture.c */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_mult</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(i&lt;<span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"a+b=: %d\n"</span>,a+b);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"a*b=: %d\n"</span>,a*b);</span><br><span class="line">        &#125;</span><br><span class="line">        i = i + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>,b = <span class="number">1</span>;</span><br><span class="line">    add_mult(a,b);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自己编写mytor.s如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rodata段 储存常量</span><br><span class="line">	.section .rodata</span><br><span class="line">STR0:</span><br><span class="line">	.string &quot;a+b&#x3D;: %d\n&quot;</span><br><span class="line">STR1:</span><br><span class="line">	.string &quot;a*b&#x3D;: %d\n&quot;</span><br><span class="line">	</span><br><span class="line"># 函数add_mult</span><br><span class="line">	.text</span><br><span class="line">	.globl add_mult</span><br><span class="line">	.type  add_mult, @function</span><br><span class="line">add_mult:</span><br><span class="line"># int i &#x3D; 0;</span><br><span class="line">	movl $0,%edx</span><br><span class="line"># a存到%ebx,b存到%ecx	</span><br><span class="line">	movl 4(%esp),%ebx</span><br><span class="line">	movl 8(%esp),%ecx</span><br><span class="line"># while(i&lt;2)</span><br><span class="line">	jmp  judge</span><br><span class="line">do:</span><br><span class="line">	# if(i &#x3D;&#x3D; 0)</span><br><span class="line">	cmpl $0,%edx</span><br><span class="line">	jne  p2</span><br><span class="line">	# printf(&quot;a+b&#x3D;: %d\n&quot;,a+b);</span><br><span class="line">p1:	</span><br><span class="line">	movl %ebx,%eax</span><br><span class="line">	addl %ecx,%eax</span><br><span class="line">	pushl %edx</span><br><span class="line">	pushl %eax</span><br><span class="line">	pushl $STR0</span><br><span class="line">	call printf</span><br><span class="line">	addl $8,%esp</span><br><span class="line">	popl %edx</span><br><span class="line">	jmp  inc</span><br><span class="line">	# printf(&quot;a*b&#x3D;: %d\n&quot;,a*b);</span><br><span class="line">p2:</span><br><span class="line">	pushl %edx</span><br><span class="line">	movl %ebx,%eax</span><br><span class="line">	imull %ecx,%eax</span><br><span class="line">	pushl %eax</span><br><span class="line">	pushl $STR1</span><br><span class="line">	call printf</span><br><span class="line">	addl $8,%esp</span><br><span class="line">	popl  %edx</span><br><span class="line">	# i &#x3D; i + 1;</span><br><span class="line">inc:</span><br><span class="line">	addl $1,%edx</span><br><span class="line">judge:</span><br><span class="line">	cmpl $2,%edx</span><br><span class="line">	jl   do</span><br><span class="line">	ret</span><br><span class="line"># 函数main</span><br><span class="line">	.text</span><br><span class="line">	.globl main</span><br><span class="line">	.type  main, @function</span><br><span class="line">main:</span><br><span class="line"># int a&#x3D;0,b&#x3D;1;</span><br><span class="line">	movl $0,%eax</span><br><span class="line">	movl $1,%ebx</span><br><span class="line"># add_mult(a,b)</span><br><span class="line">	pushl %ebx</span><br><span class="line">	pushl %eax</span><br><span class="line">	call  add_mult</span><br><span class="line">	addl  $8,%esp</span><br><span class="line"># return 0	</span><br><span class="line">	movl $0,%eax</span><br><span class="line">	ret</span><br><span class="line"># 听从建议保留</span><br><span class="line">	.section        .note.GNU-stack,&quot;&quot;,@progbits</span><br></pre></td></tr></table></figure>
+
+<p>能跑出正确的结果，这个实验部分到此告一段落。</p>
+<h2 id="0x03：思考"><a href="#0x03：思考" class="headerlink" title="0x03：思考"></a>0x03：思考</h2><p> 要实现一个计算机程序将C程序转化成汇编程序，应该经过这样几步：</p>
+<ol>
+<li>为每一种语法设计翻译规则</li>
+<li>采用算法将输入的语句于语法规则匹配</li>
+<li>如果某一语句没有符合的语法，弹出错误信息并终止尝试；</li>
+<li>按照语法规则翻译C程序，输出生成的汇编程序</li>
+</ol>
+<p>编译器肯定不能只翻译一个程序，而应该把所有的这种语言写的程序给翻译了。这个时候我们需要用到语法制导翻译：根据对应的属性来生成对应的代码。</p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Compiler学习-0x03</title>
     <url>/2020/09/29/Compiler%E5%AD%A6%E4%B9%A0-0x03/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="编译系统原理预习作业03-刀马WCH"><a href="#编译系统原理预习作业03-刀马WCH" class="headerlink" title="编译系统原理预习作业03@刀马WCH"></a>编译系统原理预习作业03@刀马WCH</h1><h2 id="1：翻译模式设计"><a href="#1：翻译模式设计" class="headerlink" title="1：翻译模式设计"></a>1：翻译模式设计</h2><blockquote>
