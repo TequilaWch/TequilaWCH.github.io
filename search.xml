@@ -25,6 +25,33 @@
       </tags>
   </entry>
   <entry>
+    <title>Compiler学习-0x05</title>
+    <url>/2020/10/18/Compiler%E5%AD%A6%E4%B9%A0-0x05/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="编译系统原理预习作业04-刀马WCH"><a href="#编译系统原理预习作业04-刀马WCH" class="headerlink" title="编译系统原理预习作业04@刀马WCH"></a>编译系统原理预习作业04@刀马WCH</h1><h2 id="1：画状态转换图"><a href="#1：画状态转换图" class="headerlink" title="1：画状态转换图"></a>1：画状态转换图</h2><blockquote>
+<p>尝试画正则表达式(a|b)*abb对应的状态转换图。</p>
+</blockquote>
+<p><img src="https://i.loli.net/2020/10/18/Zv5MDF7S9uHk4wf.png" alt="IMG_0036.PNG"></p>
+<h2 id="2：设计有限自动机"><a href="#2：设计有限自动机" class="headerlink" title="2：设计有限自动机"></a>2：设计有限自动机</h2><blockquote>
+<p>设计一个不包含子串011的0，1串</p>
+</blockquote>
+<p>转换图如下</p>
+<p><img src="https://i.loli.net/2020/10/18/XFcgl1G3xUV7wdQ.png" alt="IMG_0033.PNG"></p>
+<p>其对应的五元组如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">S  &#x3D;  &#123;0，1，2，3&#125; </span><br><span class="line">s0 &#x3D;  0</span><br><span class="line">F  &#x3D;  &#123;0，1，2&#125;</span><br><span class="line">Σ  &#x3D;  &#123;0，1&#125;</span><br><span class="line">δ(0,0)  &#x3D; 1, δ(1,0)  &#x3D; 1, δ(2,0)  &#x3D; 1, δ(3,0)  &#x3D; 3</span><br><span class="line">δ(0,1)  &#x3D; 0, δ(1,1)  &#x3D; 2, δ(2,1)  &#x3D; 3, δ(3,1)  &#x3D; 3</span><br></pre></td></tr></table></figure>
+
+<h2 id="3：正则表达式→NFA"><a href="#3：正则表达式→NFA" class="headerlink" title="3：正则表达式→NFA"></a>3：正则表达式→NFA</h2><blockquote>
+<p>((ε | a)b*)*</p>
+</blockquote>
+<p>分解下来是这样的一个正则表达式</p>
+<p><img src="https://i.loli.net/2020/10/18/EzjcPsoNCL2t3a6.png" alt="IMG_0034.PNG"></p>
+<p>因此由这个正则表达式生成NFA的过程如下</p>
+<p><img src="https://i.loli.net/2020/10/18/m1rXWv6VZPLeJQK.png" alt="IMG_0035.PNG"></p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Compiler学习-0x04</title>
     <url>/2020/10/11/Compiler%E5%AD%A6%E4%B9%A0-0x04/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="lab2–自己做个编译器-刀马WCH"><a href="#lab2–自己做个编译器-刀马WCH" class="headerlink" title="lab2–自己做个编译器@刀马WCH"></a>lab2–自己做个编译器@刀马WCH</h1><blockquote>
