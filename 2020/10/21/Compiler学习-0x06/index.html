@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta name="baidu-site-verification" content="R9wFeVUEye" />
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Compiler学习-0x06 |  净土
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/taiji.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Compiler学习-0x06"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Compiler学习-0x06
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/21/Compiler%E5%AD%A6%E4%B9%A0-0x06/" class="article-date">
+  <time datetime="2020-10-21T09:03:21.000Z" itemprop="datePublished">2020-10-21</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">14 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="语法分析器辅助构造工具-刀马WCH"><a href="#语法分析器辅助构造工具-刀马WCH" class="headerlink" title="语法分析器辅助构造工具@刀马WCH"></a>语法分析器辅助构造工具@刀马WCH</h1><p>这个报告不用交，就写的不太正式，主要是贴代码和自己踩过的坑。</p>
+<h2 id="0x01：熟悉Bison的使用并修改讲义中的Yacc程序"><a href="#0x01：熟悉Bison的使用并修改讲义中的Yacc程序" class="headerlink" title="0x01：熟悉Bison的使用并修改讲义中的Yacc程序"></a>0x01：熟悉Bison的使用并修改讲义中的Yacc程序</h2><blockquote>
+<ol>
+<li>将所有的词法分析功能均放在yylex函数内实现，为+,-,*,,(,)每个运算符分别定义一个单词类别，在yylex内实现代码，能识别这些单词，并将单词类别返回给词法分析程序</li>
+<li>实现功能更强的词法分析程序，可识别并忽略空格，制表符，回车等空白符，能识别多位十进制整数。</li>
+<li>修改Yacc程序，不进行表达式的计算，而是实现中缀表达式到后缀表达式的转换</li>
+</ol>
+</blockquote>
+<p>这个部分没遇到啥坑，极其简单，myacc01程序满足要求1，2；myacc02程序满足要求3。源码如下：</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">%&#123;</span><br><span class="line">    &#x2F;* myacc01.y is a yacc program for lab3 one and two. code by wch *&#x2F;</span><br><span class="line">    #include&lt;stdio.h&gt;</span><br><span class="line">    #include&lt;stdlib.h&gt;</span><br><span class="line">    #ifndef YYSTYPE</span><br><span class="line">    #define YYSTYPE double</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    int yylex();</span><br><span class="line"></span><br><span class="line">    extern int yyparse();</span><br><span class="line"></span><br><span class="line">    FILE* yyin;</span><br><span class="line"></span><br><span class="line">    void yyerror(const char* s);</span><br><span class="line">    %&#125;</span><br><span class="line"></span><br><span class="line">%token NUMBER ADD SUB MUL DIV LBR RBR </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%left ADD SUB</span><br><span class="line">%left MUL DIV</span><br><span class="line">%right UMINUS</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines	:	lines expr &#39;;&#39; &#123; printf(&quot;%f\n&quot;, $2); &#125;</span><br><span class="line">|	lines &#39;;&#39;</span><br><span class="line">|	</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">expr	:	expr ADD expr &#123; $$ &#x3D; $1 + $3; &#125;</span><br><span class="line">|	expr SUB expr &#123; $$ &#x3D; $1 - $3; &#125;</span><br><span class="line">|	expr MUL expr &#123; $$ &#x3D; $1 * $3; &#125;</span><br><span class="line">|	expr DIV expr &#123; $$ &#x3D; $1 &#x2F; $3; &#125;</span><br><span class="line">|	LBR expr RBR  &#123; $$ &#x3D; $2; &#125;</span><br><span class="line">|	SUB expr %prec UMINUS &#123; $$ &#x3D; -$2; &#125;</span><br><span class="line">|	NUMBER &#123; $$ &#x3D; $1; &#125;</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line">int yylex()</span><br><span class="line">&#123;</span><br><span class="line">    int t;</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        t &#x3D; getchar();</span><br><span class="line">        if(t &#x3D;&#x3D; &#39;\n&#39; || t &#x3D;&#x3D; &#39; &#39; || t &#x3D;&#x3D; &#39;\t&#39;);</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;+&#39;)return ADD;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;-&#39;)return SUB;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;*&#39;)return MUL;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x2F;&#39;)return DIV;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;(&#39;)return LBR;</span><br><span class="line">            else if(t &#x3D;&#x3D; &#39;)&#39;)return RBR;</span><br><span class="line">        else if(isdigit(t))</span><br><span class="line">        &#123;</span><br><span class="line">            yylval &#x3D; 0;</span><br><span class="line">            while(isdigit(t))</span><br><span class="line">            &#123;</span><br><span class="line">                yylval &#x3D; yylval * 10 + t - &#39;0&#39;;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">            &#125;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return NUMBER;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#96;&#39;)</span><br><span class="line"></span><br><span class="line">        else return t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    yyin &#x3D; stdin;</span><br><span class="line">    do&#123;</span><br><span class="line">        yyparse();</span><br><span class="line">        &#125;while(!feof(yyin));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void yyerror(const char* s)</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;Parse error: %s\n&quot;, s);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">%&#123;</span><br><span class="line">    &#x2F;* myacc02.y is a yacc program for lab3 three. code by wch *&#x2F;</span><br><span class="line">    #include&lt;stdio.h&gt;</span><br><span class="line">    #include&lt;stdlib.h&gt;</span><br><span class="line">    #include&lt;string.h&gt;</span><br><span class="line">    #ifndef YYSTYPE</span><br><span class="line">    #define YYSTYPE char*</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    char idStr[50];</span><br><span class="line">    char numStr[50];</span><br><span class="line"></span><br><span class="line">    int yylex();</span><br><span class="line">    extern int yyparse();</span><br><span class="line"></span><br><span class="line">    FILE* yyin;</span><br><span class="line">    void yyerror(const char* s);</span><br><span class="line">    %&#125;</span><br><span class="line"></span><br><span class="line">%token NUMBER ADD SUB MUL DIV ID LBR RBR</span><br><span class="line"></span><br><span class="line">%left ADD SUB</span><br><span class="line">%left MUL DIV</span><br><span class="line">%right UMINUS</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines	:	lines expr &#39;\n&#39; &#123; printf(&quot;%s\n&quot;, $2); &#125;</span><br><span class="line">|	lines &#39;\n&#39;</span><br><span class="line">|	</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">expr	:	expr ADD expr &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,$3);strcat($$,&quot;+ &quot;); &#125;</span><br><span class="line">|	expr SUB expr &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,$3);strcat($$,&quot;- &quot;); &#125;</span><br><span class="line">|	expr MUL expr &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,$3);strcat($$,&quot;* &quot;); &#125;</span><br><span class="line">|	expr DIV expr &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,$3);strcat($$,&quot;&#x2F; &quot;); &#125;</span><br><span class="line">|	LBR expr RBR  &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$2); &#125;</span><br><span class="line">|	NUMBER &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,&quot; &quot;); &#125;</span><br><span class="line">|	ID &#123; $$ &#x3D; (char *)malloc(50*sizeof(char));strcpy($$,$1);strcat($$,&quot; &quot;); &#125;</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line">int yylex()</span><br><span class="line">&#123;</span><br><span class="line">    int t;</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line">        t &#x3D; getchar();</span><br><span class="line">        if(t &#x3D;&#x3D; &#39; &#39; || t &#x3D;&#x3D; &#39;\t&#39;);</span><br><span class="line">        else if(( t &gt;&#x3D; &#39;0&#39;) &amp;&amp; (t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">        &#123;</span><br><span class="line">            int ti &#x3D; 0;</span><br><span class="line">            while(( t &gt;&#x3D; &#39;0&#39;) &amp;&amp; (t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">            &#123;</span><br><span class="line">                numStr[ti] &#x3D; t;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">                ti++;</span><br><span class="line">            &#125;</span><br><span class="line">            numStr[ti] &#x3D; &#39;\0&#39;;</span><br><span class="line">            yylval &#x3D; numStr;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return NUMBER;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(( t &gt;&#x3D; &#39;a&#39; &amp;&amp; t &lt;&#x3D; &#39;z&#39; ) || ( t &gt;&#x3D; &#39;A&#39; &amp;&amp; t &lt;&#x3D; &#39;Z&#39;) || ( t &#x3D;&#x3D; &#39;_&#39; ))</span><br><span class="line">        &#123;</span><br><span class="line">            int ti &#x3D; 0;</span><br><span class="line">            while(( t &gt;&#x3D; &#39;a&#39; &amp;&amp; t &lt;&#x3D; &#39;z&#39; ) || ( t &gt;&#x3D; &#39;A&#39; &amp;&amp; t &lt;&#x3D; &#39;Z&#39;) || ( t &#x3D;&#x3D; &#39;_&#39; ) || (t &gt;&#x3D; &#39;0&#39; &amp;&amp; t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">            &#123;</span><br><span class="line">                idStr[ti] &#x3D; t;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">                ti++;</span><br><span class="line">            &#125;</span><br><span class="line">            idStr[ti] &#x3D; &#39;\0&#39;;</span><br><span class="line">            yylval &#x3D; idStr;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return ID;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;+&#39;)return ADD;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;-&#39;)return SUB;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;*&#39;)return MUL;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x2F;&#39;)return DIV;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;(&#39;)return LBR;</span><br><span class="line">            else if(t &#x3D;&#x3D; &#39;)&#39;)return RBR;</span><br><span class="line">        else return t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    yyin &#x3D; stdin;</span><br><span class="line">    do&#123;</span><br><span class="line">        yyparse();</span><br><span class="line">        &#125;while(!feof(yyin));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void yyerror(const char* s)</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;Parse error: %s\n&quot;, s);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02：思考"><a href="#0x02：思考" class="headerlink" title="0x02：思考"></a>0x02：思考</h2><blockquote>
+<ul>
+<li>在1.2的基础上，实现功能更强的词法分析和语法分析程序，使之能支持变量，修改词法分析程序，能识别变量(标识符)和“=”符号，修改语法分析器，使之能分析，翻译“a=2”形式的赋值语句(或者更复杂“a=表达式”)，当变量出现在表达式中时，能正确获取其值进行计算(未赋值的变量取0).当然，这些都需要实现符号表功能。</li>
+<li>将翻译目标改为生成汇编代码</li>
+</ul>
+</blockquote>
+<p>写这个部分就有点让人头疼了，写了两个版本都不能很好的完成功能。</p>
+<p>变量的赋值和存储比较好搞定，用一个map数据结构就可以(其实用数组就行，但是数组不好查询)；</p>
+<p>第一个版本中<strong>yylval声明为double类型</strong>，在这个架构下可以正常的赋值和运算，但是变量名只能是一个字符(double类型的局限性)，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">%&#123;</span><br><span class="line">    &#x2F;* myacc03.y is a yacc program for lab3 challenge. code by wch *&#x2F;</span><br><span class="line">    #include&lt;stdio.h&gt;</span><br><span class="line">    #include&lt;stdlib.h&gt;</span><br><span class="line">    #include&lt;map&gt;</span><br><span class="line">    #ifndef YYSTYPE</span><br><span class="line">    #define YYSTYPE double</span><br><span class="line">    #endif</span><br><span class="line">    using namespace std;</span><br><span class="line"></span><br><span class="line">    map&lt;char, double&gt;syMap;</span><br><span class="line">    map&lt;char, double&gt;::iterator flag;;</span><br><span class="line">    char id;</span><br><span class="line">    int yylex();</span><br><span class="line"></span><br><span class="line">    extern int yyparse();</span><br><span class="line"></span><br><span class="line">    double assign(char id, double value);</span><br><span class="line"></span><br><span class="line">    double read(double id);</span><br><span class="line"></span><br><span class="line">    FILE* yyin;</span><br><span class="line"></span><br><span class="line">    void yyerror(const char* s);</span><br><span class="line">    %&#125;</span><br><span class="line"></span><br><span class="line">%token NUMBER ADD SUB MUL DIV EQL LBR RBR ID</span><br><span class="line"></span><br><span class="line">%left EQL</span><br><span class="line">%left ADD SUB</span><br><span class="line">%left MUL DIV</span><br><span class="line">%right UMINUS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines	:	lines expr &#39;;&#39; &#123; printf(&quot;%f\n&quot;, $2); &#125;</span><br><span class="line">|	lines &#39;;&#39;</span><br><span class="line">|	</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">expr	:	expr ADD expr &#123; $$ &#x3D; $1 + $3; &#125;</span><br><span class="line">|	expr SUB expr &#123; $$ &#x3D; $1 - $3; &#125;</span><br><span class="line">|	expr MUL expr &#123; $$ &#x3D; $1 * $3; &#125;</span><br><span class="line">|	expr DIV expr &#123; $$ &#x3D; $1 &#x2F; $3; &#125;</span><br><span class="line">|	LBR expr RBR  &#123; $$ &#x3D; $2; &#125;</span><br><span class="line">|	SUB expr %prec UMINUS &#123; $$ &#x3D; -$2; &#125;</span><br><span class="line">|	NUMBER </span><br><span class="line">|	ID	      &#123; $$ &#x3D; read($1); &#125;</span><br><span class="line">|	asexpr	      </span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">asexpr	:	ID EQL expr   &#123; $$ &#x3D; assign($1,$3); &#125;</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line">int yylex()</span><br><span class="line">&#123;</span><br><span class="line">    int t;</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        t &#x3D; getchar();</span><br><span class="line">        if(t &#x3D;&#x3D; &#39;\n&#39; || t &#x3D;&#x3D; &#39; &#39; || t &#x3D;&#x3D; &#39;\t&#39;);</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;+&#39;)return ADD;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;-&#39;)return SUB;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;*&#39;)return MUL;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x2F;&#39;)return DIV;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;(&#39;)return LBR;</span><br><span class="line">            else if(t &#x3D;&#x3D; &#39;)&#39;)return RBR;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x3D;&#39;)return EQL;</span><br><span class="line">        else if(isdigit(t))</span><br><span class="line">        &#123;</span><br><span class="line">            yylval &#x3D; 0;</span><br><span class="line">            while(isdigit(t))</span><br><span class="line">            &#123;</span><br><span class="line">                yylval &#x3D; yylval * 10 + t - &#39;0&#39;;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">            &#125;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return NUMBER;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(( t &gt;&#x3D; &#39;a&#39; &amp;&amp; t &lt;&#x3D; &#39;z&#39; ) || ( t &gt;&#x3D; &#39;A&#39; &amp;&amp; t &lt;&#x3D; &#39;Z&#39;) || ( t &#x3D;&#x3D; &#39;_&#39; ))</span><br><span class="line">        &#123;</span><br><span class="line">            yylval &#x3D; double(t);</span><br><span class="line">            return ID;</span><br><span class="line">        &#125;</span><br><span class="line">        else return t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">double assign(char id, double value)</span><br><span class="line">&#123;</span><br><span class="line">    syMap[id] &#x3D; value;</span><br><span class="line">    return syMap[char(id)];</span><br><span class="line">&#125;</span><br><span class="line">double read(double id)</span><br><span class="line">&#123;</span><br><span class="line">    return syMap[char(id)];</span><br><span class="line">&#125;</span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    yyin &#x3D; stdin;</span><br><span class="line">    do&#123;</span><br><span class="line">        yyparse();</span><br><span class="line">        &#125;while(!feof(yyin));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void yyerror(const char* s)</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;Parse error: %s\n&quot;, s);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后觉得人得有更高的追求，于是把<strong>yylval改成char*类型</strong>，从而可以命名任意变量。我本来以为我要做的就是解决double和char*的转换，我真傻，真的。在编写的过程中我依次遇到了以下神奇的bug（而且每个bug都是解决上个bug后冒出来的）</p>
+<ol>
+<li>a op b的时候会被识别为 b op b</li>
+<li>map插入的值不能被读出</li>
+<li>所有变量的值都在被修改</li>
+</ol>
+<p>最后发现这些都是因为地址不对导致的，及其恶心，意识到用char<em>传一个地址是不可取的，于是转而投向了*</em>string**的怀抱。</p>
+<p>只能说，真香(虽然此处遇到一个原先的printf输出string会乱码的问题，改用cout就没事了)。</p>
+<p>最后的代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br></pre></td><td class="code"><pre><span class="line">%&#123;</span><br><span class="line">    &#x2F;* myacc03.y is a yacc program for lab3 challenge. code by wch *&#x2F;</span><br><span class="line">    #include&lt;stdio.h&gt;</span><br><span class="line">    #include&lt;stdlib.h&gt;</span><br><span class="line">    #include&lt;map&gt;</span><br><span class="line">    #include&lt;string&gt;</span><br><span class="line">    #include&lt;sstream&gt;</span><br><span class="line">    #include&lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">    #ifndef YYSTYPE</span><br><span class="line">    #define YYSTYPE string</span><br><span class="line">    #endif</span><br><span class="line">    using namespace std;</span><br><span class="line"></span><br><span class="line">    map&lt;string, string&gt;syMap;</span><br><span class="line">    map&lt;string, string&gt;::iterator flag;</span><br><span class="line">    char idStr[50];</span><br><span class="line">    string assign (string id,string value);</span><br><span class="line">    string read   (string id);</span><br><span class="line">    string double_to_char(double value);</span><br><span class="line">    double atof(string value);</span><br><span class="line">    string add(string a, string b);</span><br><span class="line">    string sub(string a, string b);</span><br><span class="line">    string mul(string a, string b);</span><br><span class="line">    string div(string a, string b);</span><br><span class="line">    string neg(string a);</span><br><span class="line"></span><br><span class="line">    void print_value(string a);</span><br><span class="line"></span><br><span class="line">    int yylex();</span><br><span class="line">    extern int yyparse();</span><br><span class="line"></span><br><span class="line">    FILE* yyin;</span><br><span class="line"></span><br><span class="line">    void yyerror(const string s);</span><br><span class="line">    %&#125;</span><br><span class="line"></span><br><span class="line">%token NUMBER ADD SUB MUL DIV EQL LBR RBR ID</span><br><span class="line"></span><br><span class="line">%left EQL</span><br><span class="line">%left ADD SUB</span><br><span class="line">%left MUL DIV</span><br><span class="line">%right UMINUS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines	:	lines expr &#39;;&#39; &#123; print_value($2); &#125;</span><br><span class="line">|	lines &#39;;&#39;</span><br><span class="line">|	</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">expr	:	expr ADD expr &#123; $$ &#x3D; add($1, $3); &#125;</span><br><span class="line">|	expr SUB expr &#123; $$ &#x3D; sub($1, $3); &#125;</span><br><span class="line">|	expr MUL expr &#123; $$ &#x3D; mul($1, $3); &#125;</span><br><span class="line">|	expr DIV expr &#123; $$ &#x3D; div($1, $3); &#125;</span><br><span class="line">|	LBR expr RBR  &#123; $$ &#x3D; $2; &#125;</span><br><span class="line">|	SUB expr %prec UMINUS &#123; $$ &#x3D; neg($2); &#125;</span><br><span class="line">|	NUMBER	      &#123; $$ &#x3D; $1; &#125; </span><br><span class="line">|	ID	      &#123; $$ &#x3D; read($1); &#125;</span><br><span class="line">|	asexpr	      </span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">asexpr	:	ID EQL expr   &#123; $$ &#x3D; assign($1,$3); &#125;</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line">int yylex()</span><br><span class="line">&#123;</span><br><span class="line">    int t;</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        t &#x3D; getchar();</span><br><span class="line">        if(t &#x3D;&#x3D; &#39;\n&#39; || t &#x3D;&#x3D; &#39; &#39; || t &#x3D;&#x3D; &#39;\t&#39;);</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;+&#39;)return ADD;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;-&#39;)return SUB;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;*&#39;)return MUL;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x2F;&#39;)return DIV;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;(&#39;)return LBR;</span><br><span class="line">            else if(t &#x3D;&#x3D; &#39;)&#39;)return RBR;</span><br><span class="line">        else if(t &#x3D;&#x3D; &#39;&#x3D;&#39;)return EQL;</span><br><span class="line">        else if(( t &gt;&#x3D; &#39;0&#39;) &amp;&amp; (t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">        &#123;</span><br><span class="line">            char* numStr &#x3D; new char[50];</span><br><span class="line">            int ti &#x3D; 0;</span><br><span class="line">            while(( t &gt;&#x3D; &#39;0&#39;) &amp;&amp; (t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">            &#123;</span><br><span class="line">                numStr[ti] &#x3D; t;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">                ti++; </span><br><span class="line">            &#125;</span><br><span class="line">            numStr[ti] &#x3D; &#39;\0&#39;;</span><br><span class="line">            yylval &#x3D; numStr;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return NUMBER;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(( t &gt;&#x3D; &#39;a&#39; &amp;&amp; t &lt;&#x3D; &#39;z&#39; ) || ( t &gt;&#x3D; &#39;A&#39; &amp;&amp; t &lt;&#x3D; &#39;Z&#39;) || ( t &#x3D;&#x3D; &#39;_&#39; ))</span><br><span class="line">        &#123;	</span><br><span class="line"></span><br><span class="line">            int ti &#x3D; 0;</span><br><span class="line">            while(( t &gt;&#x3D; &#39;a&#39; &amp;&amp; t &lt;&#x3D; &#39;z&#39; ) || ( t &gt;&#x3D; &#39;A&#39; &amp;&amp; t &lt;&#x3D; &#39;Z&#39;) || ( t &#x3D;&#x3D; &#39;_&#39; ) || (t &gt;&#x3D; &#39;0&#39; &amp;&amp; t &lt;&#x3D; &#39;9&#39;))</span><br><span class="line">            &#123;</span><br><span class="line">                idStr[ti] &#x3D; t;</span><br><span class="line">                t &#x3D; getchar();</span><br><span class="line">                ti++;</span><br><span class="line">            &#125;</span><br><span class="line">            idStr[ti] &#x3D; &#39;\0&#39;;</span><br><span class="line">            yylval &#x3D; idStr;</span><br><span class="line">            ungetc(t, stdin);</span><br><span class="line">            return ID;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else return t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string assign (string id,string value)</span><br><span class="line">&#123;</span><br><span class="line">    syMap[id] &#x3D; value;</span><br><span class="line">    return syMap[id];</span><br><span class="line">&#125;</span><br><span class="line">string read   (string id)</span><br><span class="line">&#123;</span><br><span class="line">    flag &#x3D; syMap.find(id);</span><br><span class="line">    if(flag !&#x3D; syMap.end())return syMap[id];</span><br><span class="line">    else return &quot;0\0&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">double atof(string value)</span><br><span class="line">&#123;	</span><br><span class="line">    double num;	</span><br><span class="line">    stringstream ss;</span><br><span class="line">    ss &lt;&lt; value;</span><br><span class="line">    ss &gt;&gt; num;</span><br><span class="line">    return num;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string double_to_char(double value)</span><br><span class="line">&#123;</span><br><span class="line">    char* temp &#x3D; new char[50];</span><br><span class="line">    int sig &#x3D; 16;</span><br><span class="line">    gcvt(value, sig, temp);</span><br><span class="line">    string ret &#x3D; temp;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string add(string a, string b)</span><br><span class="line">&#123;</span><br><span class="line">    double val &#x3D; atof(a)+atof(b);</span><br><span class="line">    return double_to_char(val);</span><br><span class="line">&#125;</span><br><span class="line">string sub(string a, string b)</span><br><span class="line">&#123;</span><br><span class="line">    double val &#x3D; atof(a)-atof(b);</span><br><span class="line">    return double_to_char(val);</span><br><span class="line">&#125;</span><br><span class="line">string mul(string a, string b)</span><br><span class="line">&#123;</span><br><span class="line">    double val &#x3D; atof(a)*atof(b);</span><br><span class="line">    return double_to_char(val);</span><br><span class="line">&#125;</span><br><span class="line">string div(string a, string b)</span><br><span class="line">&#123;</span><br><span class="line">    double val &#x3D; atof(a)&#x2F;atof(b);</span><br><span class="line">    return double_to_char(val);</span><br><span class="line">&#125;</span><br><span class="line">string neg(string a)</span><br><span class="line">&#123;</span><br><span class="line">    double aval &#x3D; atof(a);</span><br><span class="line">    double val &#x3D; -aval;</span><br><span class="line">    return double_to_char(val);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void print_value(string a)</span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;a&lt;&lt;&#39;\n&#39;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    yyin &#x3D; stdin;</span><br><span class="line">    do&#123;</span><br><span class="line">        yyparse();</span><br><span class="line">        &#125;while(!feof(yyin));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void yyerror(const string s)</span><br><span class="line">&#123;</span><br><span class="line">    fprintf(stderr, &quot;Parse error: %s\n&quot;, s);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：I LOVE COMPILER</p>
+<p><img src="https://i.loli.net/2020/10/21/mZ5GIzcgYw1hQob.png" alt="1.png"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/10/21/Compiler%E5%AD%A6%E4%B9%A0-0x06/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/10/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C01-%E7%94%A8%E6%B5%81%E5%BC%8FSocket%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E7%A8%8B%E5%BA%8F/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            计算机网络01-用流式Socket实现一个简单的聊天程序
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/10/18/Compiler%E5%AD%A6%E4%B9%A0-0x05/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Compiler学习-0x05</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "Ma68dRjESk4fCGvCf2c2zUiC-gzGzoHsz",
+    app_key: "3VxRiJaLej2sxlEQW6BeLl4N",
+    path: window.location.pathname,
+    avatar: "robohash",
+    placeholder: "想夸就夸别憋着~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 刀马WCH
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="净土"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/music">音乐</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+    
+
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":150},"mobile":{"show":true},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
