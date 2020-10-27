@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta name="baidu-site-verification" content="R9wFeVUEye" />
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    BTC-01-测试币的领取，交易以及多重签名交易 |  净土
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/taiji.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-BTC-01-测试币的领取，交易以及多重签名交易"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  BTC-01-测试币的领取，交易以及多重签名交易
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/27/BTC-01-%E6%B5%8B%E8%AF%95%E5%B8%81%E7%9A%84%E9%A2%86%E5%8F%96%EF%BC%8C%E4%BA%A4%E6%98%93%E4%BB%A5%E5%8F%8A%E5%A4%9A%E9%87%8D%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93/" class="article-date">
+  <time datetime="2020-10-27T07:00:21.000Z" itemprop="datePublished">2020-10-27</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">7 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="BTC-01-测试币的领取，交易以及多重签名交易"><a href="#BTC-01-测试币的领取，交易以及多重签名交易" class="headerlink" title="BTC-01-测试币的领取，交易以及多重签名交易"></a>BTC-01-测试币的领取，交易以及多重签名交易</h1><h2 id="0x00：前言"><a href="#0x00：前言" class="headerlink" title="0x00：前言"></a>0x00：前言</h2><p>区块链作为比特币交易的基础，是一个非常有前景的技术，值得研究(就算不做应用也可以和人吹牛或者防骗)。这里开个篇目用来记录一些比特币交易的常用知识和测试币的领取方法。</p>
+<p>分享一本书，<a href="https://pan.baidu.com/s/1mX_s1Na94-0BkelTbiIReg" target="_blank" rel="noopener">《区块链:技术驱动金融》</a>(提取码SMTM),个人觉得非常好，希望能有助于各位读者学习。</p>
+<p>这个系列的所有代码可以在<a href="https://github.com/TequilaWch/Blockchain-Learning" target="_blank" rel="noopener">Blockchain-Learning</a>中找到，而你的每一笔交易可以在<a href="https://live.blockcypher.com/btc-testnet/" target="_blank" rel="noopener">区块链浏览器</a>中找到(如果成功的话)。</p>
+<p>涉及到的比特币脚本可以在<a href="https://en.bitcoin.it/wiki/Main_Page" target="_blank" rel="noopener">比特币维基</a>中的script部分查看相关定义。</p>
+<a id="more"></a>
+
+<h2 id="0x01：测试币的领取"><a href="#0x01：测试币的领取" class="headerlink" title="0x01：测试币的领取"></a>0x01：测试币的领取</h2><p>首先你需要一个python3的环境并且安装了python bitcoinlib库，如果没有的话你可以通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-bitcoinlib</span><br></pre></td></tr></table></figure>
+
+<p>来获取这个库。之后你可以运行keygen.py文件生成一个公私钥对(包含一个address和一个privateKey，address是你的publicKey的hash值)。此后你可以通过访问<a href="https://coinfaucet.eu/en/btc-testnet/" target="_blank" rel="noopener">比特币测试网络</a>或者其他的测试币领取网站来获得一些免费的比特币(请记住，用完之后应当返回给这个测试网络，以供之后的人来使用)</p>
+<p>如果获取成功，他会给你一个txid和一个address。这个txid你可以类比为钞票上的编号，唯一确定一个事务，通过txid[index]来找到是第几笔输出。而address则是你需要归还比特币的地址。</p>
+<p>获取到上面这些内容后需要好好保存，同时修改config目录下的config.py，配置对应的参数。之后便可以进行下一个阶段。</p>
+<h2 id="0x02：划分和简单的交易"><a href="#0x02：划分和简单的交易" class="headerlink" title="0x02：划分和简单的交易"></a>0x02：划分和简单的交易</h2><p>因为刚刚我们只领取了一个tx，而在交易过程中tx是无法拆分的，为了满足后续测试需要，应当运行SplitandPay目录下的split_test_coins.py文件，将先前的tx划分成几份(类似于换零钱)，如果你正确配置了参数，会得到一个新的txid和根据你配置的n份零钱，之后可以通过配置如下的参数来决定花费哪一份零钱。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">amount_to_send = <span class="literal">None</span><span class="comment">#需要花费的数目</span></span><br><span class="line">txid_to_spend = (</span><br><span class="line">       <span class="string">'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'</span>)</span><br><span class="line">utxo_index = <span class="literal">None</span><span class="comment">#从0到n</span></span><br></pre></td></tr></table></figure>
+
+<p>但是记住，比如你领取到了0.0123个币，千万不要全部花出去，因为这样会导致你的交易难以被确认(关于确认交易的部分可以看那本书中的第二章)，你需要保留一定的份额作为确认这笔交易者的奖励(比如你领取到了0.0123个币，你花费0.01个币，剩下的0.0023便作为奖励，奖励越高越容易被确认)。</p>
+<p>自然，划分后的txid我们也应该很好的保存起来（之前那个就没有用处了）,接下来要做的就是将其交易给之前的测试网给你的address。</p>
+<p>一个最简单的比特币交易的输出为：“凭借哈希值为X的公钥，以及这个公钥所有者的签名，获得这笔资金。”这实际上就是一个最常见的比特币脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">OP_DUP</span><br><span class="line">OP_HASH160</span><br><span class="line">&lt;address&gt;</span><br><span class="line">OP_EQUALVERIFY</span><br><span class="line">OP_CHECKSIG</span><br></pre></td></tr></table></figure>
+
+<p>为了确认一笔交易正确地获取了上一笔交易所输出的资金，需要把交易的输入脚本(scriptSig)和上一笔交易的输出脚本(scriptPubKey)串联，只有这个串联起来的脚本成功执行才能获取资金，串联起来的脚本如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;sig&gt;</span><br><span class="line">&lt;pubKey&gt;</span><br><span class="line">--------------</span><br><span class="line">OP_DUP</span><br><span class="line">OP_HASH160</span><br><span class="line">&lt;address&gt;</span><br><span class="line">OP_EQUALVERIFY</span><br><span class="line">OP_CHECKSIG</span><br></pre></td></tr></table></figure>
+
+<p>读者可以在SplitandPay的ex1中找到对应的写法，我们来看看这个过程中做了什么。</p>
+<p>这个过程实际上是个堆栈操作过程，从上往下执行(最右边是栈顶)，每次执行的结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1:NULL										| 起始状态</span><br><span class="line">2:&lt;sig&gt;										| sig压栈</span><br><span class="line">3:&lt;sig&gt;&lt;pubKey&gt;								| pubKey压栈</span><br><span class="line">4:&lt;sig&gt;&lt;pubKey&gt;&lt;pubKey&gt;						| OP_DUP复制栈顶并压栈</span><br><span class="line">5:&lt;sig&gt;&lt;pubKey&gt;&lt;pubKeyHash&gt;					| OP_HASH160将栈顶哈希并替换栈顶</span><br><span class="line">6:&lt;sig&gt;&lt;pubKey&gt;&lt;pubKeyHash&gt;&lt;pubKeyHash?&gt;	| 已知的address压栈</span><br><span class="line">7:&lt;sig&gt;&lt;pubKey&gt;								| 比较address和pubKeyHash，相等后抛弃栈顶开始的两位，不相等就终止</span><br><span class="line">8:true										| 用CHECKSIG验证签名有效，有效则true，无效则false</span><br></pre></td></tr></table></figure>
+
+<p>其余部分详见ex1，不做详细介绍。</p>
+<h2 id="0x03：多重签名交易"><a href="#0x03：多重签名交易" class="headerlink" title="0x03：多重签名交易"></a>0x03：多重签名交易</h2><p>这里假设一个情景：一共四个参与者，一位银行(bank)和三位客户(cust)，银行和三位用户共同给一笔钱上锁，需要银行和其中一位用户的签名才能解锁。</p>
+<p>这个情景可以分成2个部分：先验证银行，再验证其中一位用户的签名。</p>
+<p>验证银行的部分和之前的简单的一对一交易一样，不做叙述。需要说一下验证用户签名的部分。</p>
+<p>N名用户对一个数据上锁，需要至少M名用户的签名才能解锁，这个方案被成为是一个M-N的多重签名方案。</p>
+<p>多重签名方案需要使用一个操作码OP_CHECKMULTISIG来实现，整个上锁的脚本为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">OP_M</span><br><span class="line">&lt;pubKey 1&gt;</span><br><span class="line">&lt;pubKey 2&gt;</span><br><span class="line">......</span><br><span class="line">&lt;pubKey N&gt;</span><br><span class="line">OP_N</span><br><span class="line">OP_CHECKMULTISIG</span><br></pre></td></tr></table></figure>
+
+<p>第一个OP_M说明了至少需要M个签名才能解锁，之后压入N个地址和一个OP_N，即一共有N个参与者。最后用OP_CHECKMULTISIG，只要有M个属于1-N的公钥对应的签名就返回true。</p>
+<p>其解锁脚本为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;sig 1&gt;</span><br><span class="line">&lt;sig 2&gt;</span><br><span class="line">......</span><br><span class="line">&lt;sig M&gt;</span><br></pre></td></tr></table></figure>
+
+<p>即给出M个签名即可解锁。需要注意的是这个解锁脚本是有一些bug的，体现为至少需要2个输入。所以对于一个1-N的方案，只输入sig 1是不行的，还需要用一个OP_0来填充，才能保证正常的使用。</p>
+<p>再回到我们的情景，是一个bank+1-3的解锁过程，不难想到应该先验证bank，因为没有bank的话有多少个用户签名也无效，再验证用户签名，所以我们的上锁脚本应该这么设计</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;pubKey bank&gt;</span><br><span class="line">OP_CHECKSIGVERIFY</span><br><span class="line">OP_1</span><br><span class="line">&lt;pubKey 1&gt;</span><br><span class="line">&lt;pubKey 2&gt;</span><br><span class="line">&lt;pubKey 3&gt;</span><br><span class="line">OP_3</span><br><span class="line">OP_CHECKMULTISIG</span><br></pre></td></tr></table></figure>
+
+<p>这里之所以使用OP_CHECKSIGVERIFY而不是OP_CHECKSIG，是因为如果使用OP_CHECKSIG会导致栈中有两个true，而我们只需要一个，会导致无法正常使用，而用OP_CHECKSIGVERIFY就会在验证后不把true压栈，解决这个问题。</p>
+<p>而我们的解锁脚本应该是这样</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;sig cust&gt;</span><br><span class="line">OP_0</span><br><span class="line">&lt;sig bank&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里面sig cust和OP_0的位置可以互换，但是bank的位置不能改变。这个同样是因为栈的关系。我们把两个脚本连起来看就很容易弄懂了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1	&lt;sig cust&gt;</span><br><span class="line">2	OP_0</span><br><span class="line">3	&lt;sig bank&gt;</span><br><span class="line">4	&lt;pubKey bank&gt;</span><br><span class="line">5	OP_CHECKSIGVERIFY</span><br><span class="line">6	OP_1</span><br><span class="line">7	&lt;pubKey 1&gt;</span><br><span class="line">8	&lt;pubKey 2&gt;</span><br><span class="line">9	&lt;pubKey 3&gt;</span><br><span class="line">10	OP_3</span><br><span class="line">11	OP_CHECKMULTISIG</span><br></pre></td></tr></table></figure>
+
+<p>能注意到3，4，5共同构成了上一个部分讲过的一对一的验证，如果sig bank和sig cust交换位置，那么就无法和pubkey bank一起通过check，整个的栈帧在执行过程中变化如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1:NULL										| 起始状态</span><br><span class="line">2:&lt;sig cust&gt;								| sig cust压栈</span><br><span class="line">3:&lt;sig cust&gt;								| OP_0不动</span><br><span class="line">4:&lt;sig cust&gt;&lt;sig bank&gt;						| sig bank压栈</span><br><span class="line">5:&lt;sig cust&gt;&lt;sig bank&gt;&lt;pubKey bank&gt;			| pubKey bank压栈</span><br><span class="line">6:&lt;sig cust&gt;								| CHECKSIGVERIFY检测通过后移除栈顶两位</span><br><span class="line">7:&lt;sig cust&gt;								| OP_1说明之前的1个参数作为需要检查的参数</span><br><span class="line">8:&lt;sig cust&gt;&lt;pub 1&gt;&lt;pub 2&gt;&lt;pub 3&gt;			| 3个pubkey压栈</span><br><span class="line">9:&lt;sig cust&gt;&lt;pub 1&gt;&lt;pub 2&gt;&lt;pub 3&gt;			| OP_3说明之前的3个参数作为检查的范围</span><br><span class="line">10:true										| CHECKMULTISIG将sig cust与pub123比较，比较成功返回true</span><br></pre></td></tr></table></figure>
+
+<p>至此成功解锁</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/10/27/BTC-01-%E6%B5%8B%E8%AF%95%E5%B8%81%E7%9A%84%E9%A2%86%E5%8F%96%EF%BC%8C%E4%BA%A4%E6%98%93%E4%BB%A5%E5%8F%8A%E5%A4%9A%E9%87%8D%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/10/24/Compiler%E5%AD%A6%E4%B9%A0-0x07/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Compiler学习-0x07</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "Ma68dRjESk4fCGvCf2c2zUiC-gzGzoHsz",
+    app_key: "3VxRiJaLej2sxlEQW6BeLl4N",
+    path: window.location.pathname,
+    avatar: "robohash",
+    placeholder: "想夸就夸别憋着~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2019-2020
+        <i class="ri-heart-fill heart_icon"></i> 刀马WCH
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="净土"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/music">音乐</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"></script>
+        
+    
+
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":150},"mobile":{"show":true},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
