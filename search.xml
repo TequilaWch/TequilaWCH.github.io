@@ -2034,4 +2034,825 @@
         <tag>热爱学习的WCH的日志</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Compiler学习-0x09</title>
+    <url>/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x09/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script>]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Compiler学习-0x08</title>
+    <url>/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x08/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="编译系统原理预习作业07-刀马WCH"><a href="#编译系统原理预习作业07-刀马WCH" class="headerlink" title="编译系统原理预习作业07@刀马WCH"></a>编译系统原理预习作业07@刀马WCH</h1><a id="more"></a>
+
+<h2 id="1：错误处理"><a href="#1：错误处理" class="headerlink" title="1：错误处理"></a>1：错误处理</h2><p>指出程序中存在哪些错误，分析哪些容易恢复，哪些困难</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f1</span><span class="params">(<span class="keyword">int</span> v)</span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">	<span class="keyword">int</span> i,j=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (i=<span class="number">1</span>;i&lt;<span class="number">5</span>;i++)</span><br><span class="line">	&#123;   </span><br><span class="line">        <span class="comment">/* </span></span><br><span class="line"><span class="comment">        语法错误：缺少分号 容易恢复</span></span><br><span class="line"><span class="comment">        语法错误：函数未声明</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">		j=v+f2(i) </span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f2</span><span class="params">(<span class="keyword">int</span> u)</span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">	<span class="keyword">int</span> j;</span><br><span class="line">	j=u+f1(u*u);</span><br><span class="line">	<span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i,j=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (i=<span class="number">1</span>;i&lt;<span class="number">10</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        语法错误：缺少分号 容易恢复</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">		j=j+i*i</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        语法错误：中文引号 容易恢复</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">		<span class="built_in">printf</span>(“%d\n”,i); 	</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,f1(j));</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2：最右推导"><a href="#2：最右推导" class="headerlink" title="2：最右推导"></a>2：最右推导</h2><p><img src="https://i.loli.net/2020/11/03/qhlCDaIH6MwryBR.png" alt="IMG_0049.PNG"></p>
+<h2 id="3：NFA-gt-CFG"><a href="#3：NFA-gt-CFG" class="headerlink" title="3：NFA-&gt;CFG"></a>3：NFA-&gt;CFG</h2><blockquote>
+<p>A<del>0</del> → 1A<del>0</del> | 0A<del>1</del> | ε</p>
+<p>A<del>1</del> → 0A<del>1</del> | 1A<del>2</del> | ε</p>
+<p>A<del>2</del> → 0A<del>1</del> | ε</p>
+</blockquote>
+<h2 id="4：消除间接左递归"><a href="#4：消除间接左递归" class="headerlink" title="4：消除间接左递归"></a>4：消除间接左递归</h2><blockquote>
+<p>S → Aa | b</p>
+<p>A → bdA’ | A’</p>
+<p>A’ → cA’ | adA’ |ε</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ucore-lab2</title>
+    <url>/2020/11/13/Ucore-lab2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><blockquote>
+<p>本文记录了清华大学操作系统使用的Ucore实验的lab2的报告</p>
+<p>由我，YYF同学及LZQ同学共同完成，感谢二位大佬的指教和帮助</p>
+<p>仅供学习交流使用，未经许可不得转载，抄袭。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="前置"><a href="#前置" class="headerlink" title="前置"></a>前置</h2><p>实验一过后大家做出来了一个可以启动的系统，实验二主要涉及操作系统的物理内存管理。 操作系统为了使用内存，还需高效地管理内存资源。在实验二中大家会了解并且自己动手完 成一个简单的物理内存管理系统。</p>
+<p>实验目的如下</p>
+<ul>
+<li>理解基于段页式内存地址的转换机制</li>
+<li>理解页表的建立和使用方法</li>
+<li>理解物理内存的管理方法</li>
+</ul>
+<p>在开始实验前，别忘了将lab1中已经完成的代码填入本实验中代码有LAB1的注释的相应部分。可以采用diff和patch工具进行半自动的合并(merge)，也可以用一些图形化的比较/merge工具来合并，比如meld，eclipse中的diff/merge工具，understand中的diff/merge工具</p>
+<h2 id="练习0：合并Lab0和Lab1代码"><a href="#练习0：合并Lab0和Lab1代码" class="headerlink" title="练习0：合并Lab0和Lab1代码"></a>练习0：合并Lab0和Lab1代码</h2><p><img src="https://i.loli.net/2020/11/05/wrHk5b68dyYtceK.png" alt="image-20201102235653991.png"></p>
+<p>使用meld工具打开文件进行比较，因为lab1只修改了trap.c，init.c和kdegub.c这三个文件，所以一一比较合并即可。</p>
+<h2 id="练习1：实现first-fit连续物理内存分配算法-需要编程"><a href="#练习1：实现first-fit连续物理内存分配算法-需要编程" class="headerlink" title="练习1：实现first-fit连续物理内存分配算法(需要编程)"></a>练习1：实现first-fit连续物理内存分配算法(需要编程)</h2><blockquote>
+<p>在实现first fit 内存分配算法的回收函数时，要考虑地址连续的空闲块之间的合并操作。提示: 在建立空闲页块链表时，需要按照空闲页块起始地址来排序，形成一个有序的链表。可能会 修改default_pmm.c中的default_init，default_init_memmap，default_alloc_pages， default_free_pages等相关函数。请仔细查看和理解default_pmm.c中的注释。</p>
+<p>请在实验报告中简要说明你的设计实现过程。请回答如下问题：</p>
+<ul>
+<li>你的first fit算法是否有进一步的改进空间</li>
+</ul>
+</blockquote>
+<p>ucore中采用面向对象编程的思想，将物理内存管理的内容抽象成若干个特定的函数，并以结构体pmm_manager作为物理内存管理器封装各个内存管理函数的指针，这样在管理物理内存时只需调用结构体内封装的函数，从而可将内存管理功能的具体实现与系统中其他部分隔离开。pmm_manager中保存的函数及其功能如下所述：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pmm_manager</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;                                 <span class="comment">/*某种物理内存管理器的名称（可根据算法等具体实现的不同自定义新的内存管理器，这样也更加符合面向对象的思想）*/</span></span><br><span class="line">    <span class="keyword">void</span> (*init)(<span class="keyword">void</span>);                               <span class="comment">/*物理内存管理器初始化，包括生成内部描述和数据结构（空闲块链表和空闲页总数）*/</span> </span><br><span class="line">    <span class="keyword">void</span> (*init_memmap)(struct Page *base, <span class="keyword">size_t</span> n); <span class="comment">/*初始化空闲页，根据初始时的空闲物理内存区域将页映射到物理内存上*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *(*<span class="title">alloc_pages</span>)(<span class="title">size_t</span> <span class="title">n</span>);</span>            <span class="comment">//申请分配指定数量的物理页</span></span><br><span class="line">    <span class="keyword">void</span> (*free_pages)(struct Page *base, <span class="keyword">size_t</span> n);  <span class="comment">//申请释放若干指定物理页</span></span><br><span class="line">    <span class="keyword">size_t</span> (*nr_free_pages)(<span class="keyword">void</span>);                    <span class="comment">//查询当前空闲页总数</span></span><br><span class="line">    <span class="keyword">void</span> (*check)(<span class="keyword">void</span>);                              <span class="comment">//检查物理内存管理器的正确性</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上图为pmm.h当中定义的结构体pmm_manager</p>
+</blockquote>
+<p>涉及的结构体和宏定义：</p>
+<p>memlayout.h中：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Page</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> ref;                        <span class="comment">// page frame's reference counter</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;                 <span class="comment">//描述物理页帧状态的标志位</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> property;          <span class="comment">//只在空闲块内第一页中用于记录该块中页数，其他页都是0</span></span><br><span class="line">    <span class="keyword">list_entry_t</span> page_link;         <span class="comment">//空闲物理内存块双向链表</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Flags describing the status of a page frame */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PG_reserved                 0       <span class="comment">// if this bit=1: the Page is reserved for kernel, cannot be used in alloc/free_pages; otherwise, this bit=0 </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PG_property                 1       <span class="comment">// if this bit=1: the Page is the head page of a free memory block(contains some continuous_addrress pages), and can be used in alloc_pages; if this bit=0: if the Page is the the head page of a free memory block, then this Page and the memory block is alloced. Or this Page isn't the head page.</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SetPageReserved(page)       set_bit(PG_reserved, &amp;((page)-&gt;flags))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ClearPageReserved(page)     clear_bit(PG_reserved, &amp;((page)-&gt;flags))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PageReserved(page)          test_bit(PG_reserved, &amp;((page)-&gt;flags))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SetPageProperty(page)       set_bit(PG_property, &amp;((page)-&gt;flags))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ClearPageProperty(page)     clear_bit(PG_property, &amp;((page)-&gt;flags))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PageProperty(page)          test_bit(PG_property, &amp;((page)-&gt;flags))</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* free_area_t - maintains a doubly linked list to record free (unused) pages */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_entry_t</span> free_list;         <span class="comment">// the list header(@ with a forward ptr &amp; a backward ptr)</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> nr_free;           <span class="comment">// # of free pages in this free list</span></span><br><span class="line">&#125; <span class="keyword">free_area_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>list.h：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">list_entry</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_entry</span> *<span class="title">prev</span>, *<span class="title">next</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/*list_entry_t是双链表结点的两个指针构成的集合，这个空闲块链表实际上是将各个块首页的指针集合（由prev和next构成）的指针（或者说指针集合所在地址）相连*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list_entry</span> <span class="title">list_entry_t</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>练习一共需实现四个函数：</p>
+<ul>
+<li>default_init：初始化物理内存管理器；</li>
+<li>default_init_memmap：初始化空闲页；</li>
+<li>default_alloc_pages：申请分配指定数量的物理页；</li>
+<li>default_free_pages: 申请释放若干指定物理页；</li>
+</ul>
+<p>直接修改default_pmm.c中的内存管理函数来实现。</p>
+<p><strong>default_init：</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">free_area_t</span> free_area; <span class="comment">/*allocate blank memory for the doublely linked list*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> free_list (free_area.free_list)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> nr_free (free_area.nr_free)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">default_init(<span class="keyword">void</span>) &#123;</span><br><span class="line">    list_init(&amp;free_list);</span><br><span class="line">    nr_free = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化双向链表，将空闲页总数nr_free初始化为0。</p>
+<p><strong>default_init_memmap：</strong></p>
+<p>初始化一整个空闲物理内存块，将块内每一页对应的Page结构初始化，参数为基址和页数（因为相邻编号的页对应的Page结构在内存上是相邻的，所以可将第一个空闲物理页对应的Page结构地址作为基址，以基址+偏移量的方式访问所有空闲物理页的Page结构，<strong>根据指导书，这个空闲块链表正是将各个块首页的指针集合（由prev和next构成）的指针（或者说指针集合所在地址）相连，并以基址区分不同的连续内存物理块</strong>）。</p>
+<p>根据注释，<strong>具体流程为</strong>：遍历块内所有空闲物理页的Page结构，将各个flags置为0以标记物理页帧有效，将property成员置零，使用 SetPageProperty宏置PG_Property标志位来标记各个页有效（具体而言，如果一页的该位为1，则对应页应是一个空闲块的块首页；若为0，则对应页要么是一个已分配块的块首页，要么不是块中首页；另一个标志位PG_Reserved在pmm_init函数里已被置位，这里用于确认对应页不是被OS内核占用的保留页，因而可用于用户程序的分配和回收），清空各物理页的引用计数ref；最后再将首页Page结构的property置为块内总页数，将全局总页数nr_free加上块内总页数，并用page_link这个双链表结点指针集合将块首页连接到空闲块链表里。</p>
+<p>写出代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> </span><br><span class="line">default_init_memmap(struct Page *base, <span class="keyword">size_t</span> n) &#123;   </span><br><span class="line">    assert(n &gt; <span class="number">0</span>);</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">p</span> = <span class="title">base</span>;</span><span class="comment">//块基址</span></span><br><span class="line">    <span class="keyword">for</span> (; p != base + n; p ++)</span><br><span class="line">    &#123;</span><br><span class="line">        assert(PageReserved(p));<span class="comment">//确认本页不是给OS的保留页</span></span><br><span class="line">        p-&gt;flags = p-&gt;property = <span class="number">0</span>;</span><br><span class="line">        SetPageProperty(p);<span class="comment">//设置标志位</span></span><br><span class="line">        set_page_ref(p, <span class="number">0</span>);<span class="comment">//清空引用</span></span><br><span class="line">    &#125;</span><br><span class="line">    nr_free += n;<span class="comment">//增加全局总页数</span></span><br><span class="line">    base-&gt;property=n;<span class="comment">//本块首页的property设为n</span></span><br><span class="line">    list_add_before(&amp;free_list, &amp;(base-&gt;page_link));<span class="comment">//首页的指针集合插入空闲页链表</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>default_alloc_pages(size_t n)：</strong></p>
+<p>该函数分配指定页数的连续空闲物理内存空间，返回分配的空间中第一页的Page结构的指针。</p>
+<p>流程：从起始位置开始顺序搜索空闲块链表，找到第一个页数不小于所申请页数n的块（只需检查每个Page的property成员，在其值&gt;=n的第一个页停下），如果这个块的页数正好等于申请的页数，则可直接分配；如果块页数比申请的页数多，要将块分成两半，将起始地址较低的一半分配出去，将起始地址较高的一半作为链表内新的块，分配完成后重新计算块内空闲页数和全局空闲页数；若遍历整个空闲链表仍找不到足够大的块，则返回NULL表示分配失败。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *</span></span><br><span class="line"><span class="class"><span class="title">default_alloc_pages</span>(<span class="title">size_t</span> <span class="title">n</span>) &#123;</span></span><br><span class="line">    assert(n&gt;<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(n&gt;nr_free) <span class="keyword">return</span> <span class="literal">NULL</span>;<span class="comment">//如果所有空闲页的总数都不够，直接返回NULL</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">page</span> = <span class="title">NULL</span>;</span></span><br><span class="line">	<span class="keyword">list_entry_t</span> *le = &amp;free_list;</span><br><span class="line">	<span class="keyword">while</span> ((le = list_next(le)) != &amp;free_list) &#123;</span><br><span class="line">   		<span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">p</span> = <span class="title">le2page</span>(<span class="title">le</span>, <span class="title">page_link</span>);</span><span class="comment">//链表内地址转换为Page结构指针</span></span><br><span class="line">    	<span class="keyword">if</span> (p-&gt;property &gt;= n) &#123;<span class="comment">//遇到第一个页数不小于n的块</span></span><br><span class="line">        	page = p;<span class="comment">//可得块首页</span></span><br><span class="line">        	<span class="keyword">break</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">if</span> (page != <span class="literal">NULL</span>) &#123; <span class="comment">//如果找到了满足条件的空闲内存块</span></span><br><span class="line">    	<span class="keyword">for</span> (struct Page *p = page; p != (page + n); ++p)</span><br><span class="line">        	ClearPageProperty(p); <span class="comment">//将分配出去的内存页标记为非空闲</span></span><br><span class="line">    	<span class="keyword">if</span> (page-&gt;property &gt; n) &#123; <span class="comment">/*如果原先找到的空闲块大小大于需要的分配内存大小，进行分裂*/</span>		  <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">p</span> = <span class="title">page</span> + <span class="title">n</span>;</span> <span class="comment">//分裂出来的新的小空闲块首页</span></span><br><span class="line">        	p-&gt;property = page-&gt;property - n; <span class="comment">//更新新的空闲块的大小信息</span></span><br><span class="line">        	list_add(&amp;(page-&gt;page_link), &amp;(p-&gt;page_link)); <span class="comment">/*将新空闲块插入空闲块列表中*/</span>	&#125;</span><br><span class="line">    list_del(&amp;(page-&gt;page_link)); <span class="comment">//从链表里删除分配出去的空闲块</span></span><br><span class="line">    nr_free -= n; <span class="comment">//更新全局空闲页数</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> page;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>default_free_pages(struct Page *base, size_t n)：</strong></p>
+<p>释放从指定的某一物理页开始的若干个被占用的连续物理页，将这些页连回空闲块链表，重置其中的标志信息，最后进行一些碎片整理性质的块合并操作。</p>
+<p>首先根据参数提供的块基址，遍历链表找到待插入位置，插入这些页。然后将引用计数ref、flags标志位置位，最后<strong>调用merge_blocks函数迭代地进行块合并，以获取尽可能大的连续内存块</strong>。规则是从新插入的块开始，首先正序遍历链表，不断将链表内基址与新插入块物理地址较大一端相邻的空闲块合并到新插入块里（也是对应着分配内存块时将物理基址较大的块留在链表里）；然后反序遍历链表，不断将链表内的基址与新插入块物理地址较小一端相邻的空闲块合并到新插入块里。</p>
+<p>代码实现如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">default_free_pages(struct Page *base, <span class="keyword">size_t</span> n) &#123;</span><br><span class="line">    assert(n &gt; <span class="number">0</span>);</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">p</span> = <span class="title">base</span>;</span></span><br><span class="line">    <span class="keyword">for</span> (; p != base + n; p ++) &#123;</span><br><span class="line">        assert(!PageReserved(p) &amp;&amp; !PageProperty(p));<span class="comment">/*确认各个页状态是被OS占用的或是已分配的，如果释放了空闲的内存则产生异常*/</span></span><br><span class="line">        p-&gt;flags = <span class="number">0</span>;</span><br><span class="line">        SetPageProperty(p);<span class="comment">//PG_Property重置为空闲状态</span></span><br><span class="line">        set_page_ref(p, <span class="number">0</span>);</span><br><span class="line">    &#125;<span class="comment">//先对块内各页进行标志信息重置</span></span><br><span class="line">    <span class="comment">//块首页的成员property重新赋值为n</span></span><br><span class="line">    base-&gt;property = n;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">list_entry_t</span> *le = list_next(&amp;free_list);<span class="comment">//以链表头部的下一个为起始结点，开始顺序搜索</span></span><br><span class="line">    <span class="keyword">while</span> (le != &amp;free_list &amp;&amp; le &lt; &amp;base-&gt;page_link) &#123;</span><br><span class="line">        le = list_next(le);</span><br><span class="line">    &#125;</span><br><span class="line">    list_add_before(&amp;free_list, &amp;(base-&gt;page_link));</span><br><span class="line">    nr_free += n;</span><br><span class="line">    <span class="keyword">while</span> (merge_block(base)); <span class="comment">/*块合并*/</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">list_entry_t</span> *i = list_prev(&amp;(base-&gt;page_link)); i!= &amp;free_list; i = list_prev(i)) &#123; <span class="comment">//再将新插入的空闲块和其物理地址小的一段的所有相邻的物理空闲块进行合并</span></span><br><span class="line">    <span class="keyword">if</span> (!merge_block(le2page(i, page_link))) <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">int</span></span><br><span class="line">merge_block(struct Page *base)&#123;</span><br><span class="line">    <span class="keyword">list_entry_t</span> *le = list_next(&amp;(base-&gt;page_link)); <span class="comment">//获取链表中下一空闲块的地址</span></span><br><span class="line">    <span class="keyword">if</span> (le == &amp;free_list) <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">/*如果当前空闲块是物理地址最大的空闲块，则无法进行向后合并，返回合并失败*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">p</span> = <span class="title">le2page</span>(<span class="title">le</span>, <span class="title">page_link</span>);</span></span><br><span class="line">    <span class="keyword">if</span> (PageProperty(p) == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;<span class="comment">//异常情况</span></span><br><span class="line">    <span class="keyword">if</span> (base + base-&gt;property != p) <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//如果两空闲块不相邻，合并终止</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//合并操作</span></span><br><span class="line">    base-&gt;property += p-&gt;property;</span><br><span class="line">    p-&gt;property = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//将合并前的物理地址较大的空闲块从链表中删去</span></span><br><span class="line">    list_del(le); </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>; <span class="comment">//返回合并成功</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="练习2：实现寻找虚拟地址对应的页表项-需要编程"><a href="#练习2：实现寻找虚拟地址对应的页表项-需要编程" class="headerlink" title="练习2：实现寻找虚拟地址对应的页表项(需要编程)"></a>练习2：实现寻找虚拟地址对应的页表项(需要编程)</h2><blockquote>
+<p>通过设置页表和对应的页表项，可建立虚拟内存地址和物理内存地址的对应关系。其中的 get_pte函数是设置页表项环节中的一个重要步骤。此函数找到一个虚地址对应的二级页表项 的内核虚地址，如果此二级页表项不存在，则分配一个包含此项的二级页表。本练习需要补全get_pte函数 in kern/mm/pmm.c，实现其功能。</p>
+<p>请在实验报告中简要说明你的设计实现过程。请回答如下问题： </p>
+<ul>
+<li>请描述页目录项（Pag Director Entry）和页表（Page Table Entry）中每个组成部分的含 义和以及对ucore而言的潜在用处。</li>
+<li>如果ucore执行过程中访问内存，出现了页访问异常，请问硬件要做哪些事情？</li>
+</ul>
+</blockquote>
+<p>首先需要知道PDT(页目录表),PDE(页目录项),PTT(页表),PTE(页表项)之间的关系:页表保存页表项，页表项被映射到物理内存地址；页目录表保存页目录项，页目录项映射到页表。</p>
+<h6 id="PDE和PTE的各部分含义及用途"><a href="#PDE和PTE的各部分含义及用途" class="headerlink" title="PDE和PTE的各部分含义及用途"></a>PDE和PTE的各部分含义及用途</h6><p>PDE和PTE都是4B大小的一个元素，其高20bit被用于保存索引，低12bit用于保存属性，但是由于用处不同，内部具有细小差异，如图所示：</p>
+<p><img src="https://i.loli.net/2020/11/04/7DvHaPVIACfyjbN.png" alt="pde.png"></p>
+<p><img src="https://i.loli.net/2020/11/04/Yqdz7hTnWtEBsSc.png" alt="pte.png"></p>
+<table>
+<thead>
+<tr>
+<th>bit</th>
+<th>PDE</th>
+<th>PTE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Present位，0不存在，1存在下级页表</td>
+<td>同</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Read/Write位，0只读，1可写</td>
+<td>同</td>
+</tr>
+<tr>
+<td>2</td>
+<td>User/Supervisor位，0则其下页表/物理页用户无法访问，1可以访问</td>
+<td>同</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Page level Write Through，1则开启页层次的写回机制，0不开启</td>
+<td>同</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Page level Cache Disable， 1则禁止页层次缓存，0不禁止</td>
+<td>同</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Accessed位，1代表在地址翻译过程中曾被访问，0没有</td>
+<td>同</td>
+</tr>
+<tr>
+<td>6</td>
+<td>忽略</td>
+<td>脏位，判断是否有写入</td>
+</tr>
+<tr>
+<td>7</td>
+<td>PS，当且仅当PS=1且CR4.PSE=1，页大小为4M，否则为4K</td>
+<td>如果支持 PAT 分页，间接决定这项访问的页的内存类型，否则为0</td>
+</tr>
+<tr>
+<td>8</td>
+<td>忽略</td>
+<td>Global 位。当 CR4.PGE 位为 1 时,该位为1则全局翻译</td>
+</tr>
+<tr>
+<td>9</td>
+<td>忽略</td>
+<td>忽略</td>
+</tr>
+<tr>
+<td>10</td>
+<td>忽略</td>
+<td>忽略</td>
+</tr>
+<tr>
+<td>11</td>
+<td>忽略</td>
+<td>忽略</td>
+</tr>
+</tbody></table>
+<h6 id="出现页访问异常时，硬件执行的工作"><a href="#出现页访问异常时，硬件执行的工作" class="headerlink" title="出现页访问异常时，硬件执行的工作"></a>出现页访问异常时，硬件执行的工作</h6><ul>
+<li>首先需要将发生错误的线性地址la保存在CR2寄存器中<ul>
+<li>这里说一下控制寄存器CR0-4的作用</li>
+<li>CR0的0位是PE位，如果为1则启动保护模式，其余位也有自己的作用</li>
+<li>CR1是未定义控制寄存器，留着以后用</li>
+<li>CR2是<strong>页故障线性地址寄存器</strong>，保存最后一次出现页故障的全32位线性地址</li>
+<li>CR3是<strong>页目录基址寄存器</strong>，保存PDT的物理地址</li>
+<li>CR4在Pentium系列处理器中才实现，它处理的事务包括诸如何时启用虚拟8086模式等</li>
+</ul>
+</li>
+<li>之后需要往中断时的栈中压入EFLAGS,CS,EIP,ERROR CODE，如果这页访问异常很不巧发生在用户态，还需要先压入SS,ESP并切换到内核态</li>
+<li>最后根据IDT表查询到对应的也访问异常的ISR，跳转过去并将剩下的部分交给软件处理。</li>
+</ul>
+<h6 id="代码的实现"><a href="#代码的实现" class="headerlink" title="代码的实现"></a>代码的实现</h6><p>为了获取PTE，很自然需要先获取PDE，通过PDX(la)可以获得对应的PDE的索引，之后在pkdir中根据索引找到对应的PDE指针，写成代码即为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pde_t *pdep &#x3D; &amp;pgdir[PDX(la)];</span><br></pre></td></tr></table></figure>
+
+<p>之后判断其Present位是否为1(若不为1则需要为其创建新的PTT)，在创建时如果失败(创建标志为0或者分配物理内存页失败)需要立即返回，对应代码为</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!(*pdep &amp; PTE_P))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">temPage</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!create || (temPage = alloc_page()) == <span class="literal">NULL</span> )</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分配物理内存页之后，把这个物理页的引用的计数通过set_page_ref更新。</p>
+<p>获取这个temPage的物理地址，然后把这个物理页全部初始化为0(需要用KADDR转换为内核虚拟地址)。到此完成了pte的设置，还需要更新pde中的几个标识位。对应代码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">set_page_ref(temPage,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">uintptr_t</span> pa = page2pa(temPage);</span><br><span class="line"><span class="built_in">memset</span>(KADDR(pa), <span class="number">0</span>, PGSIZE);</span><br><span class="line"><span class="comment">// pa的地址，用户级，可写，存在</span></span><br><span class="line">*pdep = pa | PTE_U | PTE_W | PTE_P;</span><br></pre></td></tr></table></figure>
+
+<p>最后需要返回这个对应的PTE，而目前我们有的是一个pdep，存放着PTT的物理地址，根据PDE的结构，可以得出这样一个流程</p>
+<ol>
+<li>抹去低12位，只保留对应的PTT的起始基地址</li>
+<li>用PTX(la)获得PTT对应的PTE的索引</li>
+<li>用数组和对应的索引得到PTE并返回</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> &amp;((<span class="keyword">pte_t</span> *)KADDR(PDE_ADDR(*pdep)))[PTX(la)];</span><br></pre></td></tr></table></figure>
+
+<p>完整代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pte_t</span> *</span><br><span class="line">get_pte(<span class="keyword">pde_t</span> *pgdir, <span class="keyword">uintptr_t</span> la, <span class="keyword">bool</span> create) &#123;</span><br><span class="line">    <span class="comment">/* LAB2 EXERCISE 2: YOUR CODE</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * If you need to visit a physical address, please use KADDR()</span></span><br><span class="line"><span class="comment">     * please read pmm.h for useful macros</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Maybe you want help comment, BELOW comments can help you finish the code</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Some Useful MACROs and DEFINEs, you can use them in below implementation.</span></span><br><span class="line"><span class="comment">     * MACROs or Functions:</span></span><br><span class="line"><span class="comment">     *   PDX(la) = the index of page directory entry of VIRTUAL ADDRESS la.</span></span><br><span class="line"><span class="comment">     *   KADDR(pa) : takes a physical address and returns the corresponding kernel virtual address.</span></span><br><span class="line"><span class="comment">     *   set_page_ref(page,1) : means the page be referenced by one time</span></span><br><span class="line"><span class="comment">     *   page2pa(page): get the physical address of memory which this (struct Page *) page  manages</span></span><br><span class="line"><span class="comment">     *   struct Page * alloc_page() : allocation a page</span></span><br><span class="line"><span class="comment">     *   memset(void *s, char c, size_t n) : sets the first n bytes of the memory area pointed by s</span></span><br><span class="line"><span class="comment">     *                                       to the specified value c.</span></span><br><span class="line"><span class="comment">     * DEFINEs:</span></span><br><span class="line"><span class="comment">     *   PTE_P           0x001                   // page table/directory entry flags bit : Present</span></span><br><span class="line"><span class="comment">     *   PTE_W           0x002                   // page table/directory entry flags bit : Writeable</span></span><br><span class="line"><span class="comment">     *   PTE_U           0x004                   // page table/directory entry flags bit : User can access</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">    <span class="keyword">pde_t</span> *pdep = <span class="literal">NULL</span>;   <span class="comment">// (1) find page directory entry</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="number">0</span>) &#123;              <span class="comment">// (2) check if entry is not present</span></span><br><span class="line">                          <span class="comment">// (3) check if creating is needed, then alloc page for page table</span></span><br><span class="line">                          <span class="comment">// CAUTION: this page is used for page table, not for common data page</span></span><br><span class="line">                          <span class="comment">// (4) set page reference</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> pa = <span class="number">0</span>; <span class="comment">// (5) get linear address of page</span></span><br><span class="line">                          <span class="comment">// (6) clear page content using memset</span></span><br><span class="line">                          <span class="comment">// (7) set page directory entry's permission</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;          <span class="comment">// (8) return page table entry</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">pde_t</span> *pdep = &amp;pgdir[PDX(la)];</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span>(!(*pdep &amp; PTE_P))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">temPage</span>;</span></span><br><span class="line">		<span class="keyword">if</span>(!create || (temPage = alloc_page()) == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		set_page_ref(temPage,<span class="number">1</span>);</span><br><span class="line">		<span class="keyword">uintptr_t</span> pa = page2pa(temPage);</span><br><span class="line">		<span class="built_in">memset</span>(KADDR(pa),<span class="number">0</span>,PGSIZE);</span><br><span class="line">		*pdep = pa | PTE_U | PTE_W | PTE_P;		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> &amp;((<span class="keyword">pte_t</span> *)KADDR(PDE_ADDR(*pdep)))[PTX(la)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>la,PDX,PTX,PTE_ADDR,PDE_ADDR的定义可以在mmu.h下看到，具体内容如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// A linear address 'la' has a three-part structure as follows:</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// +--------10------+-------10-------+---------12----------+</span></span><br><span class="line"><span class="comment">// | Page Directory |   Page Table   | Offset within Page  |</span></span><br><span class="line"><span class="comment">// |      Index     |     Index      |                     |</span></span><br><span class="line"><span class="comment">// +----------------+----------------+---------------------+</span></span><br><span class="line"><span class="comment">//  \--- PDX(la) --/ \--- PTX(la) --/ \---- PGOFF(la) ----/</span></span><br><span class="line"><span class="comment">//  \----------- PPN(la) -----------/</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The PDX, PTX, PGOFF, and PPN macros decompose linear addresses as shown.</span></span><br><span class="line"><span class="comment">// To construct a linear address la from PDX(la), PTX(la), and PGOFF(la),</span></span><br><span class="line"><span class="comment">// use PGADDR(PDX(la), PTX(la), PGOFF(la)).</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// page directory index</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PDX(la) ((((uintptr_t)(la)) &gt;&gt; PDXSHIFT) &amp; 0x3FF)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// page table index</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTX(la) ((((uintptr_t)(la)) &gt;&gt; PTXSHIFT) &amp; 0x3FF)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// offset in page</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PGOFF(la) (((uintptr_t)(la)) &amp; 0xFFF)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// address in page table or page directory entry</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTE_ADDR(pte)   ((uintptr_t)(pte) &amp; ~0xFFF)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PDE_ADDR(pde)   PTE_ADDR(pde)</span></span><br></pre></td></tr></table></figure>
+
+<p>其高10位用作PDT的索引，中10位用作PTT的索引，末12位用作物理页偏移量</p>
+<p>KADDR，page2pa可以在pmm.h中看到</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* *</span></span><br><span class="line"><span class="comment"> * KADDR - takes a physical address and returns the corresponding kernel virtual</span></span><br><span class="line"><span class="comment"> * address. It panics if you pass an invalid physical address.</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KADDR(pa) (&#123;                                                    \</span></span><br><span class="line">            <span class="keyword">uintptr_t</span> __m_pa = (pa);                                    \</span><br><span class="line">            <span class="keyword">size_t</span> __m_ppn = PPN(__m_pa);                               \</span><br><span class="line">            <span class="keyword">if</span> (__m_ppn &gt;= npage) &#123;                                     \</span><br><span class="line">                panic(<span class="string">"KADDR called with invalid pa %08lx"</span>, __m_pa);    \</span><br><span class="line">            &#125;                                                           \</span><br><span class="line">            (<span class="keyword">void</span> *) (__m_pa + KERNBASE);                               \</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">ppn_t</span></span><br><span class="line">page2ppn(struct Page *page) &#123;</span><br><span class="line">    <span class="keyword">return</span> page - pages;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// PGSHIFT = log2(PGSIZE) = 12</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">uintptr_t</span></span><br><span class="line">page2pa(struct Page *page) &#123;</span><br><span class="line">    <span class="keyword">return</span> page2ppn(page) &lt;&lt; PGSHIFT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h5><p>PDE,PDT,PTT,PTE真的很容易让人弄混，而且他们的发音真的很像，一不留神就弄混了。搞清楚关系和结构看一下注释就能很快地搞定。</p>
+<h2 id="练习3：释放某虚地址所在的页并取消对应二级页表项的映射-需要编程"><a href="#练习3：释放某虚地址所在的页并取消对应二级页表项的映射-需要编程" class="headerlink" title="练习3：释放某虚地址所在的页并取消对应二级页表项的映射(需要编程)"></a>练习3：释放某虚地址所在的页并取消对应二级页表项的映射(需要编程)</h2><blockquote>
+<p>当释放一个包含某虚地址的物理内存页时，需要让对应此物理内存页的管理数据结构Page做相关的清除处理，使得此物理内存页成为空闲；另外还需把表示虚地址与物理地址对应关系的二级页表项清除。请仔细查看和理解page_remove_pte函数中的注释。为此，需要补全在 kern/mm/pmm.c中的page_remove_pte函数。</p>
+<p>请在实验报告中简要说明你的设计实现过程。请回答如下问题：</p>
+<ul>
+<li>数据结构Page的全局变量（其实是一个数组）的每一项与页表中的页目录项和页表项有无对应关系？如果有，其对应关系是啥？</li>
+<li>如果希望虚拟地址与物理地址相等，则需要如何修改lab2，完成此事？ 鼓励通过编程来具体完成这个问题</li>
+</ul>
+</blockquote>
+<h5 id="关于代码："><a href="#关于代码：" class="headerlink" title="关于代码："></a>关于代码：</h5><p>练习3可以看成是练习2的简单的逆过程，在理解了练习2的基础上，释放虚地址所在的页和取消对应二级页表项的映射可以大概分为如下步骤：</p>
+<ol>
+<li>通过PTE_P判断该ptep是否存在；</li>
+<li>判断Page的ref的值是否为0，若为0，则说明此时没有任何逻辑地址被映射到此物理地址，换句话说当前物理页已没人使用，因此调用free_page函数回收此物理页，使得该物理页空闲；若不为0，则说明此时仍有至少一个逻辑地址被映射到此物理地址，因此不需回收此物理页；</li>
+<li>把表示虚地址与物理地址对应关系的二级页表项清除；</li>
+<li>更新TLB；</li>
+</ol>
+<p>根据Lab2中的代码提示，我们将MACROs 和 DEFINES拿出进行理解：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *</span></span><br><span class="line"><span class="class"><span class="title">pte2page</span>(<span class="title">pte_t</span> <span class="title">pte</span>) &#123;</span><span class="comment">//从ptep值中获取相应的页面</span></span><br><span class="line">    <span class="keyword">if</span> (!(pte &amp; PTE_P)) &#123;</span><br><span class="line">        panic(<span class="string">"pte2page called with invalid pte"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pa2page(PTE_ADDR(pte));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//减少该页的引用次数，返回剩下的引用次数。</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span>  </span><br><span class="line">page_ref_dec(struct Page *page) &#123;</span><br><span class="line">    page-&gt;ref -= <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> page-&gt;ref;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//当修改的页表目前正在被进程使用时，使之无效。</span></span><br><span class="line"><span class="keyword">void</span> </span><br><span class="line">tlb_invalidate(<span class="keyword">pde_t</span> *pgdir, <span class="keyword">uintptr_t</span> la) &#123;</span><br><span class="line">    <span class="keyword">if</span> (rcr3() == PADDR(pgdir)) &#123;</span><br><span class="line">        invlpg((<span class="keyword">void</span> *)la);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTE_P           0x001                   <span class="comment">// Present，即最低位为1；</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在此基础之上，我们给出完整的代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span></span><br><span class="line">page_remove_pte(<span class="keyword">pde_t</span> *pgdir, <span class="keyword">uintptr_t</span> la, <span class="keyword">pte_t</span> *ptep) &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (*ptep &amp; PTE_P) &#123;</span><br><span class="line">        <span class="comment">// 如果对应的二级页表项存在，如果*ptep存在，则其与PTE_P相与，得到的是1；</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">page</span> = <span class="title">pte2page</span>(*<span class="title">ptep</span>);</span>  <span class="comment">// 获得*ptep对应的Page结构</span></span><br><span class="line">        <span class="comment">// 关联的page引用数自减1，page_ref_dec的返回值是现在的page-&gt;ref</span></span><br><span class="line">       <span class="keyword">if</span>(page_ref_dec(page) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果自减1后，引用数为0，需要free释放掉该物理页</span></span><br><span class="line">            free_page(page);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 把表示虚地址与物理地址对应关系的二级页表项清除(通过把整体设置为0)</span></span><br><span class="line">        *ptep = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 由于页表项发生了改变，需要使TLB快表无效</span></span><br><span class="line">        tlb_invalidate(pgdir, la);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="关于问题："><a href="#关于问题：" class="headerlink" title="关于问题："></a>关于问题：</h5><p>Q1：数据结构Page的全局变量（其实是一个数组）的每一项与页表中的页目录项和页表项有无对应关系？如果有，其对应关系是啥？</p>
+<p>A：所有的物理页都有一个描述它的Page结构，所有的页表都是通过alloc_page()分配的，每个页表项都存放在一个Page结构描述的物理页中；如果 PTE 指向某物理页，同时也有一个Page结构描述这个物理页。所以有两种对应关系：</p>
+<p>(1)可以通过 PTE 的地址计算其所在的页表的Page结构：</p>
+<p> 将虚拟地址向下对齐到页大小，换算成物理地址(减 KERNBASE), 再将其右移 PGSHIFT(12)位获得在pages数组中的索引PPN，&amp;pages[PPN]就是所求的Page结构地址。</p>
+<p>(2)可以通过 PTE 指向的物理地址计算出该物理页对应的Page结构：</p>
+<p>PTE 按位与 0xFFF获得其指向页的物理地址，再右移 PGSHIFT(12)位获得在pages数组中的索引PPN，&amp;pages[PPN]就 PTE 指向的地址对应的Page结构。</p>
+<p>Q2：如果希望虚拟地址与物理地址相等，则需要如何修改lab2，完成此事？ 鼓励通过编程来具体完成这个问题。</p>
+<p>A：此时虚拟地址和物理地址的映射关系是：phy addr + KERNBASE = virtual addr</p>
+<p>所以如果想让虚拟地址=物理地址，则只要让KERNBASE = 0，因此去修改memlayout.h的宏定义</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KERNBASE            0xC0000000</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="Challenge1：buddy-system-伙伴系统-分配算法-需要编程"><a href="#Challenge1：buddy-system-伙伴系统-分配算法-需要编程" class="headerlink" title="Challenge1：buddy system(伙伴系统)分配算法(需要编程)"></a>Challenge1：buddy system(伙伴系统)分配算法(需要编程)</h2><blockquote>
+<p>Buddy System算法把系统中的可用存储空间划分为存储块(Block)来进行管理, 每个存储块的 大小必须是2的n次幂(Pow(2, n)), 即1, 2, 4, 8, 16, 32, 64, 128… </p>
+<ul>
+<li>参考伙伴分配器的一个极简实现， 在ucore中实现buddy system分配算法，要求有比较充分的测试用例说明实现的正确性，需要有设计文档。</li>
+</ul>
+</blockquote>
+<p>   Buddy system是一种连续物理内存的分配算法，主要应用二叉树来完成内存的分配；可以用来替换exe1中的first-fit算法。</p>
+<p>网上对buddy system的算法定义如下：</p>
+<p><strong>分配内存：</strong></p>
+<p>1.寻找大小合适的内存块（大于等于所需大小并且最接近2的幂，比如需要27，实际分配32）</p>
+<p>​    1.1 如果找到了，分配给应用程序。<br>​    1.2 如果没找到，分出合适的内存块。</p>
+<p>​       1.2.1 对半分离出高于所需大小的空闲内存块<br>​       1.2.2 如果分到最低限度，分配这个大小。<br>​       1.2.3 回溯到步骤1（寻找合适大小的块）<br>​       1.2.4 重复该步骤直到一个合适的块</p>
+<p><strong>释放内存：</strong></p>
+<p>1.释放该内存块</p>
+<p>   1.1 寻找相邻的块，看其是否释放了。<br>   1.2 如果相邻块也释放了，合并这两个块，重复上述步骤直到遇上未释放的相邻块，或者达到最高上限（即所有内存都释放了）。</p>
+<p>​        在此定义之下，我们使用数组分配器来模拟构建这样完全二叉树结构而不是真的用指针建立树结构——树结构中向上或向下的指针索引都通过数组分配器里面的下标偏移来实现。在这个“完全二叉树”结构中，二叉树的节点用于标记相应内存块的使用状态，高层节点对应大的块，低层节点对应小的块，在分配和释放中我们就通过这些节点的标记属性来进行块的分离合并。</p>
+<p>​        在分配阶段，首先要搜索大小适配的块——这个块所表示的内存大小刚好大于等于最接近所需内存的2次幂；通过对树深度遍历，从左右子树里面找到最合适的，将内存分配。</p>
+<p>​        在释放阶段，我们将之前分配出去的内存占有情况还原，并考察能否和同一父节点下的另一节点合并，而后递归合并，直至不能合并为止。</p>
+<p><img src="https://i.loli.net/2020/11/11/rVJYyaZokCqDPT1.png" alt="image-20201110000901267.png"></p>
+<p>​       基于上面的理论准备，我们可以开始写代码了。因为buddy system替代的是之前的first fit算法，所以可以仿照default_pmm的格式来写。</p>
+<p>​       首先，编写buddy.h（仿照default_pmm.h），唯一修改的地方是引入的pmm_manager不一样，要改成buddy system所使用的buddy_pmm_manager</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __KERN_MM_BUDDY_PMM_H__</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>  __KERN_MM_BUDDY_PMM_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pmm.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">pmm_manager</span> <span class="title">buddy_pmm_manager</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* ! __KERN_MM_DEFAULT_PMM_H__ */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​        而后，进入buddy.c文件</p>
+<ol>
+<li><p>因为这里使用数组来表示二叉树结构，所以需要建立正确的索引机制：每level的第一左子树的下标为2^level-1，所以如果我们得到[index]节点的所在level，那么offset的计算可以归结为(index-2^level+1) * node_size = (index+1)<em>node_size – node_size</em>2^level。其中size的计算为2^(max_depth-level)，所以node_size * 2^level = 2^max_depth = size。综上所述，可得公式offset=(index+1)*node_size – size。<br>PS：式中索引的下标均从0开始，size为内存总大小，node_size为内存块对应大小。</p>
+<p>由上，完成宏定义。</p>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEFT_LEAF(index) ((index) * 2 + 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RIGHT_LEAF(index) ((index) * 2 + 2)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PARENT(index) ( ((index) + 1) / 2 - 1)</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>2.  因为buddy system的块大小都是2的倍数，所以我们对于输入的所需的块大小，要先计算出最接近于它的2的倍数的值以匹配buddy system的最合适块的查找。</code></pre><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="title">fixsize</span><span class="params">(<span class="keyword">unsigned</span> <span class="built_in">size</span>)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">size</span> |= <span class="built_in">size</span> &gt;&gt; <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">size</span> |= <span class="built_in">size</span> &gt;&gt; <span class="number">2</span>;</span><br><span class="line">  <span class="built_in">size</span> |= <span class="built_in">size</span> &gt;&gt; <span class="number">4</span>;</span><br><span class="line">  <span class="built_in">size</span> |= <span class="built_in">size</span> &gt;&gt; <span class="number">8</span>;</span><br><span class="line">  <span class="built_in">size</span> |= <span class="built_in">size</span> &gt;&gt; <span class="number">16</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">size</span>+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>构造buddy system最基本的数据结构，并初始化一个用来存放二叉树的数组。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buddy</span> &#123;</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="built_in">size</span>;<span class="comment">//表明管理内存</span></span><br><span class="line">  <span class="keyword">unsigned</span> longest; </span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buddy</span> <span class="title">root</span>[10000];</span><span class="comment">//存放二叉树的数组，用于内存分配</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>buddy system是需要和实际指向空闲块双链表配合使用的，所以需要先各自初始化数组和指向空闲块的双链表。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//先初始化双链表</span></span><br><span class="line"><span class="keyword">free_area_t</span> free_area;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> free_list (free_area.free_list)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> nr_free (free_area.nr_free)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">buddy_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    list_init(&amp;free_list);</span><br><span class="line">    nr_free=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//再初始化buddy system的数组</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buddy_new</span><span class="params">( <span class="keyword">int</span> <span class="built_in">size</span> )</span> </span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> node_size;    <span class="comment">//传入的size是这个buddy system表示的总空闲空间；node_size是对应节点所表示的空闲空间的块数</span></span><br><span class="line">  <span class="keyword">int</span> i;</span><br><span class="line">  nr_block=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">size</span> &lt; <span class="number">1</span> || !IS_POWER_OF_2(<span class="built_in">size</span>))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  root[<span class="number">0</span>].<span class="built_in">size</span> = <span class="built_in">size</span>;</span><br><span class="line">  node_size = <span class="built_in">size</span> * <span class="number">2</span>;   <span class="comment">//认为总结点数是size*2</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">2</span> * <span class="built_in">size</span> - <span class="number">1</span>; ++i) &#123;</span><br><span class="line">    <span class="keyword">if</span> (IS_POWER_OF_2(i+<span class="number">1</span>))    <span class="comment">//如果i+1是2的倍数，那么该节点所表示的二叉树就要到下一层了</span></span><br><span class="line">      node_size /= <span class="number">2</span>;</span><br><span class="line">    root[i].longest = node_size;   <span class="comment">//longest是该节点所表示的初始空闲空间块数</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>根据pmm.h里面对于pmm_manager的统一结构化定义，我们需要对buddy system完成如下函数：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">pmm_manager</span> <span class="title">buddy_pmm_manager</span> = &#123;</span></span><br><span class="line">    .name = <span class="string">"buddy_pmm_manager"</span>,      <span class="comment">// 管理器的名称</span></span><br><span class="line">    .init = buddy_init,               <span class="comment">// 初始化管理器</span></span><br><span class="line">    .init_memmap = buddy_init_memmap, <span class="comment">// 设置可管理的内存,初始化可分配的物理内存空间</span></span><br><span class="line">    .alloc_pages = buddy_alloc_pages, <span class="comment">// 分配&gt;=N个连续物理页,返回分配块首地址指针 </span></span><br><span class="line">    .free_pages = buddy_free_pages,   <span class="comment">// 释放包括自Base基址在内的，起始的&gt;=N个连续物理内存页</span></span><br><span class="line">    .nr_free_pages = buddy_nr_free_pages, <span class="comment">// 返回全局的空闲物理页数量</span></span><br><span class="line">    .check = buddy_check,             <span class="comment">//举例检测这个pmm_manager的正确性</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​    5.1 初始化管理器（这个已在上面完成）</p>
+<p>​    5.2 初始化可管理的物理内存空间</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">buddy_init_memmap(struct Page *base, <span class="keyword">size_t</span> n)</span><br><span class="line">&#123;</span><br><span class="line">    assert(n&gt;<span class="number">0</span>);</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>* <span class="title">p</span>=<span class="title">base</span>;</span></span><br><span class="line">    <span class="keyword">for</span>(;p!=base + n;p++)</span><br><span class="line">    &#123;</span><br><span class="line">        assert(PageReserved(p));</span><br><span class="line">        p-&gt;flags = <span class="number">0</span>;</span><br><span class="line">        p-&gt;property = <span class="number">1</span>;</span><br><span class="line">        set_page_ref(p, <span class="number">0</span>);    <span class="comment">//表明空闲可用</span></span><br><span class="line">        SetPageProperty(p);</span><br><span class="line">        list_add_before(&amp;free_list,&amp;(p-&gt;page_link));     <span class="comment">//向双链表中加入页的管理部分</span></span><br><span class="line">    &#125;</span><br><span class="line">    nr_free += n;     <span class="comment">//表示总共可用的空闲页数</span></span><br><span class="line">    <span class="keyword">int</span> allocpages=UINT32_ROUND_DOWN(n);</span><br><span class="line">    buddy2_new(allocpages);    <span class="comment">//传入所需要表示的总内存页大小，让buddy system的数组得以初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    5.3 分配所需的物理页，返回分配块首地址指针</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//分配的逻辑是：首先在buddy的“二叉树”结构中找到应该分配的物理页在整个实际双向链表中的位置，而后把相应的page进行标识表明该物理页已经分出去了。</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>*</span></span><br><span class="line"><span class="class"><span class="title">buddy_alloc_pages</span>(<span class="title">size_t</span> <span class="title">n</span>)&#123;</span></span><br><span class="line">  assert(n&gt;<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span>(n&gt;nr_free)</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>* <span class="title">page</span>=<span class="title">NULL</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>* <span class="title">p</span>;</span></span><br><span class="line">  <span class="keyword">list_entry_t</span> *le=&amp;free_list,*len;</span><br><span class="line">  rec[nr_block].offset=buddy2_alloc(root,n);<span class="comment">//记录偏移量</span></span><br><span class="line">  <span class="keyword">int</span> i;</span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;rec[nr_block].offset+<span class="number">1</span>;i++)</span><br><span class="line">    le=list_next(le);</span><br><span class="line">  page=le2page(le,page_link);</span><br><span class="line">  <span class="keyword">int</span> allocpages;</span><br><span class="line">  <span class="keyword">if</span>(!IS_POWER_OF_2(n))</span><br><span class="line">   allocpages=fixsize(n);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">     allocpages=n;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//根据需求n得到块大小</span></span><br><span class="line">  rec[nr_block].base=page;<span class="comment">//记录分配块首页</span></span><br><span class="line">  rec[nr_block].nr=allocpages;<span class="comment">//记录分配的页数</span></span><br><span class="line">  nr_block++;</span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;allocpages;i++)</span><br><span class="line">  &#123;</span><br><span class="line">    len=list_next(le);</span><br><span class="line">    p=le2page(le,page_link);</span><br><span class="line">    ClearPageProperty(p);</span><br><span class="line">    le=len;</span><br><span class="line">  &#125;<span class="comment">//修改每一页的状态</span></span><br><span class="line">  nr_free-=allocpages;<span class="comment">//减去已被分配的页数</span></span><br><span class="line">  page-&gt;property=n;</span><br><span class="line">  <span class="keyword">return</span> page;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//以下是在上面的分配物理内存函数中用到的结构和辅助函数</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">allocRecord</span>//记录分配块的信息</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>* <span class="title">base</span>;</span></span><br><span class="line">  <span class="keyword">int</span> offset;</span><br><span class="line">  <span class="keyword">size_t</span> nr;<span class="comment">//块大小，即包含了多少页</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">allocRecord</span> <span class="title">rec</span>[80000];</span><span class="comment">//存放偏移量的数组</span></span><br><span class="line"><span class="keyword">int</span> nr_block;<span class="comment">//已分配的块数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">buddy2_alloc</span><span class="params">(struct buddy2* self, <span class="keyword">int</span> <span class="built_in">size</span>)</span> </span>&#123; <span class="comment">//size就是这次要分配的物理页大小</span></span><br><span class="line">  <span class="keyword">unsigned</span> index = <span class="number">0</span>;  <span class="comment">//节点的标号</span></span><br><span class="line">  <span class="keyword">unsigned</span> node_size;  <span class="comment">//用于后续循环寻找合适的节点</span></span><br><span class="line">  <span class="keyword">unsigned</span> offset = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (self==<span class="literal">NULL</span>)<span class="comment">//无法分配</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">size</span> &lt;= <span class="number">0</span>)<span class="comment">//分配不合理</span></span><br><span class="line">    <span class="built_in">size</span> = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (!IS_POWER_OF_2(<span class="built_in">size</span>))<span class="comment">//不为2的幂时，取比size更大的2的n次幂</span></span><br><span class="line">    <span class="built_in">size</span> = fixsize(<span class="built_in">size</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (self[index].longest &lt; <span class="built_in">size</span>)<span class="comment">//根据根节点的longest，发现可分配内存不足，也返回</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//从根节点开始，向下寻找左右子树里面找到最合适的节点</span></span><br><span class="line">  <span class="keyword">for</span>(node_size = self-&gt;<span class="built_in">size</span>; node_size != <span class="built_in">size</span>; node_size /= <span class="number">2</span> ) &#123;</span><br><span class="line">    <span class="keyword">if</span> (self[LEFT_LEAF(index)].longest &gt;= <span class="built_in">size</span>)</span><br><span class="line">    &#123;</span><br><span class="line">       <span class="keyword">if</span>(self[RIGHT_LEAF(index)].longest&gt;=<span class="built_in">size</span>)</span><br><span class="line">        &#123;</span><br><span class="line">           index=self[LEFT_LEAF(index)].longest &lt;= self[RIGHT_LEAF(index)].longest? LEFT_LEAF(index):RIGHT_LEAF(index);</span><br><span class="line">         <span class="comment">//找到两个相符合的节点中内存较小的结点</span></span><br><span class="line">        &#125;</span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">       &#123;</span><br><span class="line">         index=LEFT_LEAF(index);</span><br><span class="line">       &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      index = RIGHT_LEAF(index);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  self[index].longest = <span class="number">0</span>;<span class="comment">//标记节点为已使用</span></span><br><span class="line">  offset = (index + <span class="number">1</span>) * node_size - self-&gt;<span class="built_in">size</span>;  <span class="comment">//offset得到的是该物理页在双向链表中距离“根节点”的偏移</span></span><br><span class="line">  <span class="comment">//这个节点被标记使用后，要层层向上回溯，改变父节点的longest值</span></span><br><span class="line">  <span class="keyword">while</span> (index) &#123;</span><br><span class="line">    index = PARENT(index);</span><br><span class="line">    self[index].longest = </span><br><span class="line">      MAX(self[LEFT_LEAF(index)].longest, self[RIGHT_LEAF(index)].longest);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> offset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>   5.4 释放指定的内存页大小</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buddy_free_pages</span><span class="params">(struct Page* base, <span class="keyword">size_t</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> node_size, index = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">unsigned</span> left_longest, right_longest;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buddy2</span>* <span class="title">self</span>=<span class="title">root</span>;</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">list_entry_t</span> *le=list_next(&amp;free_list);</span><br><span class="line">  <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nr_block;i++)  <span class="comment">//nr_block是已分配的块数</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(rec[i].base==base)  </span><br><span class="line">     <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> offset=rec[i].offset;</span><br><span class="line">  <span class="keyword">int</span> pos=i;<span class="comment">//暂存i</span></span><br><span class="line">  i=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span>(i&lt;offset)</span><br><span class="line">  &#123;</span><br><span class="line">    le=list_next(le);</span><br><span class="line">    i++;     <span class="comment">//根据该分配块的记录信息，可以找到双链表中对应的page</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> allocpages;</span><br><span class="line">  <span class="keyword">if</span>(!IS_POWER_OF_2(n))</span><br><span class="line">   allocpages=fixsize(n);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">     allocpages=n;</span><br><span class="line">  &#125;</span><br><span class="line">  assert(self &amp;&amp; offset &gt;= <span class="number">0</span> &amp;&amp; offset &lt; self-&gt;<span class="built_in">size</span>);<span class="comment">//是否合法</span></span><br><span class="line">  nr_free+=allocpages;<span class="comment">//更新空闲页的数量</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>* <span class="title">p</span>;</span></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;allocpages;i++)<span class="comment">//回收已分配的页</span></span><br><span class="line">  &#123;</span><br><span class="line">     p=le2page(le,page_link);</span><br><span class="line">     p-&gt;flags=<span class="number">0</span>;</span><br><span class="line">     p-&gt;property=<span class="number">1</span>;</span><br><span class="line">     SetPageProperty(p);</span><br><span class="line">     le=list_next(le);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//实际的双链表信息复原后，还要对“二叉树”里面的节点信息进行更新</span></span><br><span class="line">  node_size = <span class="number">1</span>;</span><br><span class="line">  index = offset + self-&gt;<span class="built_in">size</span> - <span class="number">1</span>;   <span class="comment">//从原始的分配节点的最底节点开始改变longest</span></span><br><span class="line">  self[index].longest = node_size;   <span class="comment">//这里应该是node_size，也就是从1那层开始改变</span></span><br><span class="line">  <span class="keyword">while</span> (index) &#123;<span class="comment">//向上合并，修改父节点的记录值</span></span><br><span class="line">    index = PARENT(index);</span><br><span class="line">    node_size *= <span class="number">2</span>;</span><br><span class="line">    left_longest = self[LEFT_LEAF(index)].longest;</span><br><span class="line">    right_longest = self[RIGHT_LEAF(index)].longest;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (left_longest + right_longest == node_size) </span><br><span class="line">      self[index].longest = node_size;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      self[index].longest = MAX(left_longest, right_longest);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(i=pos;i&lt;nr_block<span class="number">-1</span>;i++)<span class="comment">//清除此次的分配记录，即从分配数组里面把后面的数据往前挪</span></span><br><span class="line">  &#123;</span><br><span class="line">    rec[i]=rec[i+<span class="number">1</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  nr_block--;<span class="comment">//更新分配块数的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>   5.5 返回全局的空闲物理页数</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">size_t</span></span><br><span class="line">buddy_nr_free_pages(<span class="keyword">void</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> nr_free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    5.6 检查这个pmm_manager是否正确</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//以下是一个测试函数</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">buddy_check(<span class="keyword">void</span>) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Page</span>  *<span class="title">A</span>, *<span class="title">B</span>;</span></span><br><span class="line">    A = B  =<span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    assert((A = alloc_page()) != <span class="literal">NULL</span>);</span><br><span class="line">    assert((B = alloc_page()) != <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    assert( A != B);</span><br><span class="line">    assert(page_ref(A) == <span class="number">0</span> &amp;&amp; page_ref(B) == <span class="number">0</span>);</span><br><span class="line">  <span class="comment">//free page就是free pages(p0,1)</span></span><br><span class="line">    free_page(A);</span><br><span class="line">    free_page(B);</span><br><span class="line">    </span><br><span class="line">    A=alloc_pages(<span class="number">500</span>);     <span class="comment">//alloc_pages返回的是开始分配的那一页的地址</span></span><br><span class="line">    B=alloc_pages(<span class="number">500</span>);</span><br><span class="line">    cprintf(<span class="string">"A %p\n"</span>,A);</span><br><span class="line">    cprintf(<span class="string">"B %p\n"</span>,B);</span><br><span class="line">    free_pages(A,<span class="number">250</span>);     <span class="comment">//free_pages没有返回值</span></span><br><span class="line">    free_pages(B,<span class="number">500</span>);</span><br><span class="line">    free_pages(A+<span class="number">250</span>,<span class="number">250</span>);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Challenge2：任意大小的内存单元slub分配算法-需要编程"><a href="#Challenge2：任意大小的内存单元slub分配算法-需要编程" class="headerlink" title="Challenge2：任意大小的内存单元slub分配算法(需要编程)"></a>Challenge2：任意大小的内存单元slub分配算法(需要编程)</h2><blockquote>
+<p>slub算法，实现两层架构的高效内存单元分配，第一层是基于页大小的内存分配，第二层是在 第一层基础上实现基于任意大小的内存分配。可简化实现，能够体现其主体思想即可。 </p>
+<ul>
+<li>参考linux的slub分配算法/，在ucore中实现slub分配算法。要求有比较充分的测试用例说 明实现的正确性，需要有设计文档。</li>
+</ul>
+</blockquote>
+<p>上一个challenge中的buddy system像是一个批发商，按页批发大量的内存。但是很多时候你买东西并不需要去批发，而是去零售。零售商就是我们的slub分配算法。slub运行在buddy system之上，为内核（客户）提供小内存的管理功能。</p>
+<p>slub算法将内存分组管理，每个组分别为2^3^,2^4^,2^5^,…,2^11^B和两个特殊组96B和192B。为什么这么分，因为我们的页大小默认为4KB=2^12^B，也就是说如果我们需要大于等于2^12^B的内存，就用buddy system批发，而需要小内存的时候就用slub来分配就行。</p>
+<p>我们可以用一个kmem_cache数组 kmalloc_caches[12]来存放上面的12个组，可以把kmem_cache想象为12个零售商，每个零售商只卖一种东西。零售商有自己的仓库和自己的店面，店面里只有一个slab，如果slab卖完了再从仓库中换出其他的slab。</p>
+<p>在slub的使用过程中有如下几种情况</p>
+<ol>
+<li><p>刚刚创建slub系统，第一次申请空间</p>
+<p>此时slub刚刚建立起来，不管是仓库还是店面都没有slab，这个时候首先需要从buddy system中申请空闲的内存页，然后把这些内存页slub划分为很多的零售品object，选择一个摆在商店中，剩下的放在仓库里。然后把商品中分一个给顾客</p>
+</li>
+<li><p>商店里有可用的object</p>
+<p>这个时候就直接给呗，还能不给的咯</p>
+</li>
+<li><p>商店没东西，仓库有</p>
+<p>从仓库里换出一个新的空的slub，并分一个空闲object给顾客</p>
+</li>
+<li><p>商店和仓库都没有了</p>
+<p>这个时候只能重新批发新的slub回来，重复1</p>
+</li>
+</ol>
+<p>至于其他的嘛…</p>
+<p><img src="https://i.loli.net/2020/11/13/pYGHkwqbLjKsQWr.jpg" alt="1.jpg"></p>
+<p>我是真的不会了，写了400多行bug的挫败感确实有点大，等过段时间把手上的活忙完了再写。</p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ucore-lab1</title>
+    <url>/2020/11/13/Ucore-lab1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="Ucore-lab1学习记录"><a href="#Ucore-lab1学习记录" class="headerlink" title="Ucore-lab1学习记录"></a>Ucore-lab1学习记录</h1><blockquote>
+<p>本文记录了清华大学操作系统使用的Ucore实验的lab1的报告</p>
+<p>由我，YYF同学及LZQ同学共同完成，感谢二位大佬的指教和帮助</p>
+<p>仅供学习交流使用，未经许可不得转载，抄袭。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="前置"><a href="#前置" class="headerlink" title="前置"></a>前置</h2><p>在解压后的ucroe源码包中使用make命令即可以生成所需的目标文件,例如在本次实验中</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">user@system:~..&#x2F;lab1$ make</span><br></pre></td></tr></table></figure>
+
+<p>之后就会生成一系列的目标文件：</p>
+<ul>
+<li>user.img : 被qemu访问的虚拟硬盘文件</li>
+<li>kernel : ELF格式的toy ucore kernel执行文，嵌入到了ucore.img中</li>
+<li>bootblock : 虚拟的硬盘主引导扇区(512字节)，包含了bootloader执行代码，同样嵌入了</li>
+<li>sign : 外部执行程序，用来生成虚拟的硬盘主引导扇区</li>
+</ul>
+<p>还有其他文件，不一一列举。</p>
+<p>如果要对修改后的ucore代码和ucore 源码进行比较，可以使用diff命令。</p>
+<p><img src="https://i.loli.net/2020/10/03/XrvLV18xysfHM3e.png" alt="01.1.png"></p>
+<h2 id="练习1：理解通过make生成执行文件的过程"><a href="#练习1：理解通过make生成执行文件的过程" class="headerlink" title="练习1：理解通过make生成执行文件的过程"></a>练习1：理解通过make生成执行文件的过程</h2><p>列出本实验各练习中对应的OS原理的知识点，并说明本实验中的实现部分如何对应和体现了原理中的基本概念和关键知识点</p>
+<p>在此练习中，大家需要通过静态分析代码来了解：</p>
+<ol>
+<li>操作系统镜像文件ucore.img是如何一步一步生成的？(需要比较详细地解释Makefile中每一条相关命令和命令参数的含义，以及说明命令导致的结果)</li>
+<li>一个被系统认为是符合规范的硬盘主引导扇区的特征是什么。</li>
+</ol>
+<h6 id="操作系统镜像文件ucore-img是如何一步一步生成的？"><a href="#操作系统镜像文件ucore-img是如何一步一步生成的？" class="headerlink" title="操作系统镜像文件ucore.img是如何一步一步生成的？"></a>操作系统镜像文件ucore.img是如何一步一步生成的？</h6><p>通过使用以下命令，可以得到Makefile中具体执行的所有命令，之后就可以对每一条命令进行分析。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ make &quot;V&#x3D;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>通过这个命令会弹出来一长串信息，这个我们先不看，还是先从makefile文件入手。打开makefile文件，一下子看到一堆代码也是挺烦人的，不过可以发现里面写了注释。既然有注释，就好办多了，我们知道通过这个命令可以生成一个ucore.img文件，那我们就从ucore.img倒推回去，阅读注释，可以看到以下代码。</p>
+<p><img src="https://i.loli.net/2020/10/03/Wv6GrdoKfsNgXUi.png" alt="01.3.png"></p>
+<p>即使我们不懂makefile的语法规则，我们也很容易知道要生成这个ucore.img需要kernel和bootblock两个文件，那就再分别从这两个文件往上追溯。</p>
+<p>我们先从bootblock来看，bootblock需要生成bootasm.o,bootmain.o以及sign等文件</p>
+<p><img src="https://i.loli.net/2020/10/03/vYUrM3f8yLHeDTP.png" alt="01.4.png"></p>
+<p>其中bootasm.o由bootasm.S生成，bootmain.o由bootmain.c生成，生成代码为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -Iboot&#x2F; -march&#x3D;i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc  -fno-stack-protector -Ilibs&#x2F; -Os -nostdinc -c boot&#x2F;bootasm.S -o obj&#x2F;boot&#x2F;bootasm.o</span><br><span class="line"></span><br><span class="line">gcc -Iboot&#x2F; -march&#x3D;i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc  -fno-stack-protector -Ilibs&#x2F; -Os -nostdinc -c boot&#x2F;bootmain.c -o obj&#x2F;boot&#x2F;bootmain.o</span><br></pre></td></tr></table></figure>
+
+<p>解释一下其中出现的参数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-fno-builtin	# 不承认不以__builtin_开头的函数为内建函数</span><br><span class="line">-fno-PIC	# 产生与位置无关代码，即没有绝对地址，使代码可以被任意加载</span><br><span class="line">-Wall	# 在编译后显示所有警告</span><br><span class="line">-ggdb	# 生成专门用于gdb的调试信息</span><br><span class="line">-m32	# 生成32位机器的汇编代码</span><br><span class="line">-gstabs	# 以stabs格式生成调试信息</span><br><span class="line">-nostdinc	# 不在标准系统文件夹中寻找头文件，只在-I中指定的文件夹搜索头文件</span><br><span class="line">-I	# 添加搜索头文件的路径并且会被优先查找	</span><br><span class="line">-Os	# 优化代码，减小大小</span><br><span class="line">-c	# 把程序做成obj文件，就是.o</span><br><span class="line">-o	# 制定目标名称</span><br><span class="line">-fno-stack-protector	# 不生成用于检测缓冲区溢出的代码</span><br></pre></td></tr></table></figure>
+
+<p>生成sign的代码如下，编写在makefile文件中</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># create 'sign' tools</span></span><br><span class="line"><span class="variable">$(<span class="built_in">call</span> add_files_host,tools/sign.c,sign,sign)</span></span><br><span class="line"><span class="variable">$(<span class="built_in">call</span> create_target_host,sign,sign)</span></span><br></pre></td></tr></table></figure>
+
+<p>对应的命令是，因为没有新的参数，就不进行详细解释。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -Itools&#x2F; -g -Wall -O2 -c tools&#x2F;sign.c -o obj&#x2F;sign&#x2F;tools&#x2F;sign.o</span><br><span class="line">gcc -g -Wall -O2 obj&#x2F;sign&#x2F;tools&#x2F;sign.o -o bin&#x2F;sign</span><br></pre></td></tr></table></figure>
+
+<p>整个的bootblock的生成过程如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 生成bootblock.o</span><br><span class="line"># 新参数 -m:模拟为i386上的链接器，-N:设置代码段和数据段可读可写，-e:指定入口，-Ttext:设置代码开始位置</span><br><span class="line">ld -m    elf_i386 -nostdlib -N -e start -Ttext 0x7C00 obj&#x2F;boot&#x2F;bootasm.o obj&#x2F;boot&#x2F;bootmain.o -o obj&#x2F;bootblock.o</span><br><span class="line"></span><br><span class="line"># 将bootblock.o拷贝到bootblock.out</span><br><span class="line"># 新参数 -S:移除所有符号和重定位信息，-O:指定输出格式</span><br><span class="line">objcopy -S -O binary obj&#x2F;bootblock.o obj&#x2F;bootblock.out</span><br><span class="line"></span><br><span class="line"># 使用sign处理bootblock.out生成bootblock</span><br><span class="line">bin&#x2F;sign obj&#x2F;bootblock bin&#x2F;bootblock</span><br></pre></td></tr></table></figure>
+
+<p>再看kernel的相关代码如下：</p>
+<p><img src="https://i.loli.net/2020/10/03/n2aSNwoIEqie5jA.png" alt="01.5.png"></p>
+<p>注意到KSRCDIR这一部分的内容实际上是用给定目录的方式进行对.c文件的添加，在被执行的时候就会在这些目录中选择没使用过的.c文件来编译成.o文件。之后kernel对这些所有的.o文件进行一个链接。</p>
+<p>生成完kernel和bootblock之后，就该生成ucore.img了。由上面的生成代码即</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 生成一个有10000块的ucore.img文件，每个块默认大小为512字节</span><br><span class="line">dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;bin&#x2F;ucore.img count&#x3D;10000</span><br><span class="line"># 把bootblock添加到ucore.img的第一个块之中</span><br><span class="line">dd if&#x3D;bin&#x2F;bootblock of&#x3D;bin&#x2F;ucore.img conv&#x3D;notrunc</span><br><span class="line"># 把kernel写到ucore.img的其它块中</span><br><span class="line">dd if&#x3D;bin&#x2F;kernel of&#x3D;bin&#x2F;ucore.img seek&#x3D;1 conv&#x3D;notrunc</span><br><span class="line"># 其中几个关键参数的意义</span><br><span class="line">if:输入文件，不指定从stdin中读取</span><br><span class="line">of:输出文件，不指定从stdout中读取</span><br><span class="line">&#x2F;dev&#x2F;zero:不断返回的0值</span><br><span class="line">count:块数</span><br><span class="line">conv &#x3D; notrunc:输出不截断</span><br><span class="line">seek &#x3D; num:从输出文件开头跳过num个块</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就知道了整个ucore.img是如何从无到有的。</p>
+<h6 id="一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？"><a href="#一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？" class="headerlink" title="一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？"></a>一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？</h6><p>主引导扇区就是我们的bootblock被加载到的区域，而和生成bootblock有关的代码就是sign.c。查看这个文件得到如下代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Usage: &lt;input filename&gt; &lt;output filename&gt;\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (stat(argv[<span class="number">1</span>], &amp;st) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Error opening file '%s': %s\n"</span>, argv[<span class="number">1</span>], strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"'%s' size: %lld bytes\n"</span>, argv[<span class="number">1</span>], (<span class="keyword">long</span> <span class="keyword">long</span>)st.st_size);</span><br><span class="line">    <span class="keyword">if</span> (st.st_size &gt; <span class="number">510</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%lld &gt;&gt; 510!!\n"</span>, (<span class="keyword">long</span> <span class="keyword">long</span>)st.st_size);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">512</span>];</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">    FILE *ifp = fopen(argv[<span class="number">1</span>], <span class="string">"rb"</span>);</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">size</span> = fread(buf, <span class="number">1</span>, st.st_size, ifp);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">size</span> != st.st_size) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"read '%s' error, size is %d.\n"</span>, argv[<span class="number">1</span>], <span class="built_in">size</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(ifp);</span><br><span class="line">    buf[<span class="number">510</span>] = <span class="number">0x55</span>;</span><br><span class="line">    buf[<span class="number">511</span>] = <span class="number">0xAA</span>;</span><br><span class="line">    FILE *ofp = fopen(argv[<span class="number">2</span>], <span class="string">"wb+"</span>);</span><br><span class="line">    <span class="built_in">size</span> = fwrite(buf, <span class="number">1</span>, <span class="number">512</span>, ofp);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">size</span> != <span class="number">512</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"write '%s' error, size is %d.\n"</span>, argv[<span class="number">2</span>], <span class="built_in">size</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(ofp);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"build 512 bytes boot sector: '%s' success!\n"</span>, argv[<span class="number">2</span>]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过分析上面这段代码，我们可以得到一个合格的主引导扇区应该符合如下两个规则：</p>
+<ul>
+<li>输入字节在510字节内</li>
+<li>最后两个字节是0x55AA</li>
+</ul>
+<h2 id="练习2：使用qemu执行并调试lab1中的软件-简要写出练习过程"><a href="#练习2：使用qemu执行并调试lab1中的软件-简要写出练习过程" class="headerlink" title="练习2：使用qemu执行并调试lab1中的软件(简要写出练习过程)"></a>练习2：使用qemu执行并调试lab1中的软件(简要写出练习过程)</h2><p>为了熟悉使用qemu和gdb进行的调试工作，我们进行如下的小练习：</p>
+<ol>
+<li>从CPU加电后执行的第一条命令开始，单步跟踪BIOS的执行</li>
+<li>在初始化位置0x7c00设置实地址断点，测试断点正常</li>
+<li>从0x7c00开始跟踪代码运行，将单步跟踪反汇编得到的代码与bootasm.S和bootblock.asm进行比较</li>
+<li>自己找一个booloader或内核中的代码位置，设置断点并进行测试。</li>
+</ol>
+<h3 id="解题过程如下："><a href="#解题过程如下：" class="headerlink" title="解题过程如下："></a>解题过程如下：</h3><ol>
+<li><p><strong>启动gdb，连接到qemu进行远程调试</strong></p>
+<h4 id="gdb调试："><a href="#gdb调试：" class="headerlink" title="gdb调试："></a>gdb调试：</h4><p>摘录部分常用命令和参数如下：</p>
+<ul>
+<li>list &lt;linenum&gt; ，显示程序第linenum行周围的源程序；list &lt;function&gt; ，显示函数名为function的函数的源程序；list，显示当前行后面的源程序；list - ，显示当前行前面的源程序</li>
+<li>path &lt;dir&gt;，设定程序运行路径；how paths查看路径</li>
+<li>cd &lt;dir&gt;，相当于shell的cd命令；pwd显示当前所在目录</li>
+<li>break [filename:]&lt;function&gt;或[filename:]&lt;linenum&gt;，在源文件（可选参数）的某个函数或某行停住；break +offset或-offset，在当前行号的前面或后面的offset行停住，offset为自然数；break *address，在程序运行的内存地址停住；break，无参数时表示在下一条指令处停住；break … if &lt;condition&gt;，以上命令均可与if语句配合使用，使得满足一定条件时在指定位置停住程序</li>
+<li>info break[n]或breakpoints[n]，查看第n个断点；info break，列出当前所设置的所有观察点</li>
+<li>单步调试：next，相当于VC++当中的step over；step，相当于step into</li>
+<li>continue或c或fg：继续执行程序直到程序结束或到达下一个断点</li>
+<li>x /nfu [addr]，显示指定地址addr及其附近的内容，其中n表示机器指令（汇编码）个数，f表示格式（包括十六进制x、字符串s、指令i等），u表示单元大小（b：1B，h：2B，w：4B，g：8B），如果不显式指定addr，则地址默认为上一次x命令显示之后的地址。</li>
+<li>layout，打开可视化窗口；layout asm，打开反汇编窗口；ctrl+x a，退出当前可视化窗口回到终端</li>
+</ul>
+<h4 id="所用gdb命令，结合makefile使用（下列代码执行时只需在命令行输入make-lab1-mon）："><a href="#所用gdb命令，结合makefile使用（下列代码执行时只需在命令行输入make-lab1-mon）：" class="headerlink" title="所用gdb命令，结合makefile使用（下列代码执行时只需在命令行输入make lab1-mon）："></a>所用gdb命令，结合makefile使用（下列代码执行时只需在命令行输入make lab1-mon）：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">file bin/kernel #指定调试目标文件，让gdb获得符号信息</span><br><span class="line">target remote :1234 #设置远程连接端口为qemu的运行端口1234，连接到qemu</span><br><span class="line">set architecture i8086 #指定qemu要模拟的硬件架构</span><br><span class="line">b *0x7c00 #在bootloader开始地址0x7c00处下断点</span><br><span class="line">continue #开始调试，执行到刚才指定的断点</span><br><span class="line">x /2i $pc #以十六进制格式打印当前机器指令及其下方一条机器指令的地址，并显示汇编</span><br><span class="line"></span><br><span class="line">layout asm #显示汇编可视化窗口</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<ol start="2">
+<li><p><strong>BIOS启动：gdb查看启动后第一条执行的指令并查看BIOS代码</strong></p>
+<p>修改gdbinit中指令为：</p>
+   <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set architecture i8086</span><br><span class="line">target remote:1234</span><br></pre></td></tr></table></figure>
+
+<p>在lab1目录下执行make debug命令启动qemu，程序在启动后第一条指令停住。</p>
+<p><img src="https://i.loli.net/2020/10/24/dcJICgLnW5ExB3M.png" alt="bios.png"></p>
+</li>
+</ol>
+<p>   <strong>查看后续BIOS代码</strong>：</p>
+<p>   执行类似x /10i addr的命令即可</p>
+<ol start="3">
+<li><p><strong>跳转到bootloader：在0x7c00处设置断点、测试正常可用</strong></p>
+<p>如图。执行make lab1-mon命令后可在0x7c00处停住，并能按照指定规则打印出相应的汇编码。</p>
+<p>这个地址在lab1init文件中显式给出。</p>
+<p><img src="https://i.loli.net/2020/10/19/i1xRvgVa3KWkG8f.png" alt="gdb_break.png"></p>
+</li>
+<li><p><strong>单步调试+反汇编，跟踪代码运行，将调试时得到的反汇编代码与bootasm.S和bootblock.asm进行比较。</strong></p>
+<p><strong>bootasm.s中包括的定义</strong>：内核代码段选择子、内核数据段选择子、保护模式使能标志、全局描述符表</p>
+<p><strong>bootasm.s中包括的功能代码或代码块</strong>：禁止中断，设置寻址方向为朝向高地址，初始化（清空）DS, ES, SS段寄存器，A20使能，保护模式下初始化（设为保护模式的数据段选择子）数据段寄存器DS, ES, FS, GS, SS，初始化一个栈的指针并调用bootmain.c中的bootmain函数执行bootloader（这个函数不应该返回，如果意外返回则在下方汇编代码里进入死循环）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">0x7c4f  jmp	0x7c4f #一个死循环</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/10/19/QuhMgexjoWnyRcz.png" alt="layout_asm.png"></p>
+<p>可视化窗口的反汇编代码风格是x86的，而bootasm.s文件是AT&amp;T风格，二者功能相同。</p>
+</li>
+</ol>
+   <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">0x7c4a	call 0x7cfe #bootmain函数的起始地址应该在此处，但这个地址上的汇编是pop %bp？？</span><br></pre></td></tr></table></figure>
+
+<p>   编译lab1中的代码，在其中obj文件夹下找到<strong>bootblock.asm</strong>，即bootloader的汇编代码源文件，看到各指令下方均标明了所在地址和对应的十六进制机器码，和反汇编代码能够相互对应。</p>
+<ol start="5">
+<li><p><strong>自己找一个bootloader或内核中的代码位置设置断点并进行测试</strong></p>
+<p><img src="https://i.loli.net/2020/10/19/Xw4HKBuPE26qz8V.png" alt="break2.png"></p>
+<p>仿照之前的断点命令格式，在lab1init文件中添加一个断点，地址是0x7c02，测试可用。</p>
+</li>
+</ol>
+<h2 id="练习3：分析bootloader进入保护模式的过程-写出分析"><a href="#练习3：分析bootloader进入保护模式的过程-写出分析" class="headerlink" title="练习3：分析bootloader进入保护模式的过程(写出分析)"></a>练习3：分析bootloader进入保护模式的过程(写出分析)</h2><p>BIOS将通过读取硬盘主引导扇区到内存，并跳转到对应内存中的执行位置执行bootloader。请分析bootloader是如何完成从实模式进入保护模式的。</p>
+<p>既然题目中都给了提示要看bootasm.S的代码，那我们就先从这个源码入手，代码内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &lt;asm.h&gt;</span><br><span class="line"></span><br><span class="line"># Start the CPU: switch to 32-bit protected mode, jump into C.</span><br><span class="line"># The BIOS loads this code from the first sector of the hard disk into</span><br><span class="line"># memory at physical address 0x7c00 and starts executing in real mode</span><br><span class="line"># with %cs&#x3D;0 %ip&#x3D;7c00.</span><br><span class="line"></span><br><span class="line">.set PROT_MODE_CSEG,        0x8                     # kernel code segment selector</span><br><span class="line">.set PROT_MODE_DSEG,        0x10                    # kernel data segment selector</span><br><span class="line">.set CR0_PE_ON,             0x1                     # protected mode enable flag</span><br><span class="line"></span><br><span class="line"># start address should be 0:7c00, in real mode, the beginning address of the running bootloader</span><br><span class="line">.globl start</span><br><span class="line">start:</span><br><span class="line">.code16                                             # Assemble for 16-bit mode</span><br><span class="line">    cli                                             # Disable interrupts</span><br><span class="line">    cld                                             # String operations increment</span><br><span class="line"></span><br><span class="line">    # Set up the important data segment registers (DS, ES, SS).</span><br><span class="line">    xorw %ax, %ax                                   # Segment number zero</span><br><span class="line">    movw %ax, %ds                                   # -&gt; Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; Extra Segment</span><br><span class="line">    movw %ax, %ss                                   # -&gt; Stack Segment</span><br><span class="line"></span><br><span class="line">    #  Enable A20:</span><br><span class="line">    #  For backwards compatibility with the earliest PCs, physical</span><br><span class="line">    #  address line 20 is tied low, so that addresses higher than</span><br><span class="line">    #  1MB wrap around to zero by default. This code undoes this.</span><br><span class="line">seta20.1:</span><br><span class="line">    inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).</span><br><span class="line">    testb $0x2, %al</span><br><span class="line">    jnz seta20.1</span><br><span class="line"></span><br><span class="line">    movb $0xd1, %al                                 # 0xd1 -&gt; port 0x64</span><br><span class="line">    outb %al, $0x64                                 # 0xd1 means: write data to 8042&#39;s P2 port</span><br><span class="line"></span><br><span class="line">seta20.2:</span><br><span class="line">    inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).</span><br><span class="line">    testb $0x2, %al</span><br><span class="line">    jnz seta20.2</span><br><span class="line"></span><br><span class="line">    movb $0xdf, %al                                 # 0xdf -&gt; port 0x60</span><br><span class="line">    outb %al, $0x60                                 # 0xdf &#x3D; 11011111, means set P2&#39;s A20 bit(the 1 bit) to 1</span><br><span class="line"></span><br><span class="line">    # Switch from real to protected mode, using a bootstrap GDT</span><br><span class="line">    # and segment translation that makes virtual addresses</span><br><span class="line">    # identical to physical addresses, so that the</span><br><span class="line">    # effective memory map does not change during the switch.</span><br><span class="line">    lgdt gdtdesc</span><br><span class="line">    movl %cr0, %eax</span><br><span class="line">    orl $CR0_PE_ON, %eax</span><br><span class="line">    movl %eax, %cr0</span><br><span class="line"></span><br><span class="line">    # Jump to next instruction, but in 32-bit code segment.</span><br><span class="line">    # Switches processor into 32-bit mode.</span><br><span class="line">    ljmp $PROT_MODE_CSEG, $protcseg</span><br><span class="line"></span><br><span class="line">.code32                                             # Assemble for 32-bit mode</span><br><span class="line">protcseg:</span><br><span class="line">    # Set up the protected-mode data segment registers</span><br><span class="line">    movw $PROT_MODE_DSEG, %ax                       # Our data segment selector</span><br><span class="line">    movw %ax, %ds                                   # -&gt; DS: Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; ES: Extra Segment</span><br><span class="line">    movw %ax, %fs                                   # -&gt; FS</span><br><span class="line">    movw %ax, %gs                                   # -&gt; GS</span><br><span class="line">    movw %ax, %ss                                   # -&gt; SS: Stack Segment</span><br><span class="line"></span><br><span class="line">    # Set up the stack pointer and call into C. The stack region is from 0--start(0x7c00)</span><br><span class="line">    movl $0x0, %ebp</span><br><span class="line">    movl $start, %esp</span><br><span class="line">    call bootmain</span><br><span class="line"></span><br><span class="line">    # If bootmain returns (it shouldn&#39;t), loop.</span><br><span class="line">spin:</span><br><span class="line">    jmp spin</span><br><span class="line"></span><br><span class="line"># Bootstrap GDT</span><br><span class="line">.p2align 2                                          # force 4 byte alignment</span><br><span class="line">gdt:</span><br><span class="line">    SEG_NULLASM                                     # null seg</span><br><span class="line">    SEG_ASM(STA_X|STA_R, 0x0, 0xffffffff)           # code seg for bootloader and kernel</span><br><span class="line">    SEG_ASM(STA_W, 0x0, 0xffffffff)                 # data seg for bootloader and kernel</span><br><span class="line"></span><br><span class="line">gdtdesc:</span><br><span class="line">    .word 0x17                                      # sizeof(gdt) - 1</span><br><span class="line">    .long gdt                                       # address gdt</span><br></pre></td></tr></table></figure>
+
+<p>这段代码是bootmain执行之前bootloader所做的工作。不过在正式读代码之前，先读注释。从注释之中我们可以看到我们的代码分别完成了以下几个部分的功能：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 第一部分:屏蔽中断，设置串地址增长方向，设置一些重要的数据段寄存器(DS,ES,SS)</span><br><span class="line"># start address should be 0:7c00, in real mode, the beginning address of the running bootloader</span><br><span class="line">.globl start</span><br><span class="line">start:</span><br><span class="line">.code16                                             # 使用16位模式编译</span><br><span class="line">    cli                                             # 屏蔽中断</span><br><span class="line">    cld                                             # 设置串地址增长方向</span><br><span class="line"></span><br><span class="line">    xorw %ax, %ax                                   # Segment number zero</span><br><span class="line">    movw %ax, %ds                                   # -&gt; Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; Extra Segment</span><br><span class="line">    movw %ax, %ss                                   # -&gt; Stack Segment</span><br></pre></td></tr></table></figure>
+
+<p>在第一部分中处于实模式下，可用的内存大小不多于1M，因此需要告诉编译器使用16位模式编译。cli是禁用中断。cld将DF位置零，从而决定内存地址是增大(对应的std是将DF置一，内存地址减小)。之后使用xorw异或指令让ax寄存器值变成0，再把ax的值赋给ds，es和ss寄存器。准备工作到此结束</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> # 第二部分:启动A20</span><br><span class="line">seta20.1:</span><br><span class="line">    inb $0x64, %al                                 </span><br><span class="line">    testb $0x2, %al</span><br><span class="line">    jnz seta20.1</span><br><span class="line">    movb $0xd1, %al                                 </span><br><span class="line">    outb %al, $0x64                                </span><br><span class="line">seta20.2:</span><br><span class="line">    inb $0x64, %al                                  </span><br><span class="line">    testb $0x2, %al</span><br><span class="line">    jnz seta20.2</span><br><span class="line">    movb $0xdf, %al                                </span><br><span class="line">    outb %al, $0x60</span><br></pre></td></tr></table></figure>
+
+<p>首先要说一下A20是一个什么东西：</p>
+<ul>
+<li>最早的8086结构中的内存空间很小，一开始8086的地址线有20位，也就是说具有0-1M的寻址范围，不过当时的寄存器只有16位，无法满足寻址需求，所以采用了另外一种寻址方式：一个16位寄存器表示基址*16+另外一个16位寄存器表示偏移地址，这样寻址空间就超过了1M。但到了后来，地址线增加到了32位，为了让以前的机器也能使用这种方式(即向下兼容)，就在A20(第20根地址线)上做了一个开关，当A20被使能时，是一根正常的地址线，但是当不被使能时永远为零。在保护模式下，要访问高端的内存必须要打开这个开关，否则第21位一定是0.</li>
+<li>8086体系结构的地址空间实际上是被“挖洞”了的。最早的1M内存被分为了640KB的低端常规内存和384KB的留给ROM和系统设备的高端内存，然后这个不具有前瞻性的设计就导致在之后的内存容量增大非常麻烦:被划分成了0-640KB,1M-最大内存的两个部分。为了解决这个问题，采用了这样的解决办法:加电之后先让ROM有效，取出ROM之后再让RAM有效，把这部分内容保存到RAM这部分地址空间中。</li>
+<li>实际上A20是由一个8042键盘控制器来控制的A20 Gate，8042芯片有三个端口，其中之一是Output Port，而A20Gate就是Output Port端口的 bit1，所以控制A20的方式就是通过读写端口数据，使bit1为1。</li>
+</ul>
+<p>再讲讲这个8042芯片。</p>
+<ul>
+<li>这个芯片有两个外部端口0x60h和0x64h，相当于读写操作的地址。</li>
+<li>在读Output Port时，需要先向0x64h发送0d0h命令，然后从0x60h读取Output Port的内容；</li>
+<li>在写Output Port时，需要先向0x64h发送0d1h命令，然后往0x60h写入Output Port的内容。</li>
+<li>在读写的同时还需要检查缓冲区是否有数据，有的话就暂停等待。</li>
+</ul>
+<p>有了上面的内容我们看这部分代码就比较简单了，每一步的作用写在注释中了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 第二部分:启动A20</span><br><span class="line">seta20.1:	</span><br><span class="line">    inb $0x64, %al			#读取当前状态到al寄存器</span><br><span class="line">    testb $0x2, %al			#检查当前状态寄存器的第二位是否为1(缓冲区是否为空)</span><br><span class="line">    jnz seta20.1			#若缓冲区不为0，跳转到开始处</span><br><span class="line">    movb $0xd1, %al         #将0xd1h写入al寄存器</span><br><span class="line">    outb %al, $0x64         #向0x64h发送0xd1h命令，表示要写                      </span><br><span class="line">seta20.2:</span><br><span class="line">    inb $0x64, %al          #同1</span><br><span class="line">    testb $0x2, %al			#同1</span><br><span class="line">    jnz seta20.2			#同1</span><br><span class="line">    movb $0xdf, %al         #将0xdfh写入al寄存器                       </span><br><span class="line">    outb %al, $0x60         #向0x60h写入0xdfh，打开A20</span><br></pre></td></tr></table></figure>
+
+<p>之后就是第三部分，初始化GDT表，通过lgdt gdtdesc指令就可以实现。</p>
+<p>接下来第四部分就是进入保护模式，进入保护模式的原理就是让cr0寄存器中的PE值为1</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 第四部分</span><br><span class="line">movl %cr0, %eax</span><br><span class="line">orl  $CR0_PE_ON, %eax</span><br><span class="line">movl %eax, %cr0</span><br></pre></td></tr></table></figure>
+
+<p>之后的第五部分通过一个长跳转来更新CS寄存器的基地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ljmp $PROT_MODE_CSEG, $protcseg</span><br></pre></td></tr></table></figure>
+
+<p>我们可以注意到代码段最前面定义了PROT_MODE_CSGE和PROT_MODE_DSEG，分别被定义为0x8h和0x10h，这两个分别是代码段和数据段的选择子。</p>
+<p>第六部分是设置段寄存器并建立堆栈</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 第六部分:初始化各个段寄存器并建立堆栈	</span><br><span class="line">	movw $PROT_MODE_DSEG, %ax                       </span><br><span class="line">	movw %ax, %ds                                   </span><br><span class="line">	movw %ax, %es                                   </span><br><span class="line">	movw %ax, %fs                                  </span><br><span class="line">	movw %ax, %gs                                   </span><br><span class="line">	movw %ax, %ss                                 </span><br><span class="line"></span><br><span class="line">	movl $0x0, %ebp</span><br><span class="line">	movl $start, %esp</span><br><span class="line"># 第七部分:调用bootmain    </span><br><span class="line">	call bootmain</span><br><span class="line">spin:</span><br><span class="line">	jmp spin</span><br></pre></td></tr></table></figure>
+
+<p>这个就是将各个段寄存器设置为0x10h，ebp指向0x0h，esp指向start也就是0x7c00处，最后使用call函数将返回地址入栈，控制权交给bootmain。</p>
+<p>最后一个spin是如果当bootmain异常返回，在这里循环。</p>
+<h2 id="练习4：分析bootloader加载ELF格式的OS过程-写出分析"><a href="#练习4：分析bootloader加载ELF格式的OS过程-写出分析" class="headerlink" title="练习4：分析bootloader加载ELF格式的OS过程(写出分析)"></a>练习4：分析bootloader加载ELF格式的OS过程(写出分析)</h2><p>通过阅读bootmain.c,了解bootloader如何加载ELF文件，通过分析源代码和通过qemu来运行并调试bootloader&amp;OS</p>
+<ul>
+<li>bootloader是如何读取硬盘扇区？</li>
+<li>bootloader是如何加载ELF格式的OS？</li>
+</ul>
+<p>理论部分</p>
+<p>kernel是一个elf文件，因此需要理解bootloader是如何从磁盘扇区读取kernel并在读取后进行分析的。</p>
+<p>/* readsect - read a single sector at @secno into @dst */<br>static void<br>readsect(void *dst, uint32_t secno) {<br>    // wait for disk to be ready 等磁盘准备好<br>    waitdisk();       </p>
+<pre><code>//把参数设置好，明确读取磁盘的命令
+outb(0x1F2, 1);                         // count = 1
+outb(0x1F3, secno &amp; 0xFF);
+outb(0x1F4, (secno &gt;&gt; 8) &amp; 0xFF);
+outb(0x1F5, (secno &gt;&gt; 16) &amp; 0xFF);
+outb(0x1F6, ((secno &gt;&gt; 24) &amp; 0xF) | 0xE0);
+outb(0x1F7, 0x20);                      // cmd 0x20 - read sectors
+
+// wait for disk to be ready
+waitdisk();
+
+// read a sector 如果0x1F7不忙的话就从0x1F0把磁盘扇区数据读取到相应的内存上去
+insl(0x1F0, dst, SECTSIZE / 4);</code></pre><p>}</p>
+<p>bootloader通过readsec函数来读取磁盘扇区，用到了内联汇编的in和out系列函数。所有的IO操作是通过CPU访问硬盘的IO地址寄存器完成，其中访问第一个硬盘的扇区是通过设置IO地址寄存器0x1f0-0x1f7实现的，每个通道的主从盘的选择通过第6 个IO偏移地址寄存器来设置，地址的第6位如果是1，那就是LBA模式，为0就是CHS模式；而readsec函数中用到的in和out函数的参数表也如下所示。</p>
+<p>/* insl:从I/O端口port读取count个数据(单位双字)到以内存地址addr为开始的内存空间 */ void insl(unsigned port, void *addr, unsigned long count);</p>
+<p>/* outb:写字节端口(8位宽)。 */ void outb(unsigned char byte, unsigned port);</p>
+<p>//readseg函数实现了从offset地址处读取count个字节的数据到虚拟地址va处的功能<br>static void<br>readseg(uintptr_t va, uint32_t count, uint32_t offset) {<br>    uintptr_t end_va = va + count;</p>
+<pre><code>// round down to sector boundary
+va -= offset % SECTSIZE;
+
+// translate from bytes to sectors; kernel starts at sector 1
+//因为sector1从1开始，所以+1不能忘
+uint32_t secno = (offset / SECTSIZE) + 1;
+
+// If this is too slow, we could read lots of sectors at a time.
+// We&apos;d write more to memory than asked, but it doesn&apos;t matter --
+// we load in increasing order.
+for (; va &lt; end_va; va += SECTSIZE, secno ++) {
+    readsect((void *)va, secno);
+}</code></pre><p>}<br>readseg读入好多个字节，并转化成扇区可以读的大小，把值传给readsect代码。最终的读取扇区工作由readsect实现。</p>
+<p>/* bootmain - the entry of bootloader */<br>void<br>bootmain(void) {<br>    // read the 1st page off disk<br>    readseg((uintptr_t)ELFHDR, SECTSIZE * 8, 0);</p>
+<pre><code>// is this a valid ELF?
+if (ELFHDR-&gt;e_magic != ELF_MAGIC) {
+    //判断e_magic是不是ELF_MAGIC类型，如果不是的话说明文件无效
+    goto bad;
+}
+
+struct proghdr *ph, *eph;
+
+// load each program segment (ignores ph flags)
+ph = (struct proghdr *)((uintptr_t)ELFHDR + ELFHDR-&gt;e_phoff); 
+//e_phoff是program header表的偏移位置，所以现在ph找到了program header表的实际位置
+eph = ph + ELFHDR-&gt;e_phnum;  //e_phnum是表中的入口数目
+for (; ph &lt; eph; ph ++) {
+    //p_va是段的第一个字节将被放到内存中的虚拟地址；
+    //p_memsz是段在内存映像中占用的字节数；
+    //p_offset是段相对文件头的偏移值；
+    //readseg(uintptr_t va, uint32_t count, uint32_t offset)对照段的读取函数进行参数输入
+    readseg(ph-&gt;p_va &amp; 0xFFFFFF, ph-&gt;p_memsz, ph-&gt;p_offset);
+}
+
+// call the entry point from the ELF header
+// note: does not return
+//运行程序入口的虚拟地址
+((void (*)(void))(ELFHDR-&gt;e_entry &amp; 0xFFFFFF))();</code></pre><p>bad:<br>    outw(0x8A00, 0x8A00);<br>    outw(0x8A00, 0x8E00);</p>
+<pre><code>/* do nothing */
+while (1);</code></pre><p>}<br>由上述代码可以得出bootloader加载ELF格式文件的步骤：</p>
+<p>先判断是不是有效的ELF文件；<br>通过elf的文件头找到program header表；<br>根据program header表中的每个段的内存映像地址、大小等，并读取段数据（如数据段、代码段等）<br>必要的数据读取完成后跳转到程序入口的虚拟地址准备运行。</p>
+<p>从ELF文件格式可以更清晰地看到bootloader在判断完elf文件类型后，跳转到相应的段进行后需磁盘访问。</p>
+<p>我们还可以利用understand可以查看regsect的函数调用</p>
+<h2 id="练习5：实现函数调用堆栈跟踪函数-需要编程"><a href="#练习5：实现函数调用堆栈跟踪函数-需要编程" class="headerlink" title="练习5：实现函数调用堆栈跟踪函数(需要编程)"></a>练习5：实现函数调用堆栈跟踪函数(需要编程)</h2><p>我们需要在lab1中完成kdebug.c中函数print_stackframe的实现，可以通过函数print_stackframe了跟踪函数调用堆栈中记录的返回地址。</p>
+<p>在lab1/kern/debug目录下找到kdebug.c,打开以后发现源文件中已经有一个print_stackframe函数了(虽然里面啥也没有)，要做的就是往里面添加代码，让这个函数能实现我们需要的功能。以下是初始状态的代码。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_stackframe</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">     <span class="comment">/* LAB1 YOUR CODE : STEP 1 */</span></span><br><span class="line">     <span class="comment">/* (1) call read_ebp() to get the value of ebp. the type is (uint32_t);</span></span><br><span class="line"><span class="comment">      * (2) call read_eip() to get the value of eip. the type is (uint32_t);</span></span><br><span class="line"><span class="comment">      * (3) from 0 .. STACKFRAME_DEPTH</span></span><br><span class="line"><span class="comment">      *    (3.1) printf value of ebp, eip</span></span><br><span class="line"><span class="comment">      *    (3.2) (uint32_t)calling arguments [0..4] = the contents in address (uint32_t)ebp +2 [0..4]</span></span><br><span class="line"><span class="comment">      *    (3.3) cprintf("\n");</span></span><br><span class="line"><span class="comment">      *    (3.4) call print_debuginfo(eip-1) to print the C calling function name and line number, etc.</span></span><br><span class="line"><span class="comment">      *    (3.5) popup a calling stackframe</span></span><br><span class="line"><span class="comment">      *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]</span></span><br><span class="line"><span class="comment">      *                   the calling funciton's ebp = ss:[ebp]</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了实现函数调用堆栈跟踪函数，需要先了解函数调用栈的原理。</p>
+<p>函数调用时，自栈顶(低地址)到栈底(高地址)的情况如下图所示</p>
+<p><img src="https://i.loli.net/2020/10/04/VJfMkbU4q6ClsKe.png" alt="05.1.png"></p>
+<p>esp和ebp两个指针是其中最关键的部分，只要掌握了ebp和esp的位置，就能很容易理解函数调用过程了。根据这个图，我们可以有这样几个信息</p>
+<ul>
+<li>ss[ebp]指向上一层的ebp</li>
+<li>ss[ebp-4]指向局部变量</li>
+<li>ss[ebp+4]指向返回地址</li>
+<li>ss[ebp+4+4n]指向第n个参数</li>
+</ul>
+<p>之后我们就可以着手实现堆栈跟踪函数了。首先我们知道在bootasm.S中将esp设置为0x7c00，ebp设置为0，就调用了bootmain函数。call指令会依次执行以下命令:push返回地址，push这一层的ebp，然后把现在的esp赋值给ebp。在执行完call之后，这个ebp指向了0x7bf8(0x7c00-4-4)。</p>
+<p>实现之前我们看一下源代码中的注释，突然惊讶的发现注释已经非常贴心的教你怎么写了，那就按着这个注释一步一步来，写出如下的结果：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">print_stackframe(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">     <span class="comment">/* LAB1 YOUR CODE : STEP 1 */</span></span><br><span class="line">     <span class="comment">/* (1) call read_ebp() to get the value of ebp. the type is (uint32_t);</span></span><br><span class="line"><span class="comment">      * (2) call read_eip() to get the value of eip. the type is (uint32_t);</span></span><br><span class="line"><span class="comment">      * (3) from 0 .. STACKFRAME_DEPTH</span></span><br><span class="line"><span class="comment">      *    (3.1) printf value of ebp, eip</span></span><br><span class="line"><span class="comment">      *    (3.2) (uint32_t)calling arguments [0..4] = the contents in address (uint32_t)ebp +2 [0..4]</span></span><br><span class="line"><span class="comment">      *    (3.3) cprintf("\n");</span></span><br><span class="line"><span class="comment">      *    (3.4) call print_debuginfo(eip-1) to print the C calling function name and line number, etc.</span></span><br><span class="line"><span class="comment">      *    (3.5) popup a calling stackframe</span></span><br><span class="line"><span class="comment">      *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]</span></span><br><span class="line"><span class="comment">      *                   the calling funciton's ebp = ss:[ebp]</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">	<span class="keyword">uint32_t</span> ebp = read_ebp(), eip = read_eip();</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; ebp != <span class="number">0</span> &amp;&amp; i &lt; STACKFRAME_DEPTH; i++)&#123;</span><br><span class="line">		cprintf(<span class="string">"ebp=: 0x%08x | eip=: 0x%08x | args=: "</span>, ebp, eip);</span><br><span class="line">		<span class="keyword">uint32_t</span> *args = (<span class="keyword">uint32_t</span> *)ebp + <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">4</span>; j++)&#123;</span><br><span class="line">			cprintf(<span class="string">"0x%08x "</span>, args[j]);</span><br><span class="line">		&#125;</span><br><span class="line">		cprintf(<span class="string">"\n"</span>);</span><br><span class="line">		print_debuginfo(eip - <span class="number">1</span>);</span><br><span class="line">		eip = ((<span class="keyword">uint32_t</span> *)ebp)[<span class="number">1</span>];</span><br><span class="line">		ebp = ((<span class="keyword">uint32_t</span> *)ebp)[<span class="number">0</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后在lab1目录下执行命令 $ make qemu，得到如下的输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line">Kernel executable memory footprint: 64KB</span><br><span class="line">ebp&#x3D;: 0x00007b28 | eip&#x3D;: 0x00100a63 | args&#x3D;: 0x00010094 0x00010094 0x00007b58 0x00100092 </span><br><span class="line">    kern&#x2F;debug&#x2F;kdebug.c:307: print_stackframe+21</span><br><span class="line">ebp&#x3D;: 0x00007b38 | eip&#x3D;: 0x00100d4d | args&#x3D;: 0x00000000 0x00000000 0x00000000 0x00007ba8 </span><br><span class="line">    kern&#x2F;debug&#x2F;kmonitor.c:125: mon_backtrace+10</span><br><span class="line">ebp&#x3D;: 0x00007b58 | eip&#x3D;: 0x00100092 | args&#x3D;: 0x00000000 0x00007b80 0xffff0000 0x00007b84 </span><br><span class="line">    kern&#x2F;init&#x2F;init.c:48: grade_backtrace2+33</span><br><span class="line">ebp&#x3D;: 0x00007b78 | eip&#x3D;: 0x001000bc | args&#x3D;: 0x00000000 0xffff0000 0x00007ba4 0x00000029 </span><br><span class="line">    kern&#x2F;init&#x2F;init.c:53: grade_backtrace1+38</span><br><span class="line">ebp&#x3D;: 0x00007b98 | eip&#x3D;: 0x001000db | args&#x3D;: 0x00000000 0x00100000 0xffff0000 0x0000001d </span><br><span class="line">    kern&#x2F;init&#x2F;init.c:58: grade_backtrace0+23</span><br><span class="line">ebp&#x3D;: 0x00007bb8 | eip&#x3D;: 0x00100101 | args&#x3D;: 0x001032dc 0x001032c0 0x0000130a 0x00000000 </span><br><span class="line">    kern&#x2F;init&#x2F;init.c:63: grade_backtrace+34</span><br><span class="line">ebp&#x3D;: 0x00007be8 | eip&#x3D;: 0x00100055 | args&#x3D;: 0x00000000 0x00000000 0x00000000 0x00007c4f </span><br><span class="line">    kern&#x2F;init&#x2F;init.c:28: kern_init+84</span><br><span class="line">ebp&#x3D;: 0x00007bf8 | eip&#x3D;: 0x00007d72 | args&#x3D;: 0xc031fcfa 0xc08ed88e 0x64e4d08e 0xfa7502a8 </span><br><span class="line">    &lt;unknow&gt;: -- 0x00007d71 --</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>最后一行中给出了ebp，eip和args三个参数，其具体意义为</p>
+<ul>
+<li><strong>ebp=: 0x00007bf8</strong> 是跳转到bootmain</li>
+<li><strong>eip=: 0x00007d72</strong> 是从bootasm.s跳转到bootmain前的地址，也就是bootmain的返回地址。</li>
+<li><strong>args=: 0xc031fcfa 0xc08ed88e 0x64e4d08e 0xfa7502a8</strong> 通常状态下，args存放的四个dword是对应4个输入参数的值。但是再最底层处，即7c00往后增加的地址处，那里是bootloader的代码段，所以最后的args其实是bootloader指令的前十六个字节，下面这个例子就能很好的说明情况</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># bootloader前三条指令对应的机器码</span><br><span class="line">7c00:	cli 			fa                   	</span><br><span class="line">7c01:	cld 			fc   </span><br><span class="line">7c02:	xor    %eax,%eax	31 c0</span><br><span class="line"># 由于是小端字节序，所以存储为 c0 31 fc fa</span><br></pre></td></tr></table></figure>
+
+<h2 id="练习6：完善中断初始化和处理-需要编程"><a href="#练习6：完善中断初始化和处理-需要编程" class="headerlink" title="练习6：完善中断初始化和处理(需要编程)"></a>练习6：完善中断初始化和处理(需要编程)</h2><p>完成编码工作并回答如下问题：</p>
+<ol>
+<li><p><strong>中断描述符表（也可简称为保护模式下的中断向量表）中一个表项占多少字节？其中哪<br>几位代表中断处理代码的入口？</strong></p>
+<ul>
+<li><p>保护模式下，段寄存器含有段选择子；CPU收到中断信息后，需要先根据中断类型码找到对应的中断处理程序地址，这个过程通过查中断描述符表（获得特定中断处理程序的偏移量并以中断向量为索引查找中断处理程序的段选择子）以及全局描述符表（通过中断处理程序的段选择子获得段基址）完成；一个表项被称作一个门描述符，占<strong>八个字节</strong>。三种类型（还有第四种：调用门描述符，结构与任务门描述符相同）的门描述符结构如下：</p>
+<p><img src="https://i.loli.net/2020/10/24/hJeg6HjlRBMD2vF.png" alt="1.png"></p>
+</li>
+<li><p><strong>第16-31位</strong>（即低四字节中的高16位）段选择子结合<strong>第0-15位、第48-63位</strong>的偏移量可以代表中断处理代码的入口。</p>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li><strong>请编程完善kern/trap/trap.c中对中断向量表进行初始化的函数idt_init。在idt_init函数中，<br>依次对所有中断入口进行初始化。使用mmu.h中的SETGATE宏，填充idt数组内容。每个<br>中断的入口由tools/vectors.c生成，使用trap.c中声明的vectors数组即可。</strong></li>
+</ol>
+   <img src="https://i.loli.net/2020/10/24/GxB1s7IqPDtQuSj.png" alt="2" style="zoom:80%;" />
+
+<p>   如图，kern/mm/mmu.h中定义了两个宏用于定义或初始化门描述符。对上图宏定义的解释如下：</p>
+<p>   <strong>中断门描述符和陷阱门描述符的结构相同，均以结构体gatedesc定义，总大小为8字节。其成员变量的含义如下</strong>：</p>
+<ul>
+<li><p>gd_off_15_0：低四字节里低16位上的 中断处理程序偏移量</p>
+</li>
+<li><p>gd_ss：段选择子，位于低四字节中的高16位</p>
+</li>
+<li><p>gd_args：某些参数，在中断/陷阱门描述符里不会用到，一直设为0即可，占5位</p>
+</li>
+<li><p>gd_rsvl：某些保留部分，也不会用到，保持0不变，占3位</p>
+</li>
+<li><p>gd_type：表示当前是什么类型的门描述符，占4位；对应的变量STS_IG32（0xE）和STS_TG32（0xF）存储在kern/mm/mmu.h中；因为中断处理时只需考虑中断门和陷阱门，因此只涉及上述两个宏定义变量</p>
+</li>
+<li><p>gd_s：某系统参数，设为0即可，仅1位</p>
+</li>
+<li><p>gd_dpl：中断处理过程涉及的特权级（0或3，其中中断处理程序的DPL只能是ring 0），占两位，分别用kern/mm/mmu.h中定义的DPL_KERNEL和DPL_USER来表示</p>
+</li>
+<li><p>gd_p：一位标志位，如果段在内存里出现则为1，不在内存里则为0</p>
+</li>
+<li><p>gd_off_31_16：高四字节里高16位上的中断处理程序偏移量</p>
+<p>另：C语法中，变量定义里冒号后面接数字这个格式用于指定该变量的位数。</p>
+</li>
+</ul>
+<p>   <strong>SETGATE宏将被替换为一个语句块，功能是给IDT这个结构体数组（结构体名：gatedesc）的各项成员赋值，即用于初始化门描述符，参数的意义分别是</strong>：</p>
+<ul>
+<li>gate：取为idt[]的一项，就是一个gatedesc结构体</li>
+<li>istrap：0或1，0选择中断门，1选择陷阱门</li>
+<li>sel：中断处理程序所在段的段选择子</li>
+<li>off：32位偏移量，由16位的两部分拼接而成</li>
+<li>dpl：该门描述符对应中断处理程序的特权级</li>
+</ul>
+<p>   <strong>IDT初始化整体流程是先初始化内核态中断，再初始化系统调用中断，最后在IDTR寄存器中存放IDT的地址，代码如下</strong>：</p>
+<p>   <img src="https://i.loli.net/2020/10/24/iU8TXbcC4L6hWfK.png" alt="3.png"></p>
+<ul>
+<li><p>根据提示，中断服务例程（ISR）的入口地址都存放在uintptr_t类型的__vectors数组中，该数组由tools/vectors.c生成，存放在kern/trap/vector.S中 ；</p>
+<p><img src="https://i.loli.net/2020/10/24/TKVZBaI1O5zfSl4.png" alt="4.png"></p>
+</li>
+<li><p>vectori即为中断向量，跳转到对应的中断向量之后，将调用kern/trap/trapentry.S中__alltraps函数保存被打断的程序的现场；</p>
+</li>
+<li><p>trap.c中为IDT准备了结构体数组定义：类型为gatedesc的idt[256]，每个IDT表项就是该数组中的一项，使用SETGATE宏进行初始化；</p>
+</li>
+<li><p>中断的特权级应设为ring 0，使用/kern/mm/memlayout.h中定义的系统、用户特权级变量（DPL_KERNEL，值是0；DPL_USER，值是3）；</p>
+</li>
+<li><p>IDT的内容初始化完成后，还需要将IDT的起始地址加载到IDTR寄存器里，即需调用lidt指令——在C程序里写调用的方法是使用x86.h中定义的lidt函数（该函数参数类型pseudodesc也定义在x86.h中，可以看到存放了段的大小和基址），其功能是生成内联汇编来调用lidt指令（volatile关键字的意思是编译时拒绝优化）。</p>
+<p><img src="https://i.loli.net/2020/10/24/LSJ6IWlETd5iaHO.png" alt="5.png"></p>
+<p><img src="https://i.loli.net/2020/10/24/j4UqW1Vo8nQvf2B.png" alt="6.png"></p>
+</li>
+<li><p>在trap.c中，可以方便地将该文件里定义的pseudodesc类型结构体idt_pd实例化，作为lidt函数的参数：</p>
+<p><img src="https://i.loli.net/2020/10/24/XW8weHNy15QsjuU.png" alt="7.png"></p>
+</li>
+</ul>
+<ol start="3">
+<li><p><strong>请编程完善trap.c中的中断处理函数trap，在对时钟中断进行处理的部分填写trap函数中<br>处理时钟中断的部分，使操作系统每遇到100次时钟中断后，调用print_ticks子程序，向<br>屏幕上打印一行文字”100 ticks”。</strong></p>
+<p>trap.h当中定义了中断号；IRQ_OFFSET之后的若干编号代表硬件中断，比如IRQ_OFFSET+IRQ_TIMER表示时钟中断的中断号。</p>
+<p><img src="https://i.loli.net/2020/10/24/jvWOuQMfBSAPG5T.png" alt="8.png"></p>
+<p>按照给出的提示填充trap_dispatch函数，使用全局变量ticks记录已发生的时钟中断数目；该中断每发生每100（TICK_NUM）次调用一遍print_ticks函数打印字符串即可。</p>
+</li>
+</ol>
+<p>重新编译并运行整个系统（lab1目录下执行make qemu），可以看到打印出了时钟中断信息，按下的键也会显示在屏幕上：</p>
+<p><img src="https://i.loli.net/2020/10/24/VWRKfCBpS1xyD6s.png" alt="9.png"></p>
+<h2 id="扩展练习-Challenge1-需要编程"><a href="#扩展练习-Challenge1-需要编程" class="headerlink" title="扩展练习 Challenge1(需要编程)"></a>扩展练习 Challenge1(需要编程)</h2><blockquote>
+<p>扩展proj4,增加syscall功能，即增加一用户态函数（可执行一特定系统调用：获得时钟计数值），当内核初始完毕后，可从内核态返回到用户态的函数，而用户态的函数又通过系统调用得到内核态的服务（通过网络查询所需信息，可找老师咨询。如果完成，且有兴趣做代替考试的实验，可找老师商量）。需写出详细的设计和分析报告。完成出色的可获得适当加分。</p>
+</blockquote>
+<p>首先为了完成特权级转换，需要了解这些知识：</p>
+<ul>
+<li>int iret在不同情况下的执行步骤</li>
+<li>特权级检查</li>
+</ul>
+<p>阅读实验指导书，kern/init/init.c和kern/trap/trap.c文件，不难发现这个challenge需要我们完成以下四个内容：</p>
+<ul>
+<li>kern/init/init.c    中的 switch_to_user</li>
+<li>kern/init/init.c    中的 switch_to_kernel</li>
+<li>kern/trap/trap.c 中的 case T_SWITCH_TOU #to user</li>
+<li>kern/trap/trap.c 中的 case T_SWITCH_TOK #to kernel</li>
+</ul>
+<p>因为在调用关系中是 init.c调用trap.c，所以先从init.c中入手。</p>
+<p>先来看switch_to_user。很好，什么也没有，满足我对于难度的要求。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">lab1_switch_to_user(<span class="keyword">void</span>) &#123;</span><br><span class="line">    <span class="comment">//LAB1 CHALLENGE 1 : TODO</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有东西只能白手起家，还能咋地。先把写好的代码贴出来，之后再进行详细的解释</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;	init.c</span><br><span class="line">static void</span><br><span class="line">lab1_switch_to_user(void) &#123;</span><br><span class="line">    &#x2F;&#x2F;LAB1 CHALLENGE 1 : TODO</span><br><span class="line">    asm volatile(</span><br><span class="line">		    &quot;sub $0x8,%%esp \n&quot;</span><br><span class="line">		    &quot;int %0 \n&quot;</span><br><span class="line">		    &quot;movl %%ebp, %%esp \n&quot;</span><br><span class="line">		    :</span><br><span class="line">		    :&quot;i&quot;(T_SWITCH_TOU)</span><br><span class="line">		);</span><br><span class="line">&#125;</span><br><span class="line">static void</span><br><span class="line">lab1_switch_to_kernel(void) &#123;</span><br><span class="line">    &#x2F;&#x2F;LAB1 CHALLENGE 1 :  TODO</span><br><span class="line">    asm volatile(</span><br><span class="line">		    &quot;int %0 \n&quot;</span><br><span class="line">		    &quot;movl %%ebp, %%esp \n&quot;</span><br><span class="line">		    :</span><br><span class="line">		    :&quot;i&quot;(T_SWITCH_TOK)</span><br><span class="line">		);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// trap.c</span></span><br><span class="line">	<span class="keyword">case</span> T_SWITCH_TOU:</span><br><span class="line">        <span class="keyword">if</span>(tf-&gt;tf_cs != USER_CS)	<span class="comment">//检查是不是用户态，不是就操作</span></span><br><span class="line">        &#123;</span><br><span class="line">            	cprintf(<span class="string">"...to user\n"</span>);</span><br><span class="line">                <span class="comment">// 设置用户态对应的cs,ds,es,ss四个寄存器</span></span><br><span class="line">            	tf-&gt;tf_cs = USER_CS;</span><br><span class="line">                tf-&gt;tf_ds = tf-&gt;tf_es = tf-&gt;tf_ss = USER_DS;</span><br><span class="line">                <span class="comment">// 为用户态带来可以I/O的快乐</span></span><br><span class="line">                tf-&gt;tf_eflags |= FL_IOPL_MASK;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> T_SWITCH_TOK:</span><br><span class="line">        <span class="keyword">if</span>(tf-&gt;tf_cs != KERNEL_CS)	<span class="comment">//检查是不是内核态，不是就操作</span></span><br><span class="line">        &#123;</span><br><span class="line">            	cprintf(<span class="string">"...to kernel\n"</span>);</span><br><span class="line">            	<span class="comment">// 设置内核态对应的cs,ds,es三个寄存器</span></span><br><span class="line">                tf-&gt;tf_cs = KERNEL_CS;</span><br><span class="line">                tf-&gt;tf_ds = tf-&gt;tf_es = KERNEL_DS;</span><br><span class="line">				<span class="comment">// 剥夺用户态可以使用I/O的快乐</span></span><br><span class="line">                tf-&gt;tf_eflags &amp;= ~FL_IOPL_MASK;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+<p>一开始我以为user_to_kernel和kernel_to_user应该没有什么区别，但这个challenge1不愧是个challenge。其中的区别在中断发生的压栈状况有关系。</p>
+<p>中断可以发生在任何一个特权级别下，但是不同的特权级处理器使用的栈不同，如果涉及到特权级的变化，需要对SS和ESP寄存器进行压栈。性质如下：</p>
+<ul>
+<li><p>当低特权级向高特权级切换的压栈(<strong>用户态到内核态</strong>)</p>
+<p>需要判断是否能访问这个目标段描述符，要做的就是将找到中断描述符时的CPL与目标段描述符的DPL进行比较。当CPL特权级比DPL低(CPL&gt;DPL)时，要往高特权级栈转移，也就是说要恢复旧栈，因此处理器临时保存旧栈的SS和ESP，然后加载新的特权级和DPL相同的段到SS和ESP中，把旧栈的SS和ESP压入新栈</p>
+</li>
+<li><p>当无特权级转化时的压栈(<strong>内核态到用户态</strong>)</p>
+<p>理论上来说从内核态到用户态也需要对栈进行切换，不过在lab1中并没有完整实现对物理内存的管理，而GDT中的每一个段除了对特权级的要求以外都一样，所以只需要修改一下权限就可以实现了。这也导致这个时候不会压栈，我们需要手动压栈(体现在lab1_switch_to_user中的sub $0x8,%%esp)。</p>
+</li>
+</ul>
+<p>不过在trap.c中的实现比较雷同，把对应的tf指针修改为对应态的内容就行。</p>
+<h6 id="遇到的一些麻烦和问题"><a href="#遇到的一些麻烦和问题" class="headerlink" title="遇到的一些麻烦和问题"></a>遇到的一些麻烦和问题</h6><ol>
+<li><p><strong>关于int和iretz</strong></p>
+<p>这俩东西可以说是中断的灵魂，如果搞不懂这个真的没法做实验。用这两个中断过程来举例</p>
+<ol>
+<li><p>中断触发后，处理器根据中断向量号找到对应的中断描述符，然后拿<strong>中断发生时的CPL</strong>和<strong>中断描述符</strong>中的<strong>段选择子</strong>对应的<strong>DPL</strong>做对比，如果发现CPL权限比DPL低(CPL数值更大)时，将旧栈压入新栈，具体表现就是将ss_old和esp_old压入ss_new和esp_new中。用户态到内核态的栈切换由TSS和硬件实现</p>
+</li>
+<li><p><strong>在用户态到内核态的切换过程中</strong>，依次压入(高地址)ss,esp,eflags,cs,eip,errorno(低地址)等参数；<strong>在内核态到用户态的切换过程中</strong>，依次压入(高地址)eflags,cs,eip,errorno(低地址)等参数</p>
+</li>
+<li><p><strong>在用户态到内核态的切换过程中</strong>，不用给空间，直接用int %0触发中断。这个int %0对应的是我们的输入(T_SWITCH_TOK)，调用前后函数后我们的栈帧如下</p>
+<blockquote>
+<p>//调用前</p>
+<p>(高地址)user_ss,野指针,eflags,user_cs,eip,errorno,trapno,user_ds,user_es(低地址)</p>
+<p>// 调用后</p>
+<p>(高地址)user_ss,野指针,eflags,kernel_cs,eip,errorno,trapno,kernel_ds,kernel_es(低地址)</p>
+</blockquote>
+<p><strong>在内核态到用户态的切换过程中</strong>，先通过sub $0x8,%%esp给8B的空间，之后同样用int %0触发中断，此时对应的就是(T_SWITCH_TOU)，调用前后的栈帧如下</p>
+<blockquote>
+<p>//调用前</p>
+<p>(高地址)野指针,野指针,eflags,kernel_cs,eip,errorno,trapno,kernel_ds,kernel_es(低地址)</p>
+<p>// 调用后</p>
+<p>(高地址)user_ss,野指针,eflags,user_cs,eip,errorno,trapno,user_ds,user_es(低地址)</p>
+</blockquote>
+</li>
+<li><p>执行完中断程序之后，通过<strong>iret</strong>返回，依次弹出对应段选择子从而实现对栈的切换。在弹出eip和cs之后，根据cs中的RPL判断是否需要继续弹出。<strong>也就是说，如果要返回到特权级更低的代码，就要弹出ss和esp</strong>。</p>
+<p><strong>在用户态到内核态的切换过程中</strong>，栈中的CS是kernel_cs，DPL=0，当前的CPL=3，代码不会返回到更低的特权级，所以不弹出esp和ss。<strong>但是栈所在的段已经发生了变化</strong>，也就是SS已经发生了变化：在用户态下中断会导致user_ss和user_esp被压入新的内核栈，所以最开始的ss就是kernel_ss。这也是为什么在TOK中不用设置tf_ss。</p>
+<p><strong>在内核态到用户态的切换过程中</strong>，栈中的CS是user_cs，DPL=3，当前的CPL=0，代码会返回到更低的特权级，所以会弹出esp和ss，这个时候野指针被pop到esp，user_ss被弹出到ss，实现了栈段的切换，内核切换到了用户栈。</p>
+</li>
+<li><p>还有最后一句话movl %%ebp, %%esp。同样在两种情况下看</p>
+<p><strong>在用户态到内核态的切换过程中</strong>，要回收user_ss,user_esp，所以通过这句话让esp指向ebp，并且顶掉原来储存在这个位置的user_esp，而4中我们知道了这个时候的user_ss实际上是kernel_ss，所以不用管他。</p>
+<p><strong>在内核态到用户态的切换过程中</strong>，此时的esp是野指针，是一个内存的初始值，我们需要让他指向ebp。那怎么给ebp呢？很巧妙，在sub $0x8,%%esp这句话执行之后，栈帧状态是这样的</p>
+<blockquote>
+<p>(高地址)野指针，野指针(低地址)</p>
+</blockquote>
+<p>但其实原来的ebp刚好就在上面，实际上是这样</p>
+<blockquote>
+<p>(高地址)原ebp，(ebp指向)，野指针，野指针(低地址)</p>
+</blockquote>
+<p>所以这句话就能帮助我们让esp的野指针指向ebp</p>
+</li>
+</ol>
+</li>
+<li><p><strong>在用户态和内核态的切换时，虽然eip没变，但是段在变，为什么还能正常运行?</strong></p>
+<p>一开始没想明白，后面脑子突然上线：哦，<strong>我们现在是保护模式</strong></p>
+<p>所以我们的CS不再是直接的代码段，而是段选择子，并不是一个实际的物理段地址而是一个索引，通过这个索引去查这个段具体的物理地址。 </p>
+<p>具体的格式如下</p>
+<blockquote>
+<p>格式为：【索引(13)|TI(1)|RPL(2)】 </p>
+<p>索引：GDT表中有8K个表项(2^13=8k) </p>
+<p>TI：    0-GDT 1-LDT </p>
+<p>RPL：00-kernel，11-user </p>
+<p>内核态下的8  = 【00…01|0|00】</p>
+<p>用户态下的1b = 【00…11|0|11】</p>
+</blockquote>
+<p>这里面影响地址的只有索引，他俩的索引一个是1，3。索引和GDT表有关，那么我们看看GDT表的相关内容</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kern/mm/pmm.c</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">segdesc</span> <span class="title">gdt</span>[] = &#123;</span></span><br><span class="line">    SEG_NULL,</span><br><span class="line">    [SEG_KTEXT] = SEG(STA_X | STA_R, <span class="number">0x0</span>, <span class="number">0xFFFFFFFF</span>, DPL_KERNEL),</span><br><span class="line">    [SEG_KDATA] = SEG(STA_W, <span class="number">0x0</span>, <span class="number">0xFFFFFFFF</span>, DPL_KERNEL),</span><br><span class="line">    [SEG_UTEXT] = SEG(STA_X | STA_R, <span class="number">0x0</span>, <span class="number">0xFFFFFFFF</span>, DPL_USER),</span><br><span class="line">    [SEG_UDATA] = SEG(STA_W, <span class="number">0x0</span>, <span class="number">0xFFFFFFFF</span>, DPL_USER),</span><br><span class="line">    [SEG_TSS]   = SEG_NULL,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>1对应的是[SEG_KTEXT]，内核段，ok，3对应的是[SEG_UTEXT]，用户段，也ok。这里出现的新东西是 segdesc 和 SEG，再去看看这俩到底是个啥</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kern/mm/mmu.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">segdesc</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_lim_15_0 : <span class="number">16</span>;        <span class="comment">// low bits of segment limit</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_base_15_0 : <span class="number">16</span>;        <span class="comment">// low bits of segment base address</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_base_23_16 : <span class="number">8</span>;        <span class="comment">// middle bits of segment base address</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_type : <span class="number">4</span>;            <span class="comment">// segment type (see STS_ constants)</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_s : <span class="number">1</span>;                <span class="comment">// 0 = system, 1 = application</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_dpl : <span class="number">2</span>;            <span class="comment">// descriptor Privilege Level</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_p : <span class="number">1</span>;                <span class="comment">// present</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_lim_19_16 : <span class="number">4</span>;        <span class="comment">// high bits of segment limit</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_avl : <span class="number">1</span>;            <span class="comment">// unused (available for software use)</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_rsv1 : <span class="number">1</span>;            <span class="comment">// reserved</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_db : <span class="number">1</span>;                <span class="comment">// 0 = 16-bit segment, 1 = 32-bit segment</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_g : <span class="number">1</span>;                <span class="comment">// granularity: limit scaled by 4K when set</span></span><br><span class="line">    <span class="keyword">unsigned</span> sd_base_31_24 : <span class="number">8</span>;        <span class="comment">// high bits of segment base address</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SEG(type, base, lim, dpl)                        \</span></span><br><span class="line">    (struct segdesc)&#123;                                    \</span><br><span class="line">        ((lim) &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0xffff</span>, (base) &amp; <span class="number">0xffff</span>,        \</span><br><span class="line">        ((base) &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xff</span>, type, <span class="number">1</span>, dpl, <span class="number">1</span>,            \</span><br><span class="line">        (<span class="keyword">unsigned</span>)(lim) &gt;&gt; <span class="number">28</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>,                \</span><br><span class="line">        (<span class="keyword">unsigned</span>) (base) &gt;&gt; <span class="number">24</span>                            \</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看到SEG括号内的第二个参数base，都是0x0，破案了，<strong>他们虽然表面上选择子一直在换，但是他们所指向的实际物理段基址并没有变，是一样的</strong>。</p>
+</li>
+</ol>
+<h2 id="扩展练习-Challenge2-需要编程"><a href="#扩展练习-Challenge2-需要编程" class="headerlink" title="扩展练习 Challenge2(需要编程)"></a>扩展练习 Challenge2(需要编程)</h2><blockquote>
+<p>用键盘实现用户模式内核模式切换。具体目标是：“键盘输入3时切换到用户模式，键盘输入0时切换到内核模式”。 基本思路是借鉴软中断(syscall功能)的代码，并且把trap.c中软中断处理的设置语句拿过来。</p>
+</blockquote>
+<p>在Challenge1中我们其实已经实现了用户模式和内核模式的相互切换，所需要的只是增加一个用键盘输入来控制切换的功能。我们找到控制状态切换的trap.c文件中的trap_dispatch函数。他已经很贴心的给我们写了一个case IRQ_OFFSET + IRQ_KBD:(键盘输入情况)</p>
+<p>很自然的能够想到，用<strong>if-else</strong>结构就可以实现一个控制。那么到此编程的思路已经十分明确了。直接贴出我们的代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> IRQ_OFFSET + IRQ_KBD:</span><br><span class="line">        c = cons_getc();</span><br><span class="line">        cprintf(<span class="string">"kbd [%03d] %c\n"</span>, c, c);</span><br><span class="line">        <span class="keyword">if</span>(c == <span class="string">'0'</span> &amp;&amp; (tf-&gt;tf_cs &amp; <span class="number">3</span>) != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                cprintf(<span class="string">"Input 0......switch to kernel\n"</span>);</span><br><span class="line">                tf-&gt;tf_cs = KERNEL_CS;</span><br><span class="line">                tf-&gt;tf_ds = tf-&gt;tf_es = KERNEL_DS;</span><br><span class="line">                tf-&gt;tf_eflags &amp;= ~FL_IOPL_MASK;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (c == <span class="string">'3'</span> &amp;&amp; (tf-&gt;tf_cs &amp; <span class="number">3</span>) != <span class="number">3</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                cprintf(<span class="string">"Input 3......switch to user\n"</span>);</span><br><span class="line">                tf-&gt;tf_cs = USER_CS;</span><br><span class="line">                tf-&gt;tf_ds = tf-&gt;tf_es = tf-&gt;tf_ss = USER_DS;</span><br><span class="line">                tf-&gt;tf_eflags |= FL_IOPL_MASK;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+<p>完成了所有的实验和challeng之后，使用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ make qemu</span><br></pre></td></tr></table></figure>
+
+<p>执行出来的程序应该出现如下情况</p>
+<p><img src="https://i.loli.net/2020/10/19/eCbnJzD7joT5RpO.png" alt="01.png"></p>
+<p><img src="https://i.loli.net/2020/10/19/Ej9x48r2cCqD6Vf.png" alt="02.png"></p>
+<p><img src="https://i.loli.net/2020/10/19/nQ8HevbaUI93lgm.png" alt="03.png"></p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
 </search>

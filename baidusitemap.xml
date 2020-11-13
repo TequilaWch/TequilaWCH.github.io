@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yoursite.com/2020/11/13/Ucore-lab2/</loc>
+    <lastmod>2020-11-13</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2020/11/13/Ucore-lab1/</loc>
+    <lastmod>2020-11-13</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x09/</loc>
+    <lastmod>2020-11-07</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x08/</loc>
+    <lastmod>2020-11-07</lastmod>
+  </url>
+  <url>
     <loc>http://yoursite.com/2020/07/29/%E5%88%80%E9%A9%ACWCH%E7%9A%84%E4%B8%80%E6%96%B9%E5%87%80%E5%9C%9F/</loc>
     <lastmod>2020-11-01</lastmod>
   </url>
