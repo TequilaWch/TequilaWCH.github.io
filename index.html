@@ -187,6 +187,502 @@
 
     
     <article
+  id="post-Compiler学习-0x11"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/29/Compiler%E5%AD%A6%E4%B9%A0-0x11/"
+    >Compiler学习-0x11</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/29/Compiler%E5%AD%A6%E4%B9%A0-0x11/" class="article-date">
+  <time datetime="2020-11-29T05:41:05.000Z" itemprop="datePublished">2020-11-29</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业11-刀马WCH"><a href="#编译系统原理预习作业11-刀马WCH" class="headerlink" title="编译系统原理预习作业11@刀马WCH"></a>编译系统原理预习作业11@刀马WCH</h1><h2 id="2：消除左递归时改写翻译模式"><a href="#2：消除左递归时改写翻译模式" class="headerlink" title="2：消除左递归时改写翻译模式"></a>2：消除左递归时改写翻译模式</h2><p>对一下文法消除左递归，并相应的修改其翻译模式</p>
+<blockquote>
+<p>E -&gt; E1 + T  {E.<em>nptr</em> = mknode(“+”, E1.<em>nptr</em> , T.<em>nptr</em> )}</p>
+<p>E -&gt; E1 - T  {E.<em>nptr</em> = mknode(“-”, E1.<em>nptr</em> , T.<em>nptr</em> )}</p>
+<p>E -&gt; T  {E.<em>nptr</em> = T.<em>nptr</em> }</p>
+<p>T -&gt; (E)  {T.<em>nptr</em> = E.<em>nptr</em>}</p>
+<p>T -&gt; <strong>id</strong>  {T.<em>nptr</em> = mkleaf(<strong>id</strong>, <strong>id</strong>.<em>entry</em>)}</p>
+<p>T -&gt; <strong>num</strong> {T.<em>nptr</em> = mkleaf(<strong>num</strong>, <strong>num</strong>.<em>entry</em>)}</p>
+</blockquote>
+<p>将文法改写并修改其翻译模式如下</p>
+<blockquote>
+<p>E -&gt; T {R.i = T.nptr;} R {E.nptr = R.s;}</p>
+<p>R -&gt; + T {R1.i = mknode(“+”,R.i,T.nptr);} R1 {R.s = R1.s}</p>
+<p>R -&gt; - T {R1.i = mknode(“-“,R.i,T.nptr);} R1 {R.s = R1.s}</p>
+<p>R -&gt; ε {R.s = R.i;}</p>
+<p>T -&gt; (E) {T.nptr = E.nodeval;}</p>
+<p>T -&gt; <strong>id</strong>  {T.<em>nptr</em> = mkleaf(<strong>id</strong>, <strong>id</strong>.<em>entry</em>)}</p>
+<p>T -&gt; <strong>num</strong>  {T.<em>nptr</em> = mkleaf(<strong>num</strong>, <strong>num</strong>.<em>entry</em>)}</p>
+</blockquote>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-Compiler学习-0x10"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/29/Compiler%E5%AD%A6%E4%B9%A0-0x10/"
+    >Compiler学习-0x10</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/29/Compiler%E5%AD%A6%E4%B9%A0-0x10/" class="article-date">
+  <time datetime="2020-11-29T05:40:53.000Z" itemprop="datePublished">2020-11-29</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业-刀马WCH"><a href="#编译系统原理预习作业-刀马WCH" class="headerlink" title="编译系统原理预习作业@刀马WCH"></a>编译系统原理预习作业@刀马WCH</h1><h2 id="1：规范LR分析"><a href="#1：规范LR分析" class="headerlink" title="1：规范LR分析"></a>1：规范LR分析</h2><blockquote>
+<p>S’ -&gt; S</p>
+<p>S -&gt; CC</p>
+<p>C -&gt; cC | d</p>
+</blockquote>
+<p>根据以上文法，对ccd分别进行SLR分析和规范LR分析</p>
+<p>划分项目如下</p>
+<blockquote>
+<p>I<del>0</del>：{S’-&gt;S,S-&gt;.CC,C-&gt;.cC,C-&gt;.d}</p>
+<p>I<del>1</del>：{S’-&gt;S.}</p>
+<p>I<del>2</del>：{S-&gt;C.C,C-&gt;.cC,C-&gt;.d}</p>
+<p>I<del>3</del>：{C-&gt;c.C,CC-&gt;.cC,C-&gt;.d}</p>
+<p>I<del>4</del>：{C-&gt;d.}</p>
+<p>I<del>5</del>：{C-&gt;cC.}</p>
+<p>I<del>6</del>：{S-&gt;CC.}</p>
+</blockquote>
+<p>做出项目集规范族如下</p>
+<p><img src="https://i.loli.net/2020/11/22/erWycYI3XzSFKgV.png" alt="IMG_0074.PNG"></p>
+<p>计算FOLLOW集如下</p>
+<blockquote>
+<p>FOLLOW(S’) = FOLLOW(S) = {$}</p>
+<p>FOLLOW(C) = {$,c,d}</p>
+</blockquote>
+<p>其SLR分析表如下</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>输入c</th>
+<th>输入d</th>
+<th>输入$</th>
+<th>gotoS</th>
+<th>gotoC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>s3</td>
+<td>s4</td>
+<td></td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td>accept</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>s3</td>
+<td>s4</td>
+<td></td>
+<td></td>
+<td>6</td>
+</tr>
+<tr>
+<td>3</td>
+<td>s3</td>
+<td>s4</td>
+<td></td>
+<td></td>
+<td>5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>r3</td>
+<td>r3</td>
+<td>r3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>r2</td>
+<td>r2</td>
+<td>r2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td></td>
+<td>r1</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>对ccd进行SLR分析如下</p>
+<table>
+<thead>
+<tr>
+<th>STACK</th>
+<th>INPUT</th>
+<th>REMARK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>ccd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3</td>
+<td>cd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3c3</td>
+<td>d$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3c3d4</td>
+<td>$</td>
+<td>归约C-&gt;d</td>
+</tr>
+<tr>
+<td>0c3c3C5</td>
+<td>$</td>
+<td>归约C-&gt;cC</td>
+</tr>
+<tr>
+<td>0c3C5</td>
+<td>$</td>
+<td>归约C-&gt;cC</td>
+</tr>
+<tr>
+<td>0C2</td>
+<td>$</td>
+<td>error</td>
+</tr>
+</tbody></table>
+<p>其LR分析表如PPT所示</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>输入c</th>
+<th>输入d</th>
+<th>输入$</th>
+<th>gotoS</th>
+<th>gotoC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>s3</td>
+<td>s4</td>
+<td></td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td>acc</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>s6</td>
+<td>s7</td>
+<td></td>
+<td></td>
+<td>5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>s3</td>
+<td>s4</td>
+<td></td>
+<td></td>
+<td>8</td>
+</tr>
+<tr>
+<td>4</td>
+<td>r3</td>
+<td>r3</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td></td>
+<td>r1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>s6</td>
+<td>s7</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td></td>
+<td></td>
+<td>r3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>r2</td>
+<td>r2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td></td>
+<td></td>
+<td>r2</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>对其进行LR分析如下</p>
+<table>
+<thead>
+<tr>
+<th>STACK</th>
+<th>INPUT</th>
+<th>REMARK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>ccd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3</td>
+<td>cd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3c3</td>
+<td>d$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c3c3d4</td>
+<td>$</td>
+<td>error</td>
+</tr>
+</tbody></table>
+<h2 id="2：LALR分析"><a href="#2：LALR分析" class="headerlink" title="2：LALR分析"></a>2：LALR分析</h2><p>LR分析过程如上，不做重复</p>
+<p>LALR分析过程如下</p>
+<p>对上面的LR分析表进行合并，得到如下结果</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>输入c</th>
+<th>输入d</th>
+<th>输入$</th>
+<th>gotoS</th>
+<th>gotoC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>s36</td>
+<td>s47</td>
+<td></td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td>acc</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>s36</td>
+<td>s47</td>
+<td></td>
+<td></td>
+<td>5</td>
+</tr>
+<tr>
+<td>36</td>
+<td>s36</td>
+<td>s47</td>
+<td></td>
+<td></td>
+<td>89</td>
+</tr>
+<tr>
+<td>47</td>
+<td>r3</td>
+<td>r3</td>
+<td>r3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td></td>
+<td>r1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>89</td>
+<td>r2</td>
+<td>r2</td>
+<td>r2</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>分析如下</p>
+<table>
+<thead>
+<tr>
+<th>STACK</th>
+<th>INPUT</th>
+<th>REMARK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>ccd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c36</td>
+<td>cd$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c36c36</td>
+<td>d$</td>
+<td>移进</td>
+</tr>
+<tr>
+<td>0c36c36d47</td>
+<td>$</td>
+<td>归约C-&gt;d</td>
+</tr>
+<tr>
+<td>0c36c36C89</td>
+<td>$</td>
+<td>归约C-&gt;cC</td>
+</tr>
+<tr>
+<td>0c36C89</td>
+<td>$</td>
+<td>归约C-&gt;cC</td>
+</tr>
+<tr>
+<td>0C89</td>
+<td>$</td>
+<td>error</td>
+</tr>
+</tbody></table>
+<h2 id="3：语法制导定义"><a href="#3：语法制导定义" class="headerlink" title="3：语法制导定义"></a>3：语法制导定义</h2><blockquote>
+<p>尝试对上述语法仅使用综合属性语法制导定义来实现相同的翻译</p>
+</blockquote>
+<p>一条咸鱼放弃了思考，感觉有点复杂而精力不足了</p>
+<h2 id="4：构造DAG"><a href="#4：构造DAG" class="headerlink" title="4：构造DAG"></a>4：构造DAG</h2><p><img src="https://i.loli.net/2020/11/22/MvBjUNq5KTXw3Pi.png" alt="IMG_0075.PNG"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-Ucore-lab2"
   class="article article-type-post"
   itemscope
@@ -747,121 +1243,6 @@
 <li>提交源码和实验准备</li>
 </ol> 
       <a class="article-more-link" href="/2020/10/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C01-%E7%94%A8%E6%B5%81%E5%BC%8FSocket%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E7%A8%8B%E5%BA%8F/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-Compiler学习-0x06"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/10/21/Compiler%E5%AD%A6%E4%B9%A0-0x06/"
-    >Compiler学习-0x06</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/10/21/Compiler%E5%AD%A6%E4%B9%A0-0x06/" class="article-date">
-  <time datetime="2020-10-21T09:03:21.000Z" itemprop="datePublished">2020-10-21</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="语法分析器辅助构造工具-刀马WCH"><a href="#语法分析器辅助构造工具-刀马WCH" class="headerlink" title="语法分析器辅助构造工具@刀马WCH"></a>语法分析器辅助构造工具@刀马WCH</h1><p>这个报告不用交，就写的不太正式，主要是贴代码和自己踩过的坑。</p>
-<h2 id="0x01：熟悉Bison的使用并修改讲义中的Yacc程序"><a href="#0x01：熟悉Bison的使用并修改讲义中的Yacc程序" class="headerlink" title="0x01：熟悉Bison的使用并修改讲义中的Yacc程序"></a>0x01：熟悉Bison的使用并修改讲义中的Yacc程序</h2><blockquote>
-<ol>
-<li>将所有的词法分析功能均放在yylex函数内实现，为+,-,*,,(,)每个运算符分别定义一个单词类别，在yylex内实现代码，能识别这些单词，并将单词类别返回给词法分析程序</li>
-<li>实现功能更强的词法分析程序，可识别并忽略空格，制表符，回车等空白符，能识别多位十进制整数。</li>
-<li>修改Yacc程序，不进行表达式的计算，而是实现中缀表达式到后缀表达式的转换</li>
-</ol>
-</blockquote>
-<p>这个部分没遇到啥坑，极其简单，myacc01程序满足要求1，2；myacc02程序满足要求3。源码如下：</p> 
-      <a class="article-more-link" href="/2020/10/21/Compiler%E5%AD%A6%E4%B9%A0-0x06/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-Compiler学习-0x05"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/10/18/Compiler%E5%AD%A6%E4%B9%A0-0x05/"
-    >Compiler学习-0x05</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/10/18/Compiler%E5%AD%A6%E4%B9%A0-0x05/" class="article-date">
-  <time datetime="2020-10-18T15:54:10.000Z" itemprop="datePublished">2020-10-18</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="编译系统原理预习作业04-刀马WCH"><a href="#编译系统原理预习作业04-刀马WCH" class="headerlink" title="编译系统原理预习作业04@刀马WCH"></a>编译系统原理预习作业04@刀马WCH</h1><h2 id="1：画状态转换图"><a href="#1：画状态转换图" class="headerlink" title="1：画状态转换图"></a>1：画状态转换图</h2><blockquote>
-<p>尝试画正则表达式(a|b)*abb对应的状态转换图。</p>
-</blockquote>
-<p><img src="https://i.loli.net/2020/10/18/Zv5MDF7S9uHk4wf.png" alt="IMG_0036.PNG"></p> 
-      <a class="article-more-link" href="/2020/10/18/Compiler%E5%AD%A6%E4%B9%A0-0x05/"
         >阅读更多...</a
       >
        
