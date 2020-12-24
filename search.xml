@@ -33,6 +33,23 @@
       </tags>
   </entry>
   <entry>
+    <title>期末大作业总结-计网，网技</title>
+    <url>/2020/12/24/%E6%9C%9F%E6%9C%AB%E5%A4%A7%E4%BD%9C%E4%B8%9A%E6%80%BB%E7%BB%93-%E8%AE%A1%E7%BD%91%EF%BC%8C%E7%BD%91%E6%8A%80/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="期末大作业总结：计网、网技篇-WCH"><a href="#期末大作业总结：计网、网技篇-WCH" class="headerlink" title="期末大作业总结：计网、网技篇@WCH"></a>期末大作业总结：计网、网技篇@WCH</h1><p>有一段时间没有更新了，因为真的实在是太太太忙了。趁着现在交掉了网技，计网的大作业且不想开始写编译，把代码归类上传一下，留个档。</p>
+<a id="more"></a>
+
+<h6 id="1-计网"><a href="#1-计网" class="headerlink" title="1.计网"></a>1.计网</h6><p>计网作业分为了四个部分，需要编程的只有前面三个部分。我们的总体目标是实现一个具有可靠传输的UDP传输协议，三个部分分别采用停等机制，滑动窗口机制和拥塞控制机制。</p>
+<p>代码链接如下，S为发送端R为接收端</p>
+<p><a href="https://github.com/TequilaWch/Net-ReliableUdpConnect" target="_blank" rel="noopener">https://github.com/TequilaWch/Net-ReliableUdpConnect</a></p>
+<h6 id="2-网技"><a href="#2-网技" class="headerlink" title="2.网技"></a>2.网技</h6><p>网技作业是做一个路由程序，要求启用以后可以转发IP数据报#表现为可以跨网段ping通</p>
+<p>代码链接如下</p>
+<p><a href="https://github.com/TequilaWch/NetTeco-myrouter" target="_blank" rel="noopener">https://github.com/TequilaWch/NetTeco-myrouter</a></p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Compiler学习-0x11</title>
     <url>/2020/11/29/Compiler%E5%AD%A6%E4%B9%A0-0x11/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="编译系统原理预习作业11-刀马WCH"><a href="#编译系统原理预习作业11-刀马WCH" class="headerlink" title="编译系统原理预习作业11@刀马WCH"></a>编译系统原理预习作业11@刀马WCH</h1><a id="more"></a>
