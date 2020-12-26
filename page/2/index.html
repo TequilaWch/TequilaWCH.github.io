@@ -113,6 +113,416 @@
     
     
     <article
+  id="post-Compiler学习-0x09"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x09/"
+    >Compiler学习-0x09</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x09/" class="article-date">
+  <time datetime="2020-11-07T05:25:56.000Z" itemprop="datePublished">2020-11-07</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业08-刀马WCH"><a href="#编译系统原理预习作业08-刀马WCH" class="headerlink" title="编译系统原理预习作业08@刀马WCH"></a>编译系统原理预习作业08@刀马WCH</h1><h2 id="1：预习中的难点"><a href="#1：预习中的难点" class="headerlink" title="1：预习中的难点"></a>1：预习中的难点</h2><p>算符优先分析&amp;错误处理中对于 错误位置不在栈顶的情况 如何处理</p>
+<h2 id="2：算符优先分析-amp-错误处理"><a href="#2：算符优先分析-amp-错误处理" class="headerlink" title="2：算符优先分析&amp;错误处理"></a>2：算符优先分析&amp;错误处理</h2><blockquote>
+<p>给出(id+*id进行算符优先分析（包括错误恢复）的完整过程</p>
+</blockquote>
+<p>先构造如下的算符优先表</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>id</th>
+<th>+</th>
+<th>*</th>
+<th>(</th>
+<th>)</th>
+<th>$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td></td>
+<td>⋗</td>
+<td>⋗</td>
+<td></td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>+</td>
+<td>⋖</td>
+<td>⋗</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>*</td>
+<td>⋖</td>
+<td>⋗</td>
+<td>⋗</td>
+<td>⋖</td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>(</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>≐</td>
+<td></td>
+</tr>
+<tr>
+<td>)</td>
+<td></td>
+<td>⋗</td>
+<td>⋗</td>
+<td></td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>$</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>⋖</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>再构造如下的错误恢复表和有限错误类型</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>id</th>
+<th>(</th>
+<th>)</th>
+<th>$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>e3</td>
+<td>e3</td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>(</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>≐</td>
+<td>e4</td>
+</tr>
+<tr>
+<td>)</td>
+<td>e3</td>
+<td>e3</td>
+<td>⋗</td>
+<td>⋗</td>
+</tr>
+<tr>
+<td>$</td>
+<td>⋖</td>
+<td>⋖</td>
+<td>e2</td>
+<td>e1</td>
+</tr>
+</tbody></table>
+<p>1.e1：插入<strong>id</strong>到输入缓冲，“缺少运算数”</p>
+<p>2.e2：删除)，“未匹配右括号”</p>
+<p>3.e3：插入+到输入缓冲，“缺少运算符”</p>
+<p>4.e4：弹出(，“缺少右括号”</p>
+<p>5.e5：+或*两侧不全有非终结符时，忽略此符号，错误信息“缺少运算数”</p>
+<p>根据上表进行算符优先分析和错误处理的过程如下(因为不会打这几个符号且没有涉及，用&lt;&gt;=代替)</p>
+<table>
+<thead>
+<tr>
+<th>STACK</th>
+<th>INPUT</th>
+<th>REMARK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$</td>
+<td>(id+*id$</td>
+<td>$ &lt; (</td>
+</tr>
+<tr>
+<td>$(</td>
+<td>id+*id$</td>
+<td>( &lt; id</td>
+</tr>
+<tr>
+<td>$(id</td>
+<td>+*id$</td>
+<td>id &gt; +</td>
+</tr>
+<tr>
+<td>$(E</td>
+<td>+*id$</td>
+<td>( &lt; +</td>
+</tr>
+<tr>
+<td>$(E+</td>
+<td>*id$</td>
+<td>+ &lt; *</td>
+</tr>
+<tr>
+<td>$(E+*</td>
+<td>id$</td>
+<td>* &lt; id</td>
+</tr>
+<tr>
+<td>$(E+*id</td>
+<td>$</td>
+<td>id &gt; $</td>
+</tr>
+<tr>
+<td>$(E+*E</td>
+<td>$</td>
+<td>* &gt; $ : e5</td>
+</tr>
+<tr>
+<td>$(E+E</td>
+<td>$</td>
+<td>+ &gt; $</td>
+</tr>
+<tr>
+<td>$(E</td>
+<td>$</td>
+<td>e4</td>
+</tr>
+<tr>
+<td>$E</td>
+<td>$</td>
+<td>accept</td>
+</tr>
+</tbody></table>
+<h2 id="3：NFA识别活前缀"><a href="#3：NFA识别活前缀" class="headerlink" title="3：NFA识别活前缀"></a>3：NFA识别活前缀</h2><blockquote>
+<p>继续上一页的分析过程，完成abbcde的分析</p>
+</blockquote>
+<p>上一页的分析过后我们完成了对abbc的分析，现在我们的状态为</p>
+<blockquote>
+<p>S-&gt;aA.Be 输入缓冲区为de</p>
+</blockquote>
+<p>由于此时不存在B，输入ε迁移到状态B-&gt;.d,之后输入d迁移到状态B-&gt;d. </p>
+<p>此时可以归约出一个B，回退到状态S-&gt;aA.Be，输入B后进入S-&gt;aAB.e</p>
+<p>之后输入e,得到S-&gt;aABe.，归约出一个S，回退到S’-&gt;.S输入S，得到S’-&gt;S. 接受</p>
+<h2 id="4：构造LR-0-项目集规范族"><a href="#4：构造LR-0-项目集规范族" class="headerlink" title="4：构造LR(0)项目集规范族"></a>4：构造LR(0)项目集规范族</h2><blockquote>
+<p>对下面文法计算LR(0)项目集规范族</p>
+<p>S -&gt; aABe</p>
+<p>A -&gt; Abc | b</p>
+<p>B -&gt; d</p>
+</blockquote>
+<p>可以生成以下的拓广文法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">S&#39; → .S		S&#39; → S.</span><br><span class="line">S  → .aABe	S  → a.ABe	S  → aA.Be	S  → aAB.e	S  → aABe.</span><br><span class="line">A  → .Abc	A  → A.bc	A  → Ab.c	A  → Abc.</span><br><span class="line">A  → .b		A  → b.	</span><br><span class="line">B  → .d		B  → d.</span><br></pre></td></tr></table></figure>
+
+<p>根据拓广文法，得到如下项目集规范族</p>
+<p><img src="https://i.loli.net/2020/11/16/waBj4MDIW7QiVtb.png" alt="未命名文件.png"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-Compiler学习-0x08"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x08/"
+    >Compiler学习-0x08</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x08/" class="article-date">
+  <time datetime="2020-11-07T05:25:47.000Z" itemprop="datePublished">2020-11-07</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业07-刀马WCH"><a href="#编译系统原理预习作业07-刀马WCH" class="headerlink" title="编译系统原理预习作业07@刀马WCH"></a>编译系统原理预习作业07@刀马WCH</h1> 
+      <a class="article-more-link" href="/2020/11/07/Compiler%E5%AD%A6%E4%B9%A0-0x08/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-BTC-01-测试币的领取，交易以及多重签名交易"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/10/27/BTC-01-%E6%B5%8B%E8%AF%95%E5%B8%81%E7%9A%84%E9%A2%86%E5%8F%96%EF%BC%8C%E4%BA%A4%E6%98%93%E4%BB%A5%E5%8F%8A%E5%A4%9A%E9%87%8D%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93/"
+    >BTC-01-测试币的领取，交易以及多重签名交易</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/27/BTC-01-%E6%B5%8B%E8%AF%95%E5%B8%81%E7%9A%84%E9%A2%86%E5%8F%96%EF%BC%8C%E4%BA%A4%E6%98%93%E4%BB%A5%E5%8F%8A%E5%A4%9A%E9%87%8D%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93/" class="article-date">
+  <time datetime="2020-10-27T07:00:21.000Z" itemprop="datePublished">2020-10-27</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="BTC-01-测试币的领取，交易以及多重签名交易"><a href="#BTC-01-测试币的领取，交易以及多重签名交易" class="headerlink" title="BTC-01-测试币的领取，交易以及多重签名交易"></a>BTC-01-测试币的领取，交易以及多重签名交易</h1><h2 id="0x00：前言"><a href="#0x00：前言" class="headerlink" title="0x00：前言"></a>0x00：前言</h2><p>区块链作为比特币交易的基础，是一个非常有前景的技术，值得研究(就算不做应用也可以和人吹牛或者防骗)。这里开个篇目用来记录一些比特币交易的常用知识和测试币的领取方法。</p>
+<p>分享一本书，<a href="https://pan.baidu.com/s/1mX_s1Na94-0BkelTbiIReg" target="_blank" rel="noopener">《区块链:技术驱动金融》</a>(提取码SMTM),个人觉得非常好，希望能有助于各位读者学习。</p>
+<p>这个系列的所有代码可以在<a href="https://github.com/TequilaWch/Blockchain-Learning" target="_blank" rel="noopener">Blockchain-Learning</a>中找到，而你的每一笔交易可以在<a href="https://live.blockcypher.com/btc-testnet/" target="_blank" rel="noopener">区块链浏览器</a>中找到(如果成功的话)。</p>
+<p>涉及到的比特币脚本可以在<a href="https://en.bitcoin.it/wiki/Main_Page" target="_blank" rel="noopener">比特币维基</a>中的script部分查看相关定义。</p> 
+      <a class="article-more-link" href="/2020/10/27/BTC-01-%E6%B5%8B%E8%AF%95%E5%B8%81%E7%9A%84%E9%A2%86%E5%8F%96%EF%BC%8C%E4%BA%A4%E6%98%93%E4%BB%A5%E5%8F%8A%E5%A4%9A%E9%87%8D%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-Compiler学习-0x07"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/10/24/Compiler%E5%AD%A6%E4%B9%A0-0x07/"
+    >Compiler学习-0x07</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/24/Compiler%E5%AD%A6%E4%B9%A0-0x07/" class="article-date">
+  <time datetime="2020-10-24T08:57:57.000Z" itemprop="datePublished">2020-10-24</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="编译系统原理预习作业05-刀马WCH"><a href="#编译系统原理预习作业05-刀马WCH" class="headerlink" title="编译系统原理预习作业05@刀马WCH"></a>编译系统原理预习作业05@刀马WCH</h1><h2 id="1：NFA→DFA"><a href="#1：NFA→DFA" class="headerlink" title="1：NFA→DFA"></a>1：NFA→DFA</h2><p><img src="https://i.loli.net/2020/10/24/725Z8NuDkHUarnB.png" alt="NFA到DFA.PNG"></p> 
+      <a class="article-more-link" href="/2020/10/24/Compiler%E5%AD%A6%E4%B9%A0-0x07/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-计算机网络01-用流式Socket实现一个简单的聊天程序"
   class="article article-type-post"
   itemscope
@@ -447,231 +857,6 @@
     <footer class="article-footer">
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-Compiler学习-0x01"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/09/19/Compiler%E5%AD%A6%E4%B9%A0-0x01/"
-    >Compiler学习-0x01</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/09/19/Compiler%E5%AD%A6%E4%B9%A0-0x01/" class="article-date">
-  <time datetime="2020-09-19T06:40:45.000Z" itemprop="datePublished">2020-09-19</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="编译系统原理预习作业02-刀马WCH"><a href="#编译系统原理预习作业02-刀马WCH" class="headerlink" title="编译系统原理预习作业02@刀马WCH"></a>编译系统原理预习作业02@刀马WCH</h1><h2 id="1：CFG设计练习"><a href="#1：CFG设计练习" class="headerlink" title="1：CFG设计练习"></a>1：CFG设计练习</h2><p>设计产生式描述while语句</p>
-<blockquote>
-<p>while(expression)  statement</p>
-</blockquote>
-<p>设计产生式描述for语句</p>
-<blockquote>
-<p>for(expression<sub>1</sub>;expression<sub>2</sub>;expression<sub>3</sub>)  statement</p>
-</blockquote>
-<p>设计产生式描述变量声明语句</p>
-<blockquote>
-<p>int(float , double,  char) id<sub>1</sub> , id<sub>2</sub> , … ;</p>
-</blockquote> 
-      <a class="article-more-link" href="/2020/09/19/Compiler%E5%AD%A6%E4%B9%A0-0x01/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-Compiler学习-0x00"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/09/14/Compiler%E5%AD%A6%E4%B9%A0-0x00/"
-    >Compiler学习-0x00</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/09/14/Compiler%E5%AD%A6%E4%B9%A0-0x00/" class="article-date">
-  <time datetime="2020-09-14T12:22:40.000Z" itemprop="datePublished">2020-09-14</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="编译系统原理预习作业01-刀马WCH"><a href="#编译系统原理预习作业01-刀马WCH" class="headerlink" title="编译系统原理预习作业01@刀马WCH"></a>编译系统原理预习作业01@刀马WCH</h1><h2 id="1：C语言编程和优化"><a href="#1：C语言编程和优化" class="headerlink" title="1：C语言编程和优化"></a>1：C语言编程和优化</h2><p>需要下面两个功能相同的代码谁的速度更快。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* loop 1*&#x2F;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	a[i] &#x3D; a[i]*2000;</span><br><span class="line">	a[i] &#x3D; a[i]&#x2F;10000;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;* loop 2 *&#x2F;</span><br><span class="line">b &#x3D; a;</span><br><span class="line">for(i &#x3D; 0; i &lt; n ; i++)</span><br><span class="line">&#123;</span><br><span class="line">	*b &#x3D; *b*2000;</span><br><span class="line">	*b &#x3D; *b&#x2F;10000;</span><br><span class="line">	b++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>初步判断，loop2要更快一点，因为直接对于指针进行操作，而不是loop1对偏移量操作，省略一次加法。 编写代码测试如下</p> 
-      <a class="article-more-link" href="/2020/09/14/Compiler%E5%AD%A6%E4%B9%A0-0x00/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%88%B1%E5%AD%A6%E4%B9%A0%E7%9A%84WCH%E7%9A%84%E6%97%A5%E5%BF%97/" rel="tag">热爱学习的WCH的日志</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-nku2019计算方法题目"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/09/09/nku2019%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E9%A2%98%E7%9B%AE/"
-    >nku2019计算方法期末试题</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/09/09/nku2019%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E9%A2%98%E7%9B%AE/" class="article-date">
-  <time datetime="2020-09-09T02:48:08.000Z" itemprop="datePublished">2020-09-09</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="nku2019计算方法期末试题"><a href="#nku2019计算方法期末试题" class="headerlink" title="nku2019计算方法期末试题"></a>nku2019计算方法期末试题</h1><blockquote>
-<p>纯回忆版本 不全请见谅</p>
-</blockquote> 
-      <a class="article-more-link" href="/2020/09/09/nku2019%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E9%A2%98%E7%9B%AE/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B4%A2%E5%AF%8C%E5%AF%86%E7%A0%81/" rel="tag">财富密码</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-新生常见问题FAQ"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/08/24/%E6%96%B0%E7%94%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98FAQ/"
-    >新生常见问题FAQ</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/08/24/%E6%96%B0%E7%94%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98FAQ/" class="article-date">
-  <time datetime="2020-08-24T14:08:37.000Z" itemprop="datePublished">2020-08-24</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1 id="新生常见问题-F-amp-Q"><a href="#新生常见问题-F-amp-Q" class="headerlink" title="新生常见问题 F &amp; Q"></a>新生常见问题 F &amp; Q</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于这几天发现新同学们的问题具有普遍的共性，想着或许是你们不太能从 嗷嗷的 <strong>新生入学指南</strong> 中找到需要的信息，因此我和几位同学总结了一下常见的问题和解答，应该能解答你们的大部分疑问。</p>
-<p>但是，我希望你们能记得，要学会查找已有的信息。学长学姐花心思写好的文章和指南，不是为了让你们看一眼（<del>或者压根不看</del>）然后就转头就问<em>我该怎么怎么办</em>。<strong>一个合格的大学生应该有自己查找和解决问题的能力</strong>。祝大家大学生活愉快</p> 
-      <a class="article-more-link" href="/2020/08/24/%E6%96%B0%E7%94%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98FAQ/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%81%B6%E9%AD%94%E7%9A%84%E8%BD%BB%E8%AF%AD%E9%97%B2%E8%B0%88/" rel="tag">恶魔的轻语闲谈</a></li></ul>
 
     </footer>
   </div>
