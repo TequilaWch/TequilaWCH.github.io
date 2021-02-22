@@ -33,6 +33,46 @@
       </tags>
   </entry>
   <entry>
+    <title>如何应对拒绝访问-以githubio为例</title>
+    <url>/2021/02/22/%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E6%8B%92%E7%BB%9D%E8%AE%BF%E9%97%AE-%E4%BB%A5githubio%E4%B8%BA%E4%BE%8B/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="如何应对拒绝访问-以github-io为例"><a href="#如何应对拒绝访问-以github-io为例" class="headerlink" title="如何应对拒绝访问-以github.io为例"></a>如何应对拒绝访问-以github.io为例</h1><p>今天是开学的第一天，我也重新开始更新了。刚好，今天在访问好友的个人博客时，突然出现了一个提示</p>
+<blockquote>
+<p>访问被拒绝，请检查防火墙和代理设置</p>
+</blockquote>
+<p>我当时的心情是这样的</p>
+<p><img src="https://i.loli.net/2021/02/22/CgdMNDxuhcWTXlz.jpg" alt="-1cceb580887a73a0.jpg"></p>
+<p>我们友谊的小船，就这么说翻就翻了吗？于是找了其他的人来测试访问这个博客，完全是可以访问的。</p>
+<p>那这指向两个情况：</p>
+<ol>
+<li>问题出在好友那，她的酒馆对我打了烊（bad ending）</li>
+<li>问题出在我这，我的网络设置没法正常访问其博客（happy ending）</li>
+</ol>
+<p>我们首先排除掉情况1，因为这种情况的解决方案和技术没关系，一般需要换好友。那么情况2怎么解决呢？我们又分两种情况进行讨论</p>
+<a id="more"></a>
+
+<h2 id="情况1-无法解析域名（最可能的情况）"><a href="#情况1-无法解析域名（最可能的情况）" class="headerlink" title="情况1:无法解析域名（最可能的情况）"></a>情况1:无法解析域名（最可能的情况）</h2><p>这种情况下，我们可以直接在本地添加host文件（本地缓存），从而避免解析步骤</p>
+<p>如何修改host文件呢？首先我们打开C:\Windows\System32\drivers\etc这个目录，确保你打开了显示隐藏文件的选项，找到一个hosts文件。</p>
+<p>之后将其复制一份到其他位置(便于回滚)，再用任何文本编辑器(记事本就行)打开此目录下的hosts文件</p>
+<p>在这个<a href="https://tools.ipip.net/dns.php" target="_blank" rel="noopener">DNS查询网站</a>查询此网址的IP，找一个响应时间最短的IP如下</p>
+<p><img src="https://i.loli.net/2021/02/22/W4EcphreZVm7JNH.png" alt="QQ截图20210222202901.png"></p>
+<p>然后在刚刚打开的hosts文件末尾添加如下内容</p>
+<blockquote>
+<p>网址 空格 IP</p>
+<p>比如我们这个就是 <a href="http://www.caslone.cn" target="_blank" rel="noopener">www.caslone.cn</a> 185.199.109.153</p>
+</blockquote>
+<p>之后保存。保存的时候可能会无法保存，只用换个目录保存为txt格式文件，然后删掉后缀，替换原目录下的hosts文件即可</p>
+<p>最后重启浏览器，就可以访问了。</p>
+<p>如果仍然不能访问，我们就来看情况2</p>
+<h2 id="情况2-DNS服务器不太行（罕见情况）"><a href="#情况2-DNS服务器不太行（罕见情况）" class="headerlink" title="情况2:DNS服务器不太行（罕见情况）"></a>情况2:DNS服务器不太行（罕见情况）</h2><p>我们按照以下图片直接来操作。打开网络适配器，选择当前网络，属性，找到IPV4协议，手动配置DNS服务器地址</p>
+<p>我们可以配置的DNS服务器地址，比较常见的是腾讯的196.168.1.1和阿里的223.5.5.5</p>
+<p>保存重新启动浏览器就行了</p>
+<p><img src="https://i.loli.net/2021/02/22/iTxK5FU1DSQGMWh.png" alt="QQ截图20210222203354.png"></p>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>期末大作业总结-编译</title>
     <url>/2020/12/29/%E6%9C%9F%E6%9C%AB%E5%A4%A7%E4%BD%9C%E4%B8%9A%E6%80%BB%E7%BB%93-%E7%BC%96%E8%AF%91/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><p>总算是写完了提供了这个学期百分之50以上工作量的编译原理最后一个大作业，生成一个编译器</p>
