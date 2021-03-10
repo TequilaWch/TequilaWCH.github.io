@@ -33,6 +33,124 @@
       </tags>
   </entry>
   <entry>
+    <title>恶意代码分析实战01</title>
+    <url>/2021/03/10/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9801/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="恶意代码分析实战-LAB1"><a href="#恶意代码分析实战-LAB1" class="headerlink" title="恶意代码分析实战-LAB1"></a>恶意代码分析实战-LAB1</h1><p>本实验报告为恶意代码分析实战中的LAB1，一共分为1-1,1-2,1-3,1-4四个部分，实验环境为windows xp，实验前关闭防火墙并对虚拟机进行快照，以备搞炸了方便回滚。</p>
+<p>实验所需的<a href="https://pan.baidu.com/s/163DIYQPumUtZeu0GDEdYJQ" target="_blank" rel="noopener">样本</a>和<a href="https://pan.baidu.com/s/1gSxUB5KZ89W-5iJj1gGKog" target="_blank" rel="noopener">工具</a>点击即可下载,提取码都是WCH6，务必在虚拟机中操作</p>
+<a id="more"></a>
+
+<h2 id="Lab1-1"><a href="#Lab1-1" class="headerlink" title="Lab1-1"></a>Lab1-1</h2><blockquote>
+<p>这个实验使用Lab01-01.exe和Lab01-01.dll文件，使用本章描述的工具和技术来获取关于这些文件的信息</p>
+<p><strong>问题</strong>：</p>
+<ol>
+<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
+<li>这些文件是什么时候编译的？</li>
+<li>这两个文件是否存在迹象说明他们是否被加壳或者混淆了？如果是，迹象在哪里？</li>
+<li>是否有导入函数显示出了这个恶意代码是做什么的？如果是，是哪些导入函数？</li>
+<li>是否有任何其他文件或基于主机的迹象，让你可以在受感染系统上查找</li>
+<li>是否有基于网络的迹象，可以用来发现受感染机器上的这个恶意代码</li>
+<li>你猜这些文件的目的是什么</li>
+</ol>
+</blockquote>
+<p><strong>解答</strong></p>
+<ol>
+<li><p>将.dll和.exe分别上传至virustotal检查hash，可以得到如下的结果。<img src="https://i.loli.net/2021/03/10/Qy9gkYPBe4uAHWN.png" alt="1-1.1.png">)<img src="https://i.loli.net/2021/03/10/2suP86fdVaGoyXD.png" alt="1-1.2.png">此结果说明文件匹配到了已有的反病毒特征码</p>
+</li>
+<li><p>同样是在virustotal，在其details目录下的history项目，可以看到其create time，可知两个都是在2010年12月19日16时16分左右编译。 </p>
+<p><img src="https://i.loli.net/2021/03/10/Co4rJNKPFnykX6E.png" alt="1-1.4.png"></p>
+<p><img src="https://i.loli.net/2021/03/10/NsQ4yKgm39LhIGx.png" alt="1-1.3.png"></p>
+</li>
+<li><p>用PEiD工具打开两个文件，可以看到并未加壳，且是由VC++ 6.0编译得来</p>
+<p><img src="https://i.loli.net/2021/03/10/ph3uik9VqPtNYHr.png" alt="1-1.5.png"></p>
+</li>
+<li><p>在exe中导入了诸如FindFirstFile，CopyFile等函数，说明exe文件可能的作用是搜寻文件和复制文件。在dll文件中能找到CreateProcessInternal，Sleep说明应该是提供联网功能<img src="https://i.loli.net/2021/03/10/WOCG2TpHl8o65BJ.png" alt="1-1.6.png">)<img src="https://i.loli.net/2021/03/10/pH85eM6J37q9OZY.png" alt="1-1.7.png"></p>
+</li>
+<li><p>使用strings工具打开两个文件，分别得到以下内容（上exe下dll）</p>
+<p><img src="https://i.loli.net/2021/03/10/oiH8XajuDgLc5Gt.png" alt="1-1.8.png">)<img src="https://i.loli.net/2021/03/10/2TV1U7OHueSkAPl.png" alt="1-1.9.png">strings的结果既可以验证4中我们获取的信息，也能给我们一些新的信息。比如在exe中除了kerne<strong>l</strong>32.dll以外，还有一个kerne<strong>1</strong>32.dll，试图混淆信息，大大滴狡猾。</p>
+</li>
+<li><p>同样用strings打开dll，能看到一个ip地址，表明这是个一个基于网络的恶意代码感染迹象</p>
+</li>
+<li><p>根据以上的信息，合理推断dll是一个后门，便于攻击者通过网络攻击，而exe是用于对dll进行安装与运行的。</p>
+</li>
+</ol>
+<h2 id="Lab1-2"><a href="#Lab1-2" class="headerlink" title="Lab1-2"></a>Lab1-2</h2><blockquote>
+<p>分析Lab01-02.exe文件</p>
+<p><strong>问题</strong></p>
+<ol>
+<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
+<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
+<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
+<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
+</ol>
+</blockquote>
+<p><strong>解答</strong></p>
+<ol>
+<li><p>上传后，同样被标识<img src="https://i.loli.net/2021/03/10/XHfDCU5AjcgtVnN.png" alt="1-2-1.png"></p>
+</li>
+<li><p>用PEiD打开，可以看到是用UPX加壳的。<a href="http://upx.sourceforge.net/" target="_blank" rel="noopener">下载UPX工具</a>并运行upx -o lab1-2ori -d Lab01-02即可脱壳</p>
+<p><img src="https://i.loli.net/2021/03/10/yh74CLH5kRzQBnp.png" alt="1-2-2.png"></p>
+<p><img src="https://i.loli.net/2021/03/10/CHs47YgNJUtzxpF.png" alt="1-2-3.png"></p>
+</li>
+<li><p>脱壳后用DependencyWalker和strings打开来看，可以看到有诸如CreateService和InternetOpenUrl等导入函数，分别用以创建服务和联网</p>
+<p><img src="https://i.loli.net/2021/03/10/Wzw6jbiTQoXJMCy.png" alt="1-2-4.png"></p>
+</li>
+<li><p>根据找到的字符串，可以查看MalService或者<a href="http://www.malwareanalysisbook.com来检测" target="_blank" rel="noopener">www.malwareanalysisbook.com来检测</a></p>
+</li>
+</ol>
+<h2 id="Lab1-3"><a href="#Lab1-3" class="headerlink" title="Lab1-3"></a>Lab1-3</h2><blockquote>
+<p>分析Lab01-03.exe文件</p>
+<p><strong>问题</strong></p>
+<ol>
+<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
+<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
+<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
+<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
+</ol>
+</blockquote>
+<p><strong>解答</strong></p>
+<ol>
+<li>上传后，同样被标识<img src="https://i.loli.net/2021/03/10/XAJi3a5fKxo4kIh.png" alt="1-3.1.png"></li>
+<li>用PEiD和PEview打开，看到信息如下，非常的异常，而异常则说明应该是加壳了<img src="https://i.loli.net/2021/03/10/WrUP9JAqBoXuK3T.png" alt="1-3.2.png">加壳器信息标识为FSG 1.0-&gt;dulek /xt，属于我们目前搞不定的范畴，就不脱壳了</li>
+<li>因为没脱壳，我们用strings和Walker打开，意思意思，打开结果如下<img src="https://i.loli.net/2021/03/10/PoXW7FeUySmZJ5v.png" alt="1-3.3.png">我们跟他意思意思，他也不跟我们客气，这玩意是看不出什么东西来的，搞不来</li>
+<li>3都搞不来，何况4乎。</li>
+</ol>
+<h2 id="Lab1-4"><a href="#Lab1-4" class="headerlink" title="Lab1-4"></a>Lab1-4</h2><blockquote>
+<p>分析Lab01-04.exe文件</p>
+<p><strong>问题</strong></p>
+<ol>
+<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
+<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
+<li>这个文件是什么时候被编译的？</li>
+<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
+<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
+<li>这个文件在资源段中包含一个资源，使用Resource Hacker工具来检查资源，然后，抽取资源，从资源中你能发现什么吗？</li>
+</ol>
+</blockquote>
+<p><strong>解答</strong></p>
+<ol>
+<li><p>依旧是被成功检测<img src="https://i.loli.net/2021/03/10/JKkPdtA6fe2Xiv4.png" alt="1-4.1.png"></p>
+</li>
+<li><p>PEiD没有迹象表明混淆或加壳了</p>
+<p><img src="https://i.loli.net/2021/03/10/qpcVSixUvGjgF8B.png" alt="1-4.2.png"></p>
+</li>
+<li><p>在history条目可以看到是2019年8月30日编译的，然而这本书写出来的时候离2019还早，其中肯定有诈</p>
+<p><img src="https://i.loli.net/2021/03/10/7SzdLJEiDBrANlh.png" alt="1-4.3.png"></p>
+</li>
+<li><p>用Walker和strings打开，可以看到如下的内容<img src="https://i.loli.net/2021/03/10/u6Gk1acPT7bmVYw.png" alt="1-4.4.png">注意到里面有WinExec，WriteFile,并且调用了ADCAPI32.dll，这个程序可能会写一些文件到磁盘并执行，而且还有读取资源节的函数LoadResource等，资源节可能有用</p>
+</li>
+<li><p>注意看strings内容</p>
+<p><img src="https://i.loli.net/2021/03/10/yNAa2ie7t5UsHvW.png" alt="1-4.5.png"></p>
+<p>其中有一个\system32\wupdmgrd.exe和一个url，这代表这个程序可能会在system32下添加一个exe，url可能为下载地址</p>
+</li>
+<li><p>用RH提取后，会发现其中大部分都是二进制，然而有一串字符<em>!This program connot be run in DOS mode</em>,但凡做了前面几个实验都会非常眼熟，这个是所有PE文件开始处的DOS头部都会有的错误，而这句话出现在资源节，说明里面有个别的PE文件。点击操作-&gt;存为二进制，之后再用PEview打开，这样就可以对资源节中的这个PE文件进行分析，查看内容如下<img src="https://i.loli.net/2021/03/10/7eSOjdL1pvc8ito.png" alt="1-4.6.png">能看见一个URLDownloadToFile，也就是说，这里面这玩意还是个下载器，用他来下载额外的恶意代码</p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>热爱学习的WCH的日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何应对拒绝访问-以githubio为例</title>
     <url>/2021/02/22/%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E6%8B%92%E7%BB%9D%E8%AE%BF%E9%97%AE-%E4%BB%A5githubio%E4%B8%BA%E4%BE%8B/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="如何应对拒绝访问-以github-io为例"><a href="#如何应对拒绝访问-以github-io为例" class="headerlink" title="如何应对拒绝访问-以github.io为例"></a>如何应对拒绝访问-以github.io为例</h1><p>今天是开学的第一天，我也重新开始更新了。刚好，今天在访问好友的个人博客时，突然出现了一个提示</p>
