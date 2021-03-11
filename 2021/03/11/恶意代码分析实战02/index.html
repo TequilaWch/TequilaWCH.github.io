@@ -10,7 +10,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    恶意代码分析实战01 |  净土
+    恶意代码分析实战02 |  净土
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -56,7 +56,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-恶意代码分析实战01"
+  id="post-恶意代码分析实战02"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -67,15 +67,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  恶意代码分析实战01
+  恶意代码分析实战02
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2021/03/10/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9801/" class="article-date">
-  <time datetime="2021-03-10T12:11:46.000Z" itemprop="datePublished">2021-03-10</time>
+      <a href="/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" class="article-date">
+  <time datetime="2021-03-11T15:33:26.000Z" itemprop="datePublished">2021-03-11</time>
 </a>   
 <div class="word_count">
     <span class="post-time">
@@ -106,114 +106,100 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="恶意代码分析实战-LAB1"><a href="#恶意代码分析实战-LAB1" class="headerlink" title="恶意代码分析实战-LAB1"></a>恶意代码分析实战-LAB1</h1><p>本实验报告为恶意代码分析实战中的LAB1，一共分为1-1,1-2,1-3,1-4四个部分，实验环境为windows xp，实验前关闭防火墙并对虚拟机进行快照，以备搞炸了方便回滚。</p>
+  <h1 id="恶意代码分析实战-LAB3"><a href="#恶意代码分析实战-LAB3" class="headerlink" title="恶意代码分析实战-LAB3"></a>恶意代码分析实战-LAB3</h1><p>本实验报告为恶意代码分析实战中的LAB3，一共分为3-1,3-2,3-3,3-4四个部分，实验环境为windows xp，实验前关闭防火墙并对虚拟机进行快照，以备搞炸了方便回滚(由于Lab3主要是动态调试，快照显得更为必要)。</p>
 <p>实验所需的<a href="https://pan.baidu.com/s/163DIYQPumUtZeu0GDEdYJQ" target="_blank" rel="noopener">样本</a>和<a href="https://pan.baidu.com/s/1gSxUB5KZ89W-5iJj1gGKog" target="_blank" rel="noopener">工具</a>点击即可下载,提取码都是WCH6，务必在虚拟机中操作</p>
 <a id="more"></a>
 
-<h2 id="Lab1-1"><a href="#Lab1-1" class="headerlink" title="Lab1-1"></a>Lab1-1</h2><blockquote>
-<p>这个实验使用Lab01-01.exe和Lab01-01.dll文件，使用本章描述的工具和技术来获取关于这些文件的信息</p>
-<p><strong>问题</strong>：</p>
-<ol>
-<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
-<li>这些文件是什么时候编译的？</li>
-<li>这两个文件是否存在迹象说明他们是否被加壳或者混淆了？如果是，迹象在哪里？</li>
-<li>是否有导入函数显示出了这个恶意代码是做什么的？如果是，是哪些导入函数？</li>
-<li>是否有任何其他文件或基于主机的迹象，让你可以在受感染系统上查找</li>
-<li>是否有基于网络的迹象，可以用来发现受感染机器上的这个恶意代码</li>
-<li>你猜这些文件的目的是什么</li>
-</ol>
-</blockquote>
-<p><strong>解答</strong></p>
-<ol>
-<li><p>将.dll和.exe分别上传至virustotal检查hash，可以得到如下的结果。<img src="https://i.loli.net/2021/03/10/Qy9gkYPBe4uAHWN.png" alt="1-1.1.png">)<img src="https://i.loli.net/2021/03/10/2suP86fdVaGoyXD.png" alt="1-1.2.png">此结果说明文件匹配到了已有的反病毒特征码</p>
-</li>
-<li><p>同样是在virustotal，在其details目录下的history项目，可以看到其create time，可知两个都是在2010年12月19日16时16分左右编译。 </p>
-<p><img src="https://i.loli.net/2021/03/10/Co4rJNKPFnykX6E.png" alt="1-1.4.png"></p>
-<p><img src="https://i.loli.net/2021/03/10/NsQ4yKgm39LhIGx.png" alt="1-1.3.png"></p>
-</li>
-<li><p>用PEiD工具打开两个文件，可以看到并未加壳，且是由VC++ 6.0编译得来</p>
-<p><img src="https://i.loli.net/2021/03/10/ph3uik9VqPtNYHr.png" alt="1-1.5.png"></p>
-</li>
-<li><p>在exe中导入了诸如FindFirstFile，CopyFile等函数，说明exe文件可能的作用是搜寻文件和复制文件。在dll文件中能找到CreateProcessInternal，Sleep说明应该是提供联网功能<img src="https://i.loli.net/2021/03/10/WOCG2TpHl8o65BJ.png" alt="1-1.6.png">)<img src="https://i.loli.net/2021/03/10/pH85eM6J37q9OZY.png" alt="1-1.7.png"></p>
-</li>
-<li><p>使用strings工具打开两个文件，分别得到以下内容（上exe下dll）</p>
-<p><img src="https://i.loli.net/2021/03/10/oiH8XajuDgLc5Gt.png" alt="1-1.8.png">)<img src="https://i.loli.net/2021/03/10/2TV1U7OHueSkAPl.png" alt="1-1.9.png">strings的结果既可以验证4中我们获取的信息，也能给我们一些新的信息。比如在exe中除了kerne<strong>l</strong>32.dll以外，还有一个kerne<strong>1</strong>32.dll，试图混淆信息，大大滴狡猾。</p>
-</li>
-<li><p>同样用strings打开dll，能看到一个ip地址，表明这是个一个基于网络的恶意代码感染迹象</p>
-</li>
-<li><p>根据以上的信息，合理推断dll是一个后门，便于攻击者通过网络攻击，而exe是用于对dll进行安装与运行的。</p>
-</li>
-</ol>
-<h2 id="Lab1-2"><a href="#Lab1-2" class="headerlink" title="Lab1-2"></a>Lab1-2</h2><blockquote>
-<p>分析Lab01-02.exe文件</p>
+<h2 id="Lab3-1"><a href="#Lab3-1" class="headerlink" title="Lab3-1"></a>Lab3-1</h2><blockquote>
+<p>使用动态分析技术来分析在Lab03-01.exe文件中发现的恶意代码</p>
 <p><strong>问题</strong></p>
 <ol>
-<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
-<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
-<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
-<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
+<li>找出这个恶意代码的导入函数和字符串列表</li>
+<li>这个恶意代码在主机上的感染迹象特征是什么</li>
+<li>这个恶意代码是否存在一些有用的网络特征码，如果存在，他们是什么</li>
 </ol>
 </blockquote>
 <p><strong>解答</strong></p>
 <ol>
-<li><p>上传后，同样被标识<img src="https://i.loli.net/2021/03/10/XHfDCU5AjcgtVnN.png" alt="1-2-1.png"></p>
+<li><p>用PEview和strings打开如下</p>
+<p><img src="https://i.loli.net/2021/03/11/4Kkv3Uwpq6gDfJn.png" alt="3-1.1.png"></p>
+<p>只有一个导入函数ExitProcess，但是字符串中有很多明文字符串，说明可能其实没有加壳</p>
 </li>
-<li><p>用PEiD打开，可以看到是用UPX加壳的。<a href="http://upx.sourceforge.net/" target="_blank" rel="noopener">下载UPX工具</a>并运行upx -o lab1-2ori -d Lab01-02即可脱壳</p>
-<p><img src="https://i.loli.net/2021/03/10/yh74CLH5kRzQBnp.png" alt="1-2-2.png"></p>
-<p><img src="https://i.loli.net/2021/03/10/CHs47YgNJUtzxpF.png" alt="1-2-3.png"></p>
+<li><p>启动procmon和procexp后，打开目标文件来进行动态调试，在procexp中可以看到进程信息，包括其创建的互斥量和装载的dll文件，分别如下</p>
+<p><img src="https://i.loli.net/2021/03/11/K5m4hRdGB7iTuyX.png" alt="3-1.2.png">)<img src="https://i.loli.net/2021/03/11/LserG5oQUWiZg81.png" alt="3-1.3.png"></p>
+<p>可以看到一个名为WinVMX32的互斥量，装载了ws2_32.dlll,wshtcpip.dll，可能具有联网功能。</p>
+<p>设置procmon的过滤器如图<img src="https://i.loli.net/2021/03/11/daD3pb7iL2oOYrH.png" alt="3-1.4.png">可以看到检测到了一堆RegSetValue操作和一个WriteFile操作。其中末尾为seed的是随机数发生器的种子，应该忽略。writefile操作告诉我们此程序在windows/system32写入了一个vmx32to64文件，并且这个文件和我们打开的文件一样大小，经过hash检测发现有相同的hash值，说明是同一个文件。还有一个不是seed的RegSetValue操作，此操作往注册表中创建了新表项VideoDriver，在系统启动的时候会启动vmx32to64</p>
 </li>
-<li><p>脱壳后用DependencyWalker和strings打开来看，可以看到有诸如CreateService和InternetOpenUrl等导入函数，分别用以创建服务和联网</p>
-<p><img src="https://i.loli.net/2021/03/10/Wzw6jbiTQoXJMCy.png" alt="1-2-4.png"></p>
-</li>
-<li><p>根据找到的字符串，可以查看MalService或者<a href="http://www.malwareanalysisbook.com来检测" target="_blank" rel="noopener">www.malwareanalysisbook.com来检测</a></p>
+<li><p>修改虚拟机使用的dns服务器ip为127.0.0.1，启动apatedns并且将DNS同样设置为127.0.0.1，之后在cmd中输入nc -l -p 443以监听443端口，得到如下结果<img src="https://i.loli.net/2021/03/11/aqE1GcTFCUfBbQd.png" alt="3-1.5.png">看起来此程序在向<a href="http://www.practicalmalwareanalysis.com进行dns请求，还会在443端口发出一些随机信号" target="_blank" rel="noopener">www.practicalmalwareanalysis.com进行dns请求，还会在443端口发出一些随机信号</a></p>
 </li>
 </ol>
-<h2 id="Lab1-3"><a href="#Lab1-3" class="headerlink" title="Lab1-3"></a>Lab1-3</h2><blockquote>
-<p>分析Lab01-03.exe文件</p>
+<p><strong>解答无关部分</strong></p>
+<p>这个apatedns和netcat实在是困扰了我很长一段时间。对于nc，下载并解压之后需要将文件夹中所有文件复制粘贴到windows/system32目录下才能在cmd中使用，还比较容易。对于apateDNS，需要先下载Net Framework 3.5，但是现在能找到的版本下载安装后都会有bug，我找了很多个版本依旧不能解决。最后通过将主机中的C:\Windows\Microsoft.NET\Framework\v2.0.50727目录下的config文件夹完整替换虚拟机同目录下的config文件夹，问题才得以解决，真的坑。</p>
+<h2 id="Lab3-2"><a href="#Lab3-2" class="headerlink" title="Lab3-2"></a>Lab3-2</h2><blockquote>
+<p>使用动态分析技术来分析在Lab03-02.dll文件中发现的恶意代码</p>
 <p><strong>问题</strong></p>
 <ol>
-<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
-<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
-<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
-<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
+<li>你怎样才能让这个恶意代码自行安装</li>
+<li>在安装之后，你如何让这个恶意代码运行起来</li>
+<li>你怎么能找到这个恶意代码是在哪个进程下运行的</li>
+<li>你可以在procmon工具中设置什么样的过滤器，才能收集这个恶意代码的信息</li>
+<li>这个恶意代码在主机上的感染迹象特征是什么</li>
+<li>这个恶意代码是否存在一些有用的网络特征码</li>
 </ol>
 </blockquote>
 <p><strong>解答</strong></p>
 <ol>
-<li>上传后，同样被标识<img src="https://i.loli.net/2021/03/10/XAJi3a5fKxo4kIh.png" alt="1-3.1.png"></li>
-<li>用PEiD和PEview打开，看到信息如下，非常的异常，而异常则说明应该是加壳了<img src="https://i.loli.net/2021/03/10/WrUP9JAqBoXuK3T.png" alt="1-3.2.png">加壳器信息标识为FSG 1.0-&gt;dulek /xt，属于我们目前搞不定的范畴，就不脱壳了</li>
-<li>因为没脱壳，我们用strings和Walker打开，意思意思，打开结果如下<img src="https://i.loli.net/2021/03/10/PoXW7FeUySmZJ5v.png" alt="1-3.3.png">我们跟他意思意思，他也不跟我们客气，这玩意是看不出什么东西来的，搞不来</li>
-<li>3都搞不来，何况4乎。</li>
+<li><p>安装前用PEview和strings打开，得到如下界面<img src="https://i.loli.net/2021/03/11/tzqeQP7oLBdEaKS.png" alt="3-2.1.png">)可以注意到installA这个导入函数，同时看strings会有注册表，域名等相关内容，因此安装前需要先对注册表来个快照(快照是个好东西)。使用regshot即可</p>
+<p><img src="https://i.loli.net/2021/03/11/2AWlDFXVcgHu9aJ.png" alt="3-2.2.png"></p>
+<p>使用rundll32.exe，执行命令rundll32.exe Lab03-02.dll,installA即可安装，安装完成后点击2nd shot 可以发现有新添加的项</p>
+</li>
+<li><p>注意到HKLM\SYSTEM\CurrentControlSet\Services\IPRIP<img src="https://i.loli.net/2021/03/11/gpWORZxHQvCLn38.png" alt="3-2。3.png"></p>
+<p>这个项目说明他将自己安装成一个IPRIP服务，因此要执行可以通过net start IPRIP启动服务</p>
+</li>
+<li><p>我们需要使用Procexp和procmon一起来确定，但是注意之前的对照结果，可以看到这个项目<img src="https://i.loli.net/2021/03/11/QgbMVIRvT6xjO9n.png" alt="3-2.4.png"></p>
+<p>说明他非常有可能在svchost.exe这个进程中执行，我们先运行，然后找到这个进程<img src="https://i.loli.net/2021/03/11/q8DEWItUBJGCAwH.png" alt="3-2.5.png">这还不能说明什么，但是我们可以点击Find进入搜索界面，输入Lab03-02.dll，可以确定实在PID为1024的这个svchost之中</p>
+</li>
+<li><p>在procmon中根据pid设置如下即可<img src="https://i.loli.net/2021/03/11/dAcq9FfCj2uzkvx.png" alt="3-2.6.png"></p>
+</li>
+<li><p>主机感染迹象就是3中图1下面的几行描述信息(INA+)</p>
+</li>
+<li><p>我们通过nc+apateDNS可以分析，注意到strings中有HTTP字样，所以我们在nc监听80端口，结果如下<img src="https://i.loli.net/2021/03/11/6yMXdbakJxwp3FQ.png" alt="3-2.8.png">他会对practicalmalwareanalysis.com发出dns请求，执行一个GET请求，目标是/serve.html，这些足够作为网络特征了</p>
+</li>
 </ol>
-<h2 id="Lab1-4"><a href="#Lab1-4" class="headerlink" title="Lab1-4"></a>Lab1-4</h2><blockquote>
-<p>分析Lab01-04.exe文件</p>
+<h2 id="Lab3-3"><a href="#Lab3-3" class="headerlink" title="Lab3-3"></a>Lab3-3</h2><blockquote>
+<p>在一个安全的环境中执行Lab03-03.exe文件中发现的恶意代码，同时使用基础的动态行为分析工具监视他的行为</p>
 <p><strong>问题</strong></p>
 <ol>
-<li>将文件上传至<a href="http://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a>进行分析并查看报告。文件匹配到了已有的反病毒软件特征吗？</li>
-<li>这文件是否存在迹象说明是否被加壳或者混淆了？如果是，迹象在哪里？如果被加壳，尝试对其脱壳</li>
-<li>这个文件是什么时候被编译的？</li>
-<li>有没有任何导入函数能够暗示出这个程序的功能？如果是，是那些导入函数，他们会告诉我什么？</li>
-<li>哪些基于主机或者网络的迹象可以用于确定被这个恶意代码感染的机器</li>
-<li>这个文件在资源段中包含一个资源，使用Resource Hacker工具来检查资源，然后，抽取资源，从资源中你能发现什么吗？</li>
+<li>当你使用Process Explorer工具监视时，你注意到了什么？</li>
+<li>你可以找出任何的内存修改行为吗？</li>
+<li>这个恶意代码在主机上的感染迹象特征是什么</li>
+<li>这个恶意代码的目的是什么</li>
 </ol>
 </blockquote>
 <p><strong>解答</strong></p>
 <ol>
-<li><p>依旧是被成功检测<img src="https://i.loli.net/2021/03/10/JKkPdtA6fe2Xiv4.png" alt="1-4.1.png"></p>
+<li>这个程序会创建一个新的svchost进程然后迅速让这个进程失去父亲成为孤儿进程，如下是lab03-03自尽前的珍贵影像<img src="https://i.loli.net/2021/03/11/tiOwu1vJpSMW5cj.png" alt="3-3.1.png"></li>
+<li>打开这个svchost，分别在内存映像和磁盘镜像显示string，明显不同。<img src="https://i.loli.net/2021/03/11/EkhAiwdjb3x7nRq.png" alt="3-3.2.png"></li>
+<li>使用procmon，设置过滤条件为孤儿svchost的pid。根据上图字符串显示有很多打字相关的字符如[ENTER]，我们尝试在一个txt中打字，果然找到相关操作<img src="https://i.loli.net/2021/03/11/JWx8qzUgOFcLVMC.png" alt="3-3.3.png">说明这个代码创建了一个log文件</li>
+<li>进入这个目录，打开log文件，确实是保存了我们的键盘输入，非常恶毒<img src="https://i.loli.net/2021/03/11/nwCPgSvNOV4XWDo.png" alt="3-3.4.png"></li>
+</ol>
+<h2 id="Lab3-4"><a href="#Lab3-4" class="headerlink" title="Lab3-4"></a>Lab3-4</h2><blockquote>
+<p>使用基础的动态分析工具来分析在Lab03-04.exe文件中发现的恶意代码</p>
+<p><strong>问题</strong></p>
+<ol>
+<li>当你运行这个文件时，会发生什么</li>
+<li>是什么原因造成动态分析无法有效实施</li>
+<li>是否有其他方式来运行这个程序</li>
+</ol>
+</blockquote>
+<p><strong>解答</strong></p>
+<ol>
+<li><p>先静态分析一波，能看到一些参数，域名，导入函数等<img src="https://i.loli.net/2021/03/11/EQj3KuMx2g9Nl74.png" alt="3-4.1.png">)之后打开procmon设置过滤器，打开procexp准备观察，在cmd中打开Lab03-04.exe<img src="https://i.loli.net/2021/03/11/DT7L3cIeqhNQsiv.png" alt="3-4.2.png"></p>
+<p>结果这玩意直接没了，很神奇</p>
 </li>
-<li><p>PEiD没有迹象表明混淆或加壳了</p>
-<p><img src="https://i.loli.net/2021/03/10/qpcVSixUvGjgF8B.png" alt="1-4.2.png"></p>
+<li><p>注意到字符串中有一些参数如&gt;&gt; NUL，我们在procmon找到ProcessCreate的项目，点开得到如下结果<img src="https://i.loli.net/2021/03/11/Q7B3Dsx4AfLutC2.png" alt="3-4.3.png">说明应该是通过这句cmd指令退出了程序。</p>
 </li>
-<li><p>在history条目可以看到是2019年8月30日编译的，然而这本书写出来的时候离2019还早，其中肯定有诈</p>
-<p><img src="https://i.loli.net/2021/03/10/7SzdLJEiDBrANlh.png" alt="1-4.3.png"></p>
-</li>
-<li><p>用Walker和strings打开，可以看到如下的内容<img src="https://i.loli.net/2021/03/10/u6Gk1acPT7bmVYw.png" alt="1-4.4.png">注意到里面有WinExec，WriteFile,并且调用了ADCAPI32.dll，这个程序可能会写一些文件到磁盘并执行，而且还有读取资源节的函数LoadResource等，资源节可能有用</p>
-</li>
-<li><p>注意看strings内容</p>
-<p><img src="https://i.loli.net/2021/03/10/yNAa2ie7t5UsHvW.png" alt="1-4.5.png"></p>
-<p>其中有一个\system32\wupdmgrd.exe和一个url，这代表这个程序可能会在system32下添加一个exe，url可能为下载地址</p>
-</li>
-<li><p>用RH提取后，会发现其中大部分都是二进制，然而有一串字符<em>!This program connot be run in DOS mode</em>,但凡做了前面几个实验都会非常眼熟，这个是所有PE文件开始处的DOS头部都会有的错误，而这句话出现在资源节，说明里面有个别的PE文件。点击操作-&gt;存为二进制，之后再用PEview打开，这样就可以对资源节中的这个PE文件进行分析，查看内容如下<img src="https://i.loli.net/2021/03/10/7eSOjdL1pvc8ito.png" alt="1-4.6.png">能看见一个URLDownloadToFile，也就是说，这里面这玩意还是个下载器，用他来下载额外的恶意代码</p>
+<li><p>目前所学不满足继续分析条件</p>
 </li>
 </ol>
  
@@ -278,7 +264,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/03/10/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9801/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -291,19 +277,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            恶意代码分析实战02
-          
-        </div>
-      </a>
     
-    
-      <a href="/2021/02/22/%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E6%8B%92%E7%BB%9D%E8%AE%BF%E9%97%AE-%E4%BB%A5githubio%E4%B8%BA%E4%BE%8B/" class="article-nav-link">
+      <a href="/2021/03/10/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9801/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">如何应对拒绝访问-以githubio为例</div>
+        <div class="article-nav-title">恶意代码分析实战01</div>
       </a>
     
   </nav>
