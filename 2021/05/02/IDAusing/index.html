@@ -10,7 +10,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    恶意代码分析实战02 |  净土
+    IDAusing |  净土
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -56,7 +56,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-恶意代码分析实战02"
+  id="post-IDAusing"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -67,22 +67,22 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  恶意代码分析实战02
+  IDAusing
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" class="article-date">
-  <time datetime="2021-03-11T15:33:26.000Z" itemprop="datePublished">2021-03-11</time>
+      <a href="/2021/05/02/IDAusing/" class="article-date">
+  <time datetime="2021-05-02T09:08:48.000Z" itemprop="datePublished">2021-05-02</time>
 </a>   
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.7k</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -91,7 +91,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">6 min</span>
+            <span class="post-count">7 min</span>
         </span>
     </span>
 </div>
@@ -106,102 +106,45 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h1 id="恶意代码分析实战-LAB3"><a href="#恶意代码分析实战-LAB3" class="headerlink" title="恶意代码分析实战-LAB3"></a>恶意代码分析实战-LAB3</h1><p>本实验报告为恶意代码分析实战中的LAB3，一共分为3-1,3-2,3-3,3-4四个部分，实验环境为windows xp，实验前关闭防火墙并对虚拟机进行快照，以备搞炸了方便回滚(由于Lab3主要是动态调试，快照显得更为必要)。</p>
-<p>实验所需的<a href="https://pan.baidu.com/s/163DIYQPumUtZeu0GDEdYJQ" target="_blank" rel="noopener">样本</a>和<a href="https://pan.baidu.com/s/1gSxUB5KZ89W-5iJj1gGKog" target="_blank" rel="noopener">工具</a>点击即可下载,提取码都是WCH6，务必在虚拟机中操作</p>
-<a id="more"></a>
+  <h2 id="1：交叉引用"><a href="#1：交叉引用" class="headerlink" title="1：交叉引用"></a>1：交叉引用</h2><p>交叉引用功能很好的解决了我们在阅读代码中的函数时经常出现的一个问题：是谁杀(引用)了我，我又杀(引用)了谁。IDA中的交叉引用包括两种类型：代码交叉引用(CODE XREF)和数据交叉引用(DATA XREF),会在常规注释中包含，图1是一个很典型的例子</p>
+<p><img src="https://i.loli.net/2021/04/07/4RQUPqnNVYESkIK.png" alt="1.png"></p>
+<p>可以注意到在描述信息之后有一个”↓”，实际上还可能会有”↑”，这两种箭头指明了引用位置的相对方向。就用第一段信息举例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CODE XREF: DllEntryPoint+4B ↓ p</span><br></pre></td></tr></table></figure>
 
-<h2 id="Lab3-1"><a href="#Lab3-1" class="headerlink" title="Lab3-1"></a>Lab3-1</h2><blockquote>
-<p>使用动态分析技术来分析在Lab03-01.exe文件中发现的恶意代码</p>
-<p><strong>问题</strong></p>
-<ol>
-<li>找出这个恶意代码的导入函数和字符串列表</li>
-<li>这个恶意代码在主机上的感染迹象特征是什么</li>
-<li>这个恶意代码是否存在一些有用的网络特征码，如果存在，他们是什么</li>
-</ol>
-</blockquote>
-<p><strong>解答</strong></p>
-<ol>
-<li><p>用PEview和strings打开如下</p>
-<p><img src="https://i.loli.net/2021/03/11/4Kkv3Uwpq6gDfJn.png" alt="3-1.1.png"></p>
-<p>只有一个导入函数ExitProcess，但是字符串中有很多明文字符串，说明可能其实没有加壳</p>
-</li>
-<li><p>启动procmon和procexp后，打开目标文件来进行动态调试，在procexp中可以看到进程信息，包括其创建的互斥量和装载的dll文件，分别如下</p>
-<p><img src="https://i.loli.net/2021/03/11/K5m4hRdGB7iTuyX.png" alt="3-1.2.png">)<img src="https://i.loli.net/2021/03/11/LserG5oQUWiZg81.png" alt="3-1.3.png"></p>
-<p>可以看到一个名为WinVMX32的互斥量，装载了ws2_32.dlll,wshtcpip.dll，可能具有联网功能。</p>
-<p>设置procmon的过滤器如图<img src="https://i.loli.net/2021/03/11/daD3pb7iL2oOYrH.png" alt="3-1.4.png">可以看到检测到了一堆RegSetValue操作和一个WriteFile操作。其中末尾为seed的是随机数发生器的种子，应该忽略。writefile操作告诉我们此程序在windows/system32写入了一个vmx32to64文件，并且这个文件和我们打开的文件一样大小，经过hash检测发现有相同的hash值，说明是同一个文件。还有一个不是seed的RegSetValue操作，此操作往注册表中创建了新表项VideoDriver，在系统启动的时候会启动vmx32to64</p>
-</li>
-<li><p>修改虚拟机使用的dns服务器ip为127.0.0.1，启动apatedns并且将DNS同样设置为127.0.0.1，之后在cmd中输入nc -l -p 443以监听443端口，得到如下结果<img src="https://i.loli.net/2021/03/11/aqE1GcTFCUfBbQd.png" alt="3-1.5.png">看起来此程序在向<a href="http://www.practicalmalwareanalysis.com进行dns请求，还会在443端口发出一些随机信号" target="_blank" rel="noopener">www.practicalmalwareanalysis.com进行dns请求，还会在443端口发出一些随机信号</a></p>
-</li>
-</ol>
-<p><strong>解答无关部分</strong></p>
-<p>这个apatedns和netcat实在是困扰了我很长一段时间。对于nc，下载并解压之后需要将文件夹中所有文件复制粘贴到windows/system32目录下才能在cmd中使用，还比较容易。对于apateDNS，需要先下载Net Framework 3.5，但是现在能找到的版本下载安装后都会有bug，我找了很多个版本依旧不能解决。最后通过将主机中的C:\Windows\Microsoft.NET\Framework\v2.0.50727目录下的config文件夹完整替换虚拟机同目录下的config文件夹，问题才得以解决，真的坑。</p>
-<h2 id="Lab3-2"><a href="#Lab3-2" class="headerlink" title="Lab3-2"></a>Lab3-2</h2><blockquote>
-<p>使用动态分析技术来分析在Lab03-02.dll文件中发现的恶意代码</p>
-<p><strong>问题</strong></p>
-<ol>
-<li>你怎样才能让这个恶意代码自行安装</li>
-<li>在安装之后，你如何让这个恶意代码运行起来</li>
-<li>你怎么能找到这个恶意代码是在哪个进程下运行的</li>
-<li>你可以在procmon工具中设置什么样的过滤器，才能收集这个恶意代码的信息</li>
-<li>这个恶意代码在主机上的感染迹象特征是什么</li>
-<li>这个恶意代码是否存在一些有用的网络特征码</li>
-</ol>
-</blockquote>
-<p><strong>解答</strong></p>
-<ol>
-<li><p>安装前用PEview和strings打开，得到如下界面<img src="https://i.loli.net/2021/03/11/tzqeQP7oLBdEaKS.png" alt="3-2.1.png">)可以注意到installA这个导入函数，同时看strings会有注册表，域名等相关内容，因此安装前需要先对注册表来个快照(快照是个好东西)。使用regshot即可</p>
-<p><img src="https://i.loli.net/2021/03/11/2AWlDFXVcgHu9aJ.png" alt="3-2.2.png"></p>
-<p>使用rundll32.exe，执行命令rundll32.exe Lab03-02.dll,installA即可安装，安装完成后点击2nd shot 可以发现有新添加的项</p>
-</li>
-<li><p>注意到HKLM\SYSTEM\CurrentControlSet\Services\IPRIP<img src="https://i.loli.net/2021/03/11/gpWORZxHQvCLn38.png" alt="3-2。3.png"></p>
-<p>这个项目说明他将自己安装成一个IPRIP服务，因此要执行可以通过net start IPRIP启动服务</p>
-</li>
-<li><p>我们需要使用Procexp和procmon一起来确定，但是注意之前的对照结果，可以看到这个项目<img src="https://i.loli.net/2021/03/11/QgbMVIRvT6xjO9n.png" alt="3-2.4.png"></p>
-<p>说明他非常有可能在svchost.exe这个进程中执行，我们先运行，然后找到这个进程<img src="https://i.loli.net/2021/03/11/q8DEWItUBJGCAwH.png" alt="3-2.5.png">这还不能说明什么，但是我们可以点击Find进入搜索界面，输入Lab03-02.dll，可以确定实在PID为1024的这个svchost之中</p>
-</li>
-<li><p>在procmon中根据pid设置如下即可<img src="https://i.loli.net/2021/03/11/dAcq9FfCj2uzkvx.png" alt="3-2.6.png"></p>
-</li>
-<li><p>主机感染迹象就是3中图1下面的几行描述信息(INA+)</p>
-</li>
-<li><p>我们通过nc+apateDNS可以分析，注意到strings中有HTTP字样，所以我们在nc监听80端口，结果如下<img src="https://i.loli.net/2021/03/11/6yMXdbakJxwp3FQ.png" alt="3-2.8.png">他会对practicalmalwareanalysis.com发出dns请求，执行一个GET请求，目标是/serve.html，这些足够作为网络特征了</p>
-</li>
-</ol>
-<h2 id="Lab3-3"><a href="#Lab3-3" class="headerlink" title="Lab3-3"></a>Lab3-3</h2><blockquote>
-<p>在一个安全的环境中执行Lab03-03.exe文件中发现的恶意代码，同时使用基础的动态行为分析工具监视他的行为</p>
-<p><strong>问题</strong></p>
-<ol>
-<li>当你使用Process Explorer工具监视时，你注意到了什么？</li>
-<li>你可以找出任何的内存修改行为吗？</li>
-<li>这个恶意代码在主机上的感染迹象特征是什么</li>
-<li>这个恶意代码的目的是什么</li>
-</ol>
-</blockquote>
-<p><strong>解答</strong></p>
-<ol>
-<li>这个程序会创建一个新的svchost进程然后迅速让这个进程失去父亲成为孤儿进程，如下是lab03-03自尽前的珍贵影像<img src="https://i.loli.net/2021/03/11/tiOwu1vJpSMW5cj.png" alt="3-3.1.png"></li>
-<li>打开这个svchost，分别在内存映像和磁盘镜像显示string，明显不同。<img src="https://i.loli.net/2021/03/11/EkhAiwdjb3x7nRq.png" alt="3-3.2.png"></li>
-<li>使用procmon，设置过滤条件为孤儿svchost的pid。根据上图字符串显示有很多打字相关的字符如[ENTER]，我们尝试在一个txt中打字，果然找到相关操作<img src="https://i.loli.net/2021/03/11/JWx8qzUgOFcLVMC.png" alt="3-3.3.png">说明这个代码创建了一个log文件</li>
-<li>进入这个目录，打开log文件，确实是保存了我们的键盘输入，非常恶毒<img src="https://i.loli.net/2021/03/11/nwCPgSvNOV4XWDo.png" alt="3-3.4.png"></li>
-</ol>
-<h2 id="Lab3-4"><a href="#Lab3-4" class="headerlink" title="Lab3-4"></a>Lab3-4</h2><blockquote>
-<p>使用基础的动态分析工具来分析在Lab03-04.exe文件中发现的恶意代码</p>
-<p><strong>问题</strong></p>
-<ol>
-<li>当你运行这个文件时，会发生什么</li>
-<li>是什么原因造成动态分析无法有效实施</li>
-<li>是否有其他方式来运行这个程序</li>
-</ol>
-</blockquote>
-<p><strong>解答</strong></p>
-<ol>
-<li><p>先静态分析一波，能看到一些参数，域名，导入函数等<img src="https://i.loli.net/2021/03/11/EQj3KuMx2g9Nl74.png" alt="3-4.1.png">)之后打开procmon设置过滤器，打开procexp准备观察，在cmd中打开Lab03-04.exe<img src="https://i.loli.net/2021/03/11/DT7L3cIeqhNQsiv.png" alt="3-4.2.png"></p>
-<p>结果这玩意直接没了，很神奇</p>
-</li>
-<li><p>注意到字符串中有一些参数如&gt;&gt; NUL，我们在procmon找到ProcessCreate的项目，点开得到如下结果<img src="https://i.loli.net/2021/03/11/Q7B3Dsx4AfLutC2.png" alt="3-4.3.png">说明应该是通过这句cmd指令退出了程序。</p>
-</li>
-<li><p>目前所学不满足继续分析条件</p>
-</li>
-</ol>
+<p>这段注释可以这样解释：他被处在高地址(箭头向下代表需要向下滚动)处的 DllEntryPoint函数提出，具体位置在DllEntryPoint的第0x4B字节，是一个p类型的代码交叉引用。接下来我们将介绍这些交叉引用的区别</p>
+<h3 id="1-1-代码交叉引用"><a href="#1-1-代码交叉引用" class="headerlink" title="1.1 代码交叉引用"></a>1.1 代码交叉引用</h3><p>代码交叉引用表示一条指令将控制权转交给另外一条指令。IDA将指令转交控制权的方式叫做流。基本流有三种：普通流，跳转流和调用流，这其中的跳转流和调用流根据目标地址是近地址还是远地址还可以进一步细分</p>
+<p>普通流是最简单的流，表示由一条指令到另一条指令的顺序流，是所有的非分支指令的默认执行流。这种流没有特殊的标志，如果有指令A指向指令B的普通流，那么B会紧跟在A之后。</p>
+<p>调用流用于调用函数时，表示控制权转交给目标函数，一般会分配给call指令(call指令调用的函数如果会返回，那么这个指令还会被分配一个普通流)。调用流通过在目标函数处显示交叉引用来表示，这样就出现了上面样例的情况。调用流的后缀通常是p(procedure)</p>
+<p>而跳转流通常是被分配给分支指令(不论是有条件分支还是无条件分支)。无条件分支不会被分配普通流，但是条件分支会被分配普通流。这里同样会在跳转的目标位置处显示交叉引用信息，后缀通常是j(jump)，下面是一个实例</p>
+<p><img src="https://i.loli.net/2021/04/07/1efWDO9nutripCN.png" alt="2.png"></p>
+<h3 id="1-2-数据交叉引用"><a href="#1-2-数据交叉引用" class="headerlink" title="1.2 数据交叉引用"></a>1.2 数据交叉引用</h3><p>数据交叉引用用于跟踪二进制文件访问数据的方式，数据交叉引用与IDA数据库中任何牵涉到虚拟地址的字节有关，与栈变量毫无关系。IDA中最常用的三种数据交叉引用分别用于表示某个位置何时被读取(读取交叉引用，r)，何时被写入(写入交叉引用，w)以及何时被引用(偏移量交叉引用，o)。</p>
+<p><img src="https://i.loli.net/2021/04/07/7reyT8Is41hgFjV.png" alt="3.png"></p>
+<p>读取交叉引用表示访问了某个内存位置的内容。读取交叉引用可能源自于某个指令地址，但也可能引用任何程序位置。通常情况下，IDA会尽可能多的收集线索，根据程序访问变量的方式和函数如何将变量用作自己的参数来确定变量的大小和类型</p>
+<p><img src="https://i.loli.net/2021/04/07/y6duksGXwZAaneE.png" alt="4.png"></p>
+<p>写入交叉引用会指明修改变量内容的程序位置，和读取交叉引用一样，写入交叉引用可能仅仅源自于一条程序指令，也可能引用任何程序位置。值得说明的是在一般情况下，以一个程序指令字节为目标的写入交叉引用表示这是一段自修改代码，这种代码常常被视为无效代码。</p>
+<p>偏移量交叉引用表示引用了某个位置的地址(不是内容)，末尾的注释会指明其引用位置。代码和数据中的指针操作经常会导致偏移量交叉引用的出现，最常作为偏移量交叉引用的目标的就是字符串类型是数据。和前面两种不同的是，偏移量交叉引用可能源自于指令位置或数据位置</p>
+<p>值得说明的是，C++中的虚函数不会被直接引用，所有C++虚函数应该由至少一个虚表条目引用，并且始终是至少一个偏移量交叉引用的目标。因此，回溯偏移量交叉引用可以在程序的数据部分迅速定位C++虚表。</p>
+<h3 id="1-3-交叉引用列表"><a href="#1-3-交叉引用列表" class="headerlink" title="1.3 交叉引用列表"></a>1.3 交叉引用列表</h3><p>如果想要访问IDA中的所有交叉引用数据，那么就需要用到交叉引用列表了。你可以查看一个你感兴趣的内容，用光标选中之后，按下快捷键x查看交叉引用列表</p>
+<p><img src="https://i.loli.net/2021/04/07/5JnLXygI6tKrN9E.png" alt="5.png"></p>
+<p>在这个窗口中告诉了我们交叉引用的相对位置，类型，地址和反汇编文本，你可以通过双击任何一个条目进行跳转。</p>
+<h3 id="1-4-函数调用"><a href="#1-4-函数调用" class="headerlink" title="1.4 函数调用"></a>1.4 函数调用</h3><p>有一种交叉引用列表专门处理函数调用，可以通过选择view-&gt;open subviews-&gt;function calls打开</p>
+<p><img src="https://i.loli.net/2021/04/07/Q7cZJmk8rXOdCW6.png" alt="6.png"></p>
+<p>这个窗口的上半部分是所有调用当前函数的内容，下半部分是当前函数所有调用的内容，这个表格可以让我们更加直观的查看函数之间的交叉引用</p>
+<h2 id="2：IDA绘图"><a href="#2：IDA绘图" class="headerlink" title="2：IDA绘图"></a>2：IDA绘图</h2><p>基于上一部分中所提及的交叉引用，我们可以根据其中某些特定类型的交叉引用来绘制图形，以帮助我们更好的分析二进制文件。</p>
+<p>我们可以把交叉引用看成是图形中的有向边，而节点根据我们的需求可以是指令、基本块或是整个函数。IDA也很贴心的提供了几个绘图功能，我们分别介绍。</p>
+<h3 id="2-1-第三方图形"><a href="#2-1-第三方图形" class="headerlink" title="2.1 第三方图形"></a>2.1 第三方图形</h3><p>第一种生成图形的方法是通过IDA的外部图形功能，采用第三方图形应用程序来显示IDA生成的图形。</p>
+<p>通过使用View -&gt; Graphs中的内容，可以生成包括函数流程图、整个二进制文件的调用图、目标符号的交叉引用图、源头符号的交叉引用图和自定义的交叉引用图在内的五种图</p>
+<p>以下图像依次是flow graph、function calls、xref to、xref from、和user xref chart</p>
+<p><img src="https://i.loli.net/2021/04/07/N6dA7MpmeDB8k3o.png" alt="7.png" style="zoom:33%;" /><img src="https://i.loli.net/2021/04/07/SBwrHaZKkVzUm24.png" alt="8.png" style="zoom:33%;" /></p>
+<p><img src="https://i.loli.net/2021/04/07/sTSubCQMpOk2it9.png" alt="9.png" style="zoom:33%;" /><img src="https://i.loli.net/2021/04/07/KDOfcgywbWulxjZ.png" alt="10.png" style="zoom:33%;" /><img src="https://i.loli.net/2021/04/07/zvHFx7KXbjpA1tL.png" alt="11.png" style="zoom:33%;" /></p>
+<p>可以看到虽然有些图比较复杂，但是也有一些简明的图像可以帮助我们分析。实际上我们频繁使用的只有1flow graph和3xref to，其他的图形对于人工分析几乎毫无作用。有的时候5也可以起到很好的作用，但是需要通过自己设置</p>
+<h3 id="2-2-集成绘图视图"><a href="#2-2-集成绘图视图" class="headerlink" title="2.2 集成绘图视图"></a>2.2 集成绘图视图</h3><p>IDA5.0之后的版本可以生成交互式反汇编图形视图，这种视图可以与标准的文本式反汇编代码自由切换。但是由于这种模式使用的是面向函数的控制流图形，因此他一次只能显示一个函数，并且不能用于显示函数以外的指令，如果希望一次显示多个函数，或者要查看不属于函数的指令，就只能返回文本中的反汇编代码。通过按下空格键就可以进行切换</p>
+<p>一个很有用的降低图形混乱度的技巧是将图中的节点进行分组。如果需要对一组节点分组，我们可以通过按下ctrl键时单击选中每个需要分组的节点，然后右击其中一个节点，在上下文菜单选择Group nodes即可</p>
+<p>例如，下图1是未经分组的图形界面</p>
+<p><img src="https://i.loli.net/2021/04/07/AojS4QvH1BXbrVl.png" alt="12.png"></p>
+<p>当把右下部分的节点选中并分组后，得到这样的界面</p>
+<p><img src="https://i.loli.net/2021/04/07/JRQygpFv4KH9E5O.png" alt="13.png"></p>
+<p>通过合并图形，我们可以很轻松的简化集成绘图。如果需要撤销分组的话，再次右键并选择Ungroup Nodes即可</p>
  
       <!-- reward -->
       
@@ -264,7 +207,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/05/02/IDAusing/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -277,19 +220,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2021/05/02/IDAusing/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            IDAusing
-          
-        </div>
-      </a>
     
-    
-      <a href="/2021/03/10/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9801/" class="article-nav-link">
+      <a href="/2021/03/11/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%9802/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">恶意代码分析实战01</div>
+        <div class="article-nav-title">恶意代码分析实战02</div>
       </a>
     
   </nav>
